@@ -1,1 +1,1 @@
-"# WasteService " 
+# WasteService
