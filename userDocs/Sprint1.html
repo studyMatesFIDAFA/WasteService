@@ -1,0 +1,323 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0114)file:///C:/Users/Davide/Desktop/issLab2022/it.unibo.issLabStart/userDocs/Dispense/html/_static/templateToFill.html -->
+<html><!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+--><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+
+   
+<title>Waste Service SPRINT 1</title></head>
+    
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduction</h2>
+ 
+ 
+<h2>Requirements</h2>
+<div class="remark">
+1) ZONA_SERVIZIO: una zona di servizio (rettangolare, pianeggiante) che comprende:<br>
+
+&ensp;- una porta INDOOR , per l'immissione di materiale di scarto<br>
+
+&ensp;- un contenitore PlasticBox , dedicato alla conservazione di oggetti in plastica, fino a MAXPB kg di materiale. (CAPIENZA_PLASTICA)<br>
+
+&ensp;- un contenitore GlassBox , dedicato alla conservazione di oggetti in vetro, fino a MAXGB kg di materiale. (CAPIENZA_VETRO)<br>
+
+L'area di servizio è libera da ostacoli interni.<br><br>
+
+2) ROBOT: un robot DDR che funge da carrello di trasporto , che è inizialmente situato nella sua posizione HOME (POSIZIONE_INIZIALE) . <br>
+Il carrello di trasporto ha la forma di un quadrato di lunghezza laterale RD. <br>
+
+COMPORTAMENTO_ROBOT: Il carrello di trasporto viene utilizzato per svolgere un'azione di deposito che consiste nelle seguenti fasi:<br>
+
+&ensp;- raccogliere un carico di rifiuti da un camion dei rifiuti situato all'INDOOR<br>
+
+&ensp;- passare dall'INDOOR all'apposito contenitore dei rifiuti<br>
+
+&ensp;- depositare il carico di scarto nel contenitore<br><br>
+
+3) GUI: un Service-manager (un essere umano) che supervisiona lo stato dell'area di servizio utilizzando una WasteServiceStatusGUI .<br><br>
+
+4) SONAR_LED: un Sonar e un Led collegati a un RaspberryPi. Il Led viene utilizzato come dispositivo di segnalazione , secondo il seguente schema (COMPORTAMENTO_LED):<br>
+
+&ensp;- il Led è spento quando il carrello di trasporto è a HOME <br>
+
+&ensp;- il Led lampeggia mentre il carrello di trasporto è in movimento<br>
+
+&ensp;- il Led è acceso quando il carrello di trasporto è fermo.<br><br>
+
+COMPORTAMENTO_SONAR: Il Sonar viene utilizzato come 'dispositivo di allarme': quando misura una distanza inferiore ad un valore prefissato DLIMT ,<br>
+il carrello di trasporto deve essere fermato. Verrà ripreso quando il Sonar rileverà una distanza maggiore di DLIMT .<br><br>
+
+5) OBIETTIVO: L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
+
+Il comportamento può essere descritta come segue:<br>
+
+ 5.1) RICHIESTA_CAMION: Il camion si avvicina all'INDOOR e invia (tramite un dispositivo smart) la richiesta di immagazzinare il carico, specificando la tipologia del materiale (plastica o vetro) e il suo TruckLoad .<br>
+
+ 5.2) WasteService invia la risposta loadaccept se il contenuto finale del contenitore appropriato non supererà il valore massimo consentito ( MAXPB o MAXGB )(CARICO_ACCETTATO).<br>
+ In caso contrario, invia la risposta loadrejecetd e il camion dei rifiuti lascia l' area INDOOR (CARICO_RIFIUTATO).<br>
+
+5.3) TRASFERIMENTO_CARICO: Quando il carico viene accettato, il carrello di trasporto raggiunge l' INDOOR , preleva il materiale, va all'apposito contenitore e deposita il materiale. <br>
+Durante questa attività il WasteService fa lampeggiare il Led.<br>
+
+5.4) FINE_TRASFERIMENTO: Quando l'azione di deposito è terminata, il robot esegue un altro comando di deposito (se presente) o ritorna alla sua HOME .<br>
+
+5.5) GUI: WasteService deve creare una WasteServiceStatusGUI che mostri al Service-manager :<br>
+
+&ensp;-lo stato attuale del carrello di trasporto e la sua posizione nella stanza<br>
+
+&ensp;-il peso attuale del materiale stoccato nei due contenitori per rifiuti<br>
+
+&ensp;-lo stato attuale del Led<br>
+
+</div>
+
+ 
+
+<h2>Requirement analysis</h2>
+<div class="remark">
+QUESITI:<br>
+ - Dimensioni Plastic e Glass Box?<br>
+ - Coordinate precise di delle varie aree?<br>
+ - Plastic e Glass Box possono essere "svuotati" oppure il loro carico pu&oacute solo aumentare?<br>
+ - I valori MAXGB, MAXPB, RD e DLIMIT sono definiti a priori o cambiano dinamicamente e da chi vengono decisi?<br>
+ - GUI: Design WasteServiceStatusGUI?<br>
+ - COMPORTAMENTO_SONAR: il Service-manager &eacute l'utilizzatore del Sonar, utilizza il Sonar per bloccare il robot?<br>
+ - TruckLoad e il tipo di carico come viene definito?<br>
+ - Cosa si intende per dispositivio smart?<br>
+<br>FORMALIZZAZIONE DI ALCUNI REQUISITI:<br>
+ - HOME coincide con l'incrocio del muro in alto e quello di sinistra (angolo in alto a sinistra).<br>
+ - FINE_TRASFERIMENTO: bisogner&aacute tenere traccia delle richieste che giungono durante il singolo trasferimento.<br>
+ - RaspberryPi, Robot e Gui possono essere enti&aacute che operano su nodi differenti, quindi &eacute necessario tenere conto che possono essere distribuiti e perci&oacute tenere in conto che devono comunicare tra loro. 
+ 
+ 
+
+</div>
+
+<h2>Problem analysis</h2>
+ 
+
+<h2>Test plans</h2> 
+
+
+<h2>Project</h2> 
+ 
+
+
+<h2>Testing</h2> 
+ 
+
+<h2>Deployment</h2> 
+
+ 
+<h2>Maintenance</h2> 
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br><br> 	
+  
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+Davide Filoni email: davide.filoni2@studio.unibo.it <br>
+Fabio Scagliarini : fabio.scagliarini@studio.unibo.it <br>
+Filippo Comastri : filippo.comastri2@studio.unibo.it <br>
+<a href=https://github.com/studyMatesFIDAFA/WasteService>Link git </a>
+<!-- <img src="./TemplateToFill_files/DavideFiloni.jpeg" alt="mbot" width="15%" height="15%"> -->
+</div> 
+
+</body></html>
