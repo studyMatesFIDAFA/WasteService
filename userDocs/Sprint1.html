@@ -197,6 +197,9 @@ div.imagedesc{
 
 <div class="body"> 
 <h2>Introduction</h2>
+<div class="remark">
+Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna.
+</div>
  
  
 <h2>Requirements</h2>
@@ -281,7 +284,7 @@ QUESITI:<br>
  - RaspberryPi, Robot e Gui possono essere enti&aacute che operano su nodi differenti, quindi &eacute necessario tenere conto che possono essere distribuiti e perci&oacute tenere in conto che devono comunicare tra loro. 
  <br><br><br>
  A questo punto &eacute necessario effettuare un piccolo riassunto per evidenziare ad alto livello le entit&aacute e funzionalit&aacute presenti nel sistema:<br><br>
- - ENTIT&aacute: <br>
+ <h3>ENTIT&Aacute</h3>
  <ol>
   <li>WASTE_SERVICE</li>
   <li>TROLLEY (sinonimo Robot DDR)</li>
@@ -291,7 +294,7 @@ QUESITI:<br>
   <li>SONAR</li>
 </ol>
 <br>
-- REQUISITI FUNZIONALI: <br>
+<h3>REQUISITI FUNZIONALI </h3>
 <ol>
   <li>Richiesta ed eventuale Trasferimento del carico (RF1):<br>
   Il WASTE_TRUCK invia una richiesta al WASTE_SERVICE con le caratteristiche del carico (tipo e peso), successivamente il WASTE_SERVICE, 
@@ -322,8 +325,24 @@ QUESITI:<br>
 
 <h2>Problem analysis</h2>
 <div class="remark">
+<h3> Architettura logica</h3>
 Per ogni requisito funzionale viene riportata di segiuto l'architettura logica per mostrare le interazioni tra le varie entit&aacute: <br><br>
-<div>
+Richiesta ed eventuale Trasferimento del carico (RF1):<br>
+<img src="./img_Sprint1/RF1.png" alt="mbot" width="90%" height="90%"><br><br>
+Sonar e Led (RF2):<br>
+<img src="./img_Sprint1/RF2.png" alt="mbot" width="90%" height="90%"><br><br>
+GUI (RF3):<br>
+<img src="./img_Sprint1/RF3.png" alt="mbot" width="90%" height="90%"><br><br><br><br>
+
+A questo punto evidenziamo i contesi necessari:<br>
+<ul>
+  <li>CI PENSEREMO NEL PROSSIMO EPISODIO... TO BE CONTINUED.... STAY TURNED! LIKE SE VI E' PIACIUTO IL VIDEO</li>
+  <li>RaspberryContext: LED e SONAR</li>
+  
+</ul>
+
+<h3> Modello eseguibile</h3>
+</div>
  
 
 <h2>Test plans</h2> 
