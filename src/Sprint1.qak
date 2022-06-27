@@ -1,21 +1,41 @@
 System sprint1
 
+// MESSAGGI
 Request load_req : load_req(TIPO, PESO)
 Reply loadaccepted: loadaccepted(TIPO, PESO)
 Reply loadrejected: loadrejected(TIPO, PESO)
+
 Dispatch start_trasf:start_trasf(X,Y,TIPO, PESO)
+
 Request other_load: other_load(ARG)
 Reply yes : yes(X,Y,TIPO, PESO)
 Reply no : no(ARG)
+
 Event load_pickup: load_pickup(TIPO, PESO)
 Event waste_state:waste_state(PESOP, PESOG)
 Event trolley_state : trolley_state(STATO)
 
+// CONTESTO MONOLITICO
 Context ctxWasteService ip [host="localhost" port=8050]
 
+
+//ATTORI 
+
+// TROLLEY
 QActor trolley context ctxWasteService {
 	
+	// se il trolley è a conoscenza delle coordinate uso questi valori
+	// altrimenti aggiungerò le coordinate come elementi passati nella richiesta
 	[#
+		val IndoorX = 0
+		val IndoorY = 10
+		val HomeX = 0
+		val HomeY = 0
+		val GlassX = 10
+		val GlassY = 0
+		val PlasticX = 10
+		val PlasticY = 10
+		
 		var Stato="home"
 		var X=0
 		var Y=0
@@ -27,13 +47,14 @@ QActor trolley context ctxWasteService {
 	
 	State start initial{
 		printCurrentMessage
-		println("INITIAL: attivazione del sistema")
+		println("TROLLEY | START")
 	}
 	Goto home
 	
 	State home{
 		printCurrentMessage
-		println("HOME")
+		println("TROLLEY | HOME")
+		println("TROLLEY | Attendo un compito dal Waste Service")
 		[#Stato = "home"#]
 		emit trolley_state : trolley_state($Stato)
 	}
@@ -41,6 +62,7 @@ QActor trolley context ctxWasteService {
 	
 	State trasferimento_indoor{
 		printCurrentMessage
+		println("TROLLEY | TRASFERIMENTO INDOOR")
 		[# Stato="in_movimento" #]
 		emit trolley_state : trolley_state($Stato)
 		onMsg(start_trasf:start_trasf(X,Y,TIPO, PESO)){
@@ -59,29 +81,35 @@ QActor trolley context ctxWasteService {
 				Peso_carico = payloadArg(3).toInt()
 			#]
 		}
-		println("TRASFERIMENTO_INDOOR...")
+		//println("TROLLEY | Coordinate ($X, $Y)")
 		delayVar DelayHome
 	}
 	Goto carico_rifiuti
 	
 	State carico_rifiuti{
 		printCurrentMessage
+		println("TROLLEY | CARICO RIFIUTI")
 		[# Stato="fermo" #]
 		emit trolley_state : trolley_state($Stato)
-		println("CARICO RIFIUTI=RUSCO...")
 		emit load_pickup: load_pickup($Tipo_carico, $Peso_carico)
 	}
 	Goto trasferimento_carico
 	
 	State trasferimento_carico{
 		printCurrentMessage
+		println("TROLLEY | TRASFERIMENTO CARICO")
 		[# Stato="in_movimento" #]
 		emit trolley_state : trolley_state($Stato)
-		println("TRASFERIMENTO RUSCO...")
+		if [# Tipo_carico.equals("P") #]{
+			println("TROLLEY | Direzione PLASTIC BOX")
+		}
+		else {
+			println("TROLLEY | Direzione GLASS BOX")
+		}
 		delayVar DelayBox
 		[# Stato="fermo" #]
 		emit trolley_state : trolley_state($Stato)
-		println("FINE TRASFERIMENTO $Tipo_carico $Peso_carico")
+		println("TROLLEY | FINE TRASFERIMENTO $Tipo_carico $Peso_carico")
 		request waste_service -m other_load : other_load(x)
 	}
 	Transition t1 whenReply yes -> trasferimento_indoor
@@ -90,14 +118,16 @@ QActor trolley context ctxWasteService {
 				
 	State ritorno_home{
 		printCurrentMessage
+		println("TROLLEY | RITORNO HOME")
 		[# Stato="in_movimento" #]
 		emit trolley_state : trolley_state($Stato)
-		println("RITORNO HOME...")
 		delayVar DelayHome
 	}
 	Goto home
 }
 
+
+// WASTE SERVICE
 QActor waste_service context ctxWasteService{
 	//I VALORI 200 sarebbero MAXPB e MAXGB
 	[#
@@ -113,12 +143,14 @@ QActor waste_service context ctxWasteService{
 	
 	State start initial{
 		printCurrentMessage
-		println("WASTE SERVICE, avvio")
+		println("WASTE SERVICE | START")
 	}
 	Goto attesa_camion
 	
 	State attesa_camion{
-		println("WASTE SERVICE, attesa camion")
+		printCurrentMessage
+		println("WASTE SERVICE | ATTESA CAMION")
+		
 		onMsg (other_load : other_load(ARG)){
 			[# Trolley_occupato = false #]
 			replyTo other_load with no : no(ARG)
@@ -129,7 +161,7 @@ QActor waste_service context ctxWasteService{
 	
 	State gestisci_richiesta{
 		printCurrentMessage
-		println("WASTE SERVICE, gestisco la richiesta arrivata")
+		println("WASTE SERVICE | GESTIONE RICHIESTA")
 		onMsg(load_req : load_req(TIPO, PESO)){
 			[#
 				Tipo_carico = payloadArg(0)
@@ -169,7 +201,7 @@ QActor waste_service context ctxWasteService{
 					}
 				}
 				else{
-					println("WASTE SERVICE TIPO SBAGLIATO")
+					println("WASTE SERVICE | ERRORE: TIPO CARICO SBAGLIATO")
 				}
 			}
 		}
@@ -179,11 +211,11 @@ QActor waste_service context ctxWasteService{
 	
 	
 	State gestione_trolley{
-		//battezzo (6,0) come coordinate del glass box e (6,6) come coordinate del plastic box
 		printCurrentMessage
-		//println("WASTE SERVICE gestisco il trolley")
+		println("WASTE SERVICE | GESTIONE TROLLEY")
+		//battezzo (6,0) come coordinate del glass box e (6,6) come coordinate del plastic box
 		if [# Trolley_occupato.equals(false) #]{
-			println("gestione_trolley trolley libero")
+			println("WASTE SERVICE | Gestico trolley LIBERO")
 			if [# Tipo_carico.equals("G") #]{
 				//vetro
 				forward trolley -m start_trasf : start_trasf(6,0,$Tipo_carico, $Peso_carico)
@@ -200,13 +232,13 @@ QActor waste_service context ctxWasteService{
 	
 	State trolley_occupato{
 		printCurrentMessage
-		println("WASTE SERVICE il trolley al momento occupato")
+		println("WASTE SERVICE | TROLLEY OCCUPATO")
 	}
 	Transition t2 whenRequest other_load -> attesa_trolley
 	
 	State attesa_trolley{
 		printCurrentMessage
-		println("WASTE SERVICE attendo il trolley")
+		println("WASTE SERVICE | ATTESA TROLLEY")
 		onMsg (other_load: other_load(ARG)){
 			if [# Tipo_carico.equals("P") #]{
 				replyTo other_load with yes : yes(6,6,$Tipo_carico, $Peso_carico)
@@ -265,6 +297,10 @@ QActor waste_truck context ctxWasteService{
 
  */
  
+ // MOCK
+ 
+ // WASTE TRUCK
+ // test plan
  QActor wastetruckmock context ctxWasteService {
 	State start initial {
 		printCurrentMessage
@@ -358,8 +394,7 @@ QActor waste_truck context ctxWasteService{
 }
 
 
-// GUI MOCK
-
+// GUI 
 QActor guimock context ctxWasteService {
 	
 	[#

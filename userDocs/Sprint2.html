@@ -188,7 +188,7 @@ div.imagedesc{
     
 
    
-<title>Waste Service SPRINT 1</title></head>
+<title>Waste Service SPRINT 2</title></head>
     
 <body>
 <div id="top">
@@ -268,101 +268,12 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br>
 
 <h2>Requirement analysis</h2>
 <div class="remark">
-QUESITI:<br>
- - Dimensioni Plastic e Glass Box?<br>
- - Coordinate precise di delle varie aree?<br>
- - Waste Truck attende fino a che il carico non &eacute stato prelevato (necessit&aacute di comunicazione tra Trolley e Waste Truck)?<br>
- - Plastic e Glass Box possono essere "svuotati" oppure il loro carico pu&oacute solo aumentare?<br>
- - I valori MAXGB, MAXPB, RD e DLIMIT sono definiti a priori o cambiano dinamicamente e da chi vengono decisi?<br>
- - GUI: Design WasteServiceStatusGUI?<br>
- - COMPORTAMENTO_SONAR: il Service-manager &eacute l'utilizzatore del Sonar, utilizza il Sonar per bloccare il robot?<br>
- - Il led che è accesso quando il robot &eacute STOPPED : inteso quando fermato a causa del sonar? oppure anche davanti ai box per scaricare il carico.<br>
- - TruckLoad e il tipo di carico come viene definito?<br>
- - Cosa si intende per dispositivio smart?<br>
-<br>FORMALIZZAZIONE DI ALCUNI REQUISITI:<br>
- - HOME coincide con l'incrocio del muro in alto e quello di sinistra (angolo in alto a sinistra).<br>
- - FINE_TRASFERIMENTO: bisogner&aacute tenere traccia delle richieste che giungono durante il singolo trasferimento.<br>
- - RaspberryPi, Robot e Gui possono essere enti&aacute che operano su nodi differenti, quindi &eacute necessario tenere conto che possono essere distribuiti e perci&oacute tenere in conto che devono comunicare tra loro. 
- <br><br><br>
- A questo punto &eacute necessario effettuare un piccolo riassunto per evidenziare ad alto livello le entit&aacute e funzionalit&aacute presenti nel sistema:<br><br>
- <h3>ENTIT&Aacute</h3>
- <ol>
-  <li>WASTE_SERVICE</li>
-  <li>TROLLEY (sinonimo Robot DDR)</li>
-  <li>WASTE_TRUCK (sinonimo camion dei rifiuti)</li>
-  <li>WasteServiceStatusGui</li>
-  <li>LED</li>
-  <li>SONAR</li>
-</ol>
-<br>
-<h3>REQUISITI FUNZIONALI </h3>
-<ol>
-  <li>Richiesta ed eventuale Trasferimento del carico (RF1):<br>
-  Il WASTE_TRUCK invia una richiesta al WASTE_SERVICE con le caratteristiche del carico (tipo e peso), successivamente il WASTE_SERVICE, 
-  in base allo stato attuale (capacit&aacute residua disponibile) accetta (loadaccept) o meno (loadrejecetd) il carico.<br>
-  Se il carico viene accettato, il WASTE_SERVICE comunica ciò al TROLLEY che si sposta verso l'area INDOOR per prelevare il carico, dopo aver effettuato il prelievo lo notificher&aacute alle
-  varie enit&aacute [DOMANDA]; poi effettua il trasferimento ed infine richiede al WASTE_SERVICE se &eacute
-  presente un nuovo carico:<br>
-  - Risposta positiva: il TROLLEY si muove verso l'area INDOOR<br>
-  - Risposta negativa: il TROLLEY torna alla HOME</li>
-  <li>Sonar e Led (RF2):<br> in base alla distanza rilevata dal SONAR, il TROLLEY muta il suo comportamento:<br>
-  - Distanza minore di DLIMIT: il TROLLEY si ferma.<br>
-  - Distanza superiore a DLIMIT: il TROLLEY si muove.<br>
-  Il LED mostra lo stato attuale del TROLLEY:<br>
-  - Acceso: TROLLEY fermo a causa del SONAR (stopped).<br>
-  - Spento: TROLLEY in HOME.<br>
-  - Lampeggiante: TROLLEY in azione.<br>
-  
-  </li>
-  <li>GUI (RF3):<br> &eacute presente una gui che mostra:<br>
-  - Stato corrente del TROLLEY<br>
-  - Peso corrente dei due box<br>
-  - Stato del LED  </li>
-</ol>
-<br>
- 
 
 </div>
 
 <h2>Problem analysis</h2>
 <div class="remark">
-<h3> Architettura logica</h3>
-Per ogni requisito funzionale viene riportata di segiuto l'architettura logica per mostrare le interazioni tra le varie entit&aacute: <br><br>
-Richiesta ed eventuale Trasferimento del carico (RF1):<br>
-<img src="./img_Sprint1/RF1.jpg" alt="RF1" width="90%" height="90%"><br><br>
-Sonar e Led (RF2):<br>
-<img src="./img_Sprint1/RF2.jpg" alt="RF2" width="90%" height="90%"><br><br>
-GUI (RF3):<br>
-<img src="./img_Sprint1/RF3.jpg" alt="RF3" width="90%" height="90%"><br><br><br><br>
 
-
-<h3> Modello eseguibile</h3>
-Codice: <a href="../src/sprint1.qak">/src/sprint1.qak</a>
-<br><br>
-- FSM TROLLEY:<br>
-<img src="./img_Sprint1/fsm_Trolley.png" alt="mbot" width="90%" height="90%"><br><br>
-- FSM WASTE_SERVICE:<br>
-<img src="./img_Sprint1/fsm_Waste_Service.png" alt="mbot" width="90%" height="90%"><br><br><br>
-In questo primo Sprint ci siamo concentratti prettamente sul RF1, cercando di rappresentare formalmente mediante il linguaggio QAK<br>
-il comportamento del TROLLEY e del WASTE_SERVICE senza considerare le componenti presenti nel RaspberryPi (Sonar e Led) che verranno poi trattate negli Sprint successivi.<br>
-Inoltre il RF3 &eacute stato affrontato parzialmente per quanto concerne le parti di stato del TROLLEY e stato dei BOX introducendo un componente GUI mock.<br> 
-<h4> CRITICIT&Aacute EMERSE </h4>
-<ul>
-	<li> L'evento load_pickup in presenza di più richieste in successione presenta un problema. Infatti abbiamo notato che in fase di test tale evento<br>
-		non viene rilevato dai WASTE_TRUCK in quanto fermi in uno stato in cui non sono in attesa di alcun evento.</li>
-	<li> Chi &eacute a conoscenza delle coordinate dell' INDOOR, del PLATIC BOX, del GLASS BOX e di HOME?
-</ul><br><br>
-
-<h4> PIANO DI LAVORO </h4>
-Dopo una prima analisi del problema abbiamo delineato una prima idea di ipostazione del lavoro:<br>
-<ul>
-	<li> SPRINT 1: Definizione del comportamento di WASTE_SERVICE e TROLLEY</li>
-	<li> SPRINT 2: Risoluzione problema del load_pickup</li>
-	<li> SPRINT 3: Introduzione delle componenti presenti sul RaspberryPi (LED e SONAR)</li>
-	<li> SPRINT 4: Introduzione della WasteServiceStatusGui</li>
-	<li> SPRINT 5: Introduzione del Virtual Robot</li>
-	<li> SPRINT 6: Introduzione di LED e SONAR fisico e distribuzione del sistema in pi&uacute contesti</li>
-</ul>
 </div>
  
 
