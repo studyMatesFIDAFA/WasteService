@@ -334,12 +334,6 @@ Sonar e Led (RF2):<br>
 GUI (RF3):<br>
 <img src="./img_Sprint1/RF3.jpg" alt="RF3" width="90%" height="90%"><br><br><br><br>
 
-A questo punto evidenziamo i contesi necessari:<br>
-<ul>
-  <li>CI PENSEREMO NEL PROSSIMO EPISODIO... TO BE CONTINUED.... STAY TURNED! LIKE SE VI E' PIACIUTO IL VIDEO</li>
-  <li>RaspberryContext: LED e SONAR</li>
-  
-</ul>
 
 <h3> Modello eseguibile</h3>
 Codice: <a href="../src/sprint1.qak">/src/sprint1.qak</a>
@@ -347,7 +341,26 @@ Codice: <a href="../src/sprint1.qak">/src/sprint1.qak</a>
 - FSM TROLLEY:<br>
 <img src="./img_Sprint1/fsm_Trolley.png" alt="mbot" width="90%" height="90%"><br><br>
 - FSM WASTE_SERVICE:<br>
-<img src="./img_Sprint1/fsm_Waste_Service.png" alt="mbot" width="90%" height="90%"><br><br>
+<img src="./img_Sprint1/fsm_Waste_Service.png" alt="mbot" width="90%" height="90%"><br><br><br>
+In questo primo Sprint ci siamo concentratti prettamente sul RF1, cercando di rappresentare formalmente mediante il linguaggio QAK<br>
+il comportamento del TROLLEY e del WASTE_SERVICE senza considerare le componenti presenti nel RaspberryPi (Sonar e Led) che verranno poi trattate negli Sprint successivi.<br>
+Inoltre il RF3 &eacute stato affrontato parzialmente per quanto concerne le parti di stato del TROLLEY e stato dei BOX introducendo un componente GUI mock.<br> 
+<h4> CRITICIT&Aacute EMERSE </h4>
+<ul>
+	<li> L'evento load_pickup in presenza di più richieste in successione presenta un problema. Infatti abbiamo notato che in fase di test tale evento<br>
+		non viene rilevato dai WASTE_TRUCK in quanto fermi in uno stato in cui non sono in attesa di alcun evento.</li>
+</ul><br><br>
+
+<h4> PIANO DI LAVORO </h4>
+Dopo una prima analisi del problema abbiamo delineato una prima idea di ipostazione del lavoro:<br>
+<ul>
+	<li> SPRINT 1: Definizione del comportamento di WASTE_SERVICE e TROLLEY</li>
+	<li> SPRINT 2: Risoluzione problema del load_pickup</li>
+	<li> SPRINT 3: Introduzione delle componenti presenti sul RaspberryPi (LED e SONAR)</li>
+	<li> SPRINT 4: Introduzione della WasteServiceStatusGui</li>
+	<li> SPRINT 5: Introduzione del Virtual Robot</li>
+	<li> SPRINT 6: Introduzione di LED e SONAR fisico e distribuzione del sistema in pi&uacute contesti</li>
+</ul>
 </div>
  
 
