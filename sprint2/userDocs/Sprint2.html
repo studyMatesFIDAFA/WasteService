@@ -198,69 +198,71 @@ div.imagedesc{
 <div class="body"> 
 <h2>Introduction</h2>
 <div class="remark">
-Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna.
+Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna. (SPRINT 2)
 </div>
  
  
 <h2>Requirements</h2>
 <div class="remark">
-Una compagnia intende costruire un WasteService per la raccolta differenziata.<br><br>
-1) ZONA_SERVIZIO: una zona di servizio (rettangolare, pianeggiante) che comprende:<br>
-
-&ensp;- una porta INDOOR , per l'immissione di materiale di scarto<br>
-
-&ensp;- un contenitore PlasticBox , dedicato alla conservazione di oggetti in plastica, fino a MAXPB kg di materiale. (CAPIENZA_PLASTICA)<br>
-
-&ensp;- un contenitore GlassBox , dedicato alla conservazione di oggetti in vetro, fino a MAXGB kg di materiale. (CAPIENZA_VETRO)<br>
-
+Una compagnia intende costruire un WasteService per la raccolta differenziata.<br>
+<ol>
+<li>ZONA_SERVIZIO: una zona di servizio (rettangolare, pianeggiante) che comprende:<br>
+<ul>
+<li> una porta INDOOR , per l'immissione di materiale di scarto</li>
+<li> un contenitore PlasticBox , dedicato alla conservazione di oggetti in plastica, fino a MAXPB kg di materiale. (CAPIENZA_PLASTICA)</li>
+<li> un contenitore GlassBox , dedicato alla conservazione di oggetti in vetro, fino a MAXGB kg di materiale. (CAPIENZA_VETRO)</li>
+</ul>
 L'area di servizio è libera da ostacoli interni.<br><br>
 <img src="./img_Requisiti/areaLavoro.png" alt="mbot" width="90%" height="90%"><br><br>
+</li>
+<li>ROBOT: un robot DDR che funge da carrello di trasporto (Trolley) , che è inizialmente situato nella sua posizione HOME (POSIZIONE_INIZIALE) . <br>
+Il Trolley ha la forma di un quadrato di lunghezza laterale RD. <br>
 
-2) ROBOT: un robot DDR che funge da carrello di trasporto , che è inizialmente situato nella sua posizione HOME (POSIZIONE_INIZIALE) . <br>
-Il carrello di trasporto ha la forma di un quadrato di lunghezza laterale RD. <br>
+COMPORTAMENTO_ROBOT: Il Trolley viene utilizzato per svolgere un'azione di deposito che consiste nelle seguenti fasi:<br>
+<ul>
+<li>raccogliere un carico di rifiuti da un camion dei rifiuti situato all'INDOOR</li>
+<li>passare dall'INDOOR all'apposito contenitore dei rifiuti</li>
+<li>depositare il carico di scarto nel contenitore</li>
+</ul>
+</li>
+<li>GUI: un Service-manager (un essere umano) che supervisiona lo stato dell'area di servizio utilizzando una WasteServiceStatusGUI .</li><br>
 
-COMPORTAMENTO_ROBOT: Il carrello di trasporto viene utilizzato per svolgere un'azione di deposito che consiste nelle seguenti fasi:<br>
+<li>SONAR_LED: un Sonar e un Led collegati a un RaspberryPi. Il Led viene utilizzato come dispositivo di segnalazione , secondo il seguente schema (COMPORTAMENTO_LED):<br>
+<ul>
+<li> il Led è spento quando il Trolley è a HOME</li>
 
-&ensp;- raccogliere un carico di rifiuti da un camion dei rifiuti situato all'INDOOR<br>
+<li>il Led lampeggia mentre il Trolley è in movimento</li>
 
-&ensp;- passare dall'INDOOR all'apposito contenitore dei rifiuti<br>
-
-&ensp;- depositare il carico di scarto nel contenitore<br><br>
-
-3) GUI: un Service-manager (un essere umano) che supervisiona lo stato dell'area di servizio utilizzando una WasteServiceStatusGUI .<br><br>
-
-4) SONAR_LED: un Sonar e un Led collegati a un RaspberryPi. Il Led viene utilizzato come dispositivo di segnalazione , secondo il seguente schema (COMPORTAMENTO_LED):<br>
-
-&ensp;- il Led è spento quando il carrello di trasporto è a HOME <br>
-
-&ensp;- il Led lampeggia mentre il carrello di trasporto è in movimento<br>
-
-&ensp;- il Led è acceso quando il carrello di trasporto è fermo. (Stopped)<br><br>
+<li>il Led è acceso quando il Trolley è fermo. (Stopped)</li>
 
 COMPORTAMENTO_SONAR: Il Sonar viene utilizzato come 'dispositivo di allarme': quando misura una distanza inferiore ad un valore prefissato DLIMT ,<br>
 il carrello di trasporto deve essere fermato. Verrà ripreso quando il Sonar rileverà una distanza maggiore di DLIMT .<br><br>
-
-5) OBIETTIVO: L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
+</ul>
+</li>
+<li>OBIETTIVO: L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
 
 Il comportamento può essere descritta come segue:<br>
+<ol>
+ <li>RICHIESTA_CAMION: Il camion si avvicina all'INDOOR e invia (tramite un dispositivo smart) la richiesta di immagazzinare il carico, specificando la tipologia del materiale (plastica o vetro) e il suo TruckLoad .</li>
 
- 5.1) RICHIESTA_CAMION: Il camion si avvicina all'INDOOR e invia (tramite un dispositivo smart) la richiesta di immagazzinare il carico, specificando la tipologia del materiale (plastica o vetro) e il suo TruckLoad .<br>
-
- 5.2) WasteService invia la risposta loadaccept se il contenuto finale del contenitore appropriato non supererà il valore massimo consentito ( MAXPB o MAXGB )(CARICO_ACCETTATO).<br>
+ <li>WasteService invia la risposta loadaccept se il contenuto finale del contenitore appropriato non supererà il valore massimo consentito ( MAXPB o MAXGB )(CARICO_ACCETTATO).</li>
  In caso contrario, invia la risposta loadrejecetd e il camion dei rifiuti lascia l' area INDOOR (CARICO_RIFIUTATO).<br>
 
-5.3) TRASFERIMENTO_CARICO: Quando il carico viene accettato, il carrello di trasporto raggiunge l' INDOOR , preleva il materiale, va all'apposito contenitore e deposita il materiale. <br>
-Durante questa attività il WasteService fa lampeggiare il Led.<br>
+<li>TRASFERIMENTO_CARICO: Quando il carico viene accettato, il Trolley raggiunge l' INDOOR , preleva il materiale, va all'apposito contenitore e deposita il materiale. 
+Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 
-5.4) FINE_TRASFERIMENTO: Quando l'azione di deposito è terminata, il robot esegue un altro comando di deposito (se presente) o ritorna alla sua HOME .<br>
+<li>FINE_TRASFERIMENTO: Quando l'azione di deposito è terminata, il robot esegue un altro comando di deposito (se presente) o ritorna alla sua HOME .</li>
 
-5.5) GUI: WasteService deve creare una WasteServiceStatusGUI che mostri al Service-manager :<br>
-
-&ensp;-lo stato attuale del carrello di trasporto e la sua posizione nella stanza<br>
-
-&ensp;-il peso attuale del materiale stoccato nei due contenitori per rifiuti<br>
-
-&ensp;-lo stato attuale del Led<br>
+<li>GUI: WasteService deve creare una WasteServiceStatusGUI che mostri al Service-manager :<br>
+<ul>
+<li>lo stato attuale del carrello di trasporto e la sua posizione nella stanza</li>
+<li>il peso attuale del materiale stoccato nei due contenitori per rifiuti</li>
+<li>lo stato attuale del Led</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
 
 </div>
 
@@ -268,17 +270,110 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br>
 
 <h2>Requirement analysis</h2>
 <div class="remark">
+<h3>PUNTI APERTI:</h3>
+<ul>
+ <li>Dimensioni e coordinate PlasticBox, GlassBox, INDOOR e HOME, inoltre la piantina della stanza è nota a priori?</li>
+ <li>Waste Truck attende fino a che il carico non &eacute stato prelevato (necessit&aacute di comunicazione tra Trolley e Waste Truck)?</li>
+ <li>Plastic e Glass Box possono essere "svuotati" oppure il loro carico pu&oacute solo aumentare?</li>
+ <li>I valori MAXGB, MAXPB, RD e DLIMIT sono definiti a priori e da chi vengono decisi?</li>
+ <li>TruckLoad e il tipo di carico come viene definito e cosa si intende per dispositivo smart?</li>
+ <li>Come va rappresentata la posizione corrente del trolley? (Coordinate, Stato, Disegno della stanza, etc)</li>
+</ul>
+ <br><br>
+
+<h3>REQUISITI FUNZIONALI </h3>
+<ul>
+  <li>Sonar e Led (RF2):<br> in base alla distanza rilevata dal SONAR, il TROLLEY muta il suo comportamento:<br>
+  <ul>
+  <li> Distanza minore di DLIMIT: il TROLLEY si ferma.</li>
+  <li> Distanza superiore a DLIMIT: il TROLLEY si muove.</li>
+  </ul>
+  Il LED mostra lo stato attuale del TROLLEY:<br>
+  <ul>
+  <li> Acceso: TROLLEY fermo a causa del SONAR (stopped).</li>
+  <li> Spento: TROLLEY in HOME.</li>
+  <li> Lampeggiante: TROLLEY in azione.</li>
+  </ul>
+ </ul>
+  
+<br>
+<h3>REQUISITI NON FUNZIONALI </h3>
+<ul>
+	<li>Reattività: in caso di allarmi, in particolare, quando il sonar rileva una distanza minore di DLIMIT, il TROLLEY sospenda il lavoro.</li>
+
+	<li>Raspberry: il LED ed il SONAR sono componenti di un RaspberryPI</li>
+</ul>
+
+<h3>OSSERVAZIONE</h3>
+ RaspberryPi, Robot e Gui possono essere enti&aacute che operano su nodi differenti, quindi &eacute necessario tenere conto che possono essere distribuiti e perci&oacute tenere in conto che devono comunicare tra loro.
 
 </div>
 
 <h2>Problem analysis</h2>
 <div class="remark">
+<h3> ARCHITETTURA LOGICA</h3>
+Per ogni requisito funzionale viene riportata di segiuto l'architettura logica per mostrare le interazioni tra le varie entit&aacute: <br><br>
+Richiesta ed eventuale Trasferimento del carico (RF1):<br>
+<img src="./img_Sprint1/RF1.jpg" alt="RF1" width="90%" height="90%"><br>
+Evidenziamo le motivazione per le quali abbiamo scelto tali tipi di messaggio:
+<ul>
+	<li>La comunicazione da parte del WASTE_SERVICE al TROLLEY di eseguire un trasferimento (start_trasf) avviene attraverso un dispatch, in quanto riteniamo non ci sia bisogno di una risposta da parte del TROLLEY</li>
+	<li>Viceversa la richiesta della presenza di un nuovo carico (other_load) &eacute realizzata mediante uno schema request-response visto che il TROLLEY deve sapere, dopo aver terminato un trasferimento, l'azione da eseguire successivamente</li>
+	<li>Come ultima osservazione, abbiamo deciso di rappresentare mediante un evento (load_pickup) il ritiro del carico, questo per non creare un legame tra il WASTE_TRUCK corrente e il TROLLEY. <br>
+	In tal modo le entit&aacute interessate di questo evento devono solo registrarsi senza che il TROLLEY le debba conoscere</li>
+</ul>
+<br><br>
+Sonar e Led (RF2):<br>
+<img src="./img_Sprint1/RF2.jpg" alt="RF2" width="90%" height="90%"><br>
+Per completezza riportiamo anche una prima rappresentazione delle interazioni che interessano LED e SONAR, anche se queste entit&aacute verranno trattate pi&uacute in dettaglio
+negli Sprint successivi. Al momento SONAR e TROLLEY comunicano tramite eventi (distance e trolley_state) per evitare accoppiamenti, mentre il WASTE_SERVICE invia i comandi tramite dispatch come indicato dai requisiti. <br><br><br>
+GUI (RF3):<br>
+<img src="./img_Sprint1/RF3.jpg" alt="RF3" width="90%" height="90%"><br>
+Abbiamo deciso di rappresentare queste interazioni tramite degli eventi in modo tale che le varie conponenti non debbano conoscere l'entit&aacute GUI per comunicare con essa.
+<br><br><br>
 
+
+<h3>MODELLO ESEGUIBILE</h3>
+Codice: <a href="../src/Sprint1.qak">/src/Sprint1.qak</a>
+<br><br>
+- FSM TROLLEY:<br>
+<img src="./img_Sprint1/fsm_Trolley.png" alt="mbot" width="90%" height="90%"><br><br>
+- FSM WASTE_SERVICE:<br>
+<img src="./img_Sprint1/fsm_Waste_Service.png" alt="mbot" width="90%" height="90%"><br><br><br>
+In questo primo Sprint ci siamo concentratti prettamente sul RF1, cercando di rappresentare formalmente mediante il linguaggio QAK<br>
+il comportamento del TROLLEY e del WASTE_SERVICE senza considerare le componenti presenti nel RaspberryPi (Sonar e Led) che verranno poi trattate negli Sprint successivi.<br>
+Inoltre il RF3 &eacute stato affrontato parzialmente per quanto concerne le parti di stato del TROLLEY e stato dei BOX introducendo un componente GUI mock.<br> 
+<h4> CRITICIT&Aacute EMERSE </h4>
+<ul>
+	<li> L'evento load_pickup in presenza di più richieste in successione presenta un problema. Infatti abbiamo notato che in fase di test tale evento<br>
+		non viene rilevato dai WASTE_TRUCK in quanto fermi in uno stato in cui non sono in attesa di alcun evento.</li>
+	<li> Chi &eacute a conoscenza delle coordinate dell' INDOOR, del PLATIC BOX, del GLASS BOX e di HOME?
+</ul><br><br>
+
+<h4> PIANO DI LAVORO </h4>
+Dopo una prima analisi del problema abbiamo delineato una prima idea di ipostazione del lavoro:<br>
+<ul>
+	<li> SPRINT 1: Definizione del comportamento di WASTE_SERVICE e TROLLEY</li>
+	<li> SPRINT 2: Introduzione delle componenti presenti sul RaspberryPi (LED e SONAR)</li>
+	<li> SPRINT 3: Introduzione della WasteServiceStatusGui</li>
+	<li> SPRINT 4: Introduzione del Virtual Robot</li>
+	<li> SPRINT 5: Introduzione di LED e SONAR fisico e distribuzione del sistema in pi&uacute contesti</li>
+</ul>
 </div>
  
 
 <h2>Test plans</h2> 
-
+<div class="remark">
+Codice: <a href="../src/Sprint1Test.qak">/src/Sprint1Test.qak</a><br><br>
+Per verificare il corretto comportamento di WASTE_SERVICE e TROLLEY &eacute stato realizzato un test plan che controlli il loro funzionamento.<br>
+In particolare, sono stati introdotti dei QActor per simulare WASTE_TRUCK che arrivano sequenzialmente o contemporaneamente, le situazioni riprodotte sono le seguenti:
+<ul>
+<li> Camion 1: carico di GLASS -> ACCETTATO </li>
+<li> Camion 2: carico di GLASS -> RIFIUTATO </li>
+<li> Camion 3: carico di PLASTIC -> ACCETTATO ma messo in attesa perch&eacute il TROLLEY &eacute occupato</li>
+<li> Caimion 4 e 5: arrivano contemporaneamente -> il primo viene ACCETTATO ma messo in attesa, il secondo viene RIFIUTATO</li>
+<ul> 
+</div>
 
 <h2>Project</h2> 
  
