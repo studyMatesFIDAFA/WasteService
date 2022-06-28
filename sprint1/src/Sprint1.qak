@@ -259,138 +259,52 @@ QActor waste_service context ctxWasteService{
 	
 }
 
-/*
-QActor waste_truck context ctxWasteService{
-	State start initial{
-		println("CAMION DEL RUSCO")
-		delay 1000
-	}
-	Goto richiesta_scarico
-	
-	State richiesta_scarico{
-		println("CAMION: richiedo scarico di 50kg di vetro")
-		request waste_service -m load_req : load_req(G, 50)
-	}
-	Transition t0 whenReply loadaccepted -> carico_accettato
-					whenReply loadrejected -> carico_rifiutato
-					
-	State carico_accettato{
-		println("CAMION, carico accettato, attendo trolley...")
-	}
-	Transition t1 whenEvent load_pickup -> carico_prelevato
-	
-	State carico_rifiutato{
-		println("CAMION, carico rifiutato, lascio sistema")
-	} 
-	
-	State carico_prelevato{
-		println("CAMION, carico prelevato, ciao ciao")
-	}Goto richiesta_scarico_2
-	
-	State richiesta_scarico_2{
-		println("CAMION: richiedo scarico di 50kg di plastica")
-		request waste_service -m load_req : load_req(P, 50)
-	}
-	Transition t1 whenReply loadaccepted -> carico_accettato
-					whenReply loadrejected -> carico_rifiutato
-}
-
- */
- 
- // MOCK
- 
  // WASTE TRUCK
- // test plan
  QActor wastetruckmock context ctxWasteService {
 	State start initial {
 		printCurrentMessage
 		println("WASTE TRUCK | START")
-	} Goto camion1_req
+	} Goto camion_req
 	
-	State camion1_req {
+	State camion_req {
 		printCurrentMessage
-		println("WASTE TRUCK | CAMION 1 REQ (GLASS, 8)")
-		request waste_service -m load_req : load_req(G, 8)
-	} Transition t7 whenReply loadaccepted -> camion1_accepted
-					whenReply loadrejected -> not_as_planned
-					
-	State camion1_accepted {
+		[# 
+			var Peso    = kotlin.random.Random.nextInt(0,10)
+			var TipoInt = kotlin.random.Random.nextInt(0,1)
+			var Tipo_carico    = ""
+			
+			if(TipoInt == 0) 
+				Tipo_carico = "G"
+			else
+				Tipo_carico = "P"
+		#]
+		println("WASTE TRUCK | CAMION REQ ($Tipo_carico, $Peso)")
+		request waste_service -m load_req : load_req($Tipo_carico, $Peso)
+	} Transition t0 whenReply loadaccepted -> camion_accepted
+					whenReply loadrejected -> camion_rejected
+			
+	State camion_rejected{
+		printCurrentMessage
+		println("WASTE TRUCK | CAMION RIFIUTATO")
+	}Goto fine
+			
+	State camion_accepted {
 		printCurrentMessage
 		println("WASTE TRUCK | CAMION 1 ACCETTATO")
-	} Transition t0 whenEvent load_pickup -> camion1_terminazione
+	} Transition t0 whenEvent load_pickup -> camion_terminazione
 	
-	State camion1_terminazione {
+	
+	
+	State camion_terminazione {
 		printCurrentMessage
 		println("WASTE TRUCK | CAMION 1 TERMINA")
-	} Goto camion2_req
-	
-	State camion2_req {
-		printCurrentMessage
-		
-		println("WASTE TRUCK | CAMION 2 REQ (GLASS, 3)")
-		request waste_service -m load_req : load_req(G, 3)
-	} Transition t1 whenReply loadrejected -> camion2_rejected
-					whenReply loadaccepted -> not_as_planned
-					
-	State camion2_rejected {
-		printCurrentMessage
-		println("WASTE TRUCK | CAMION 2 REJECTED")
-	} Goto camion3_req
-	
-	State camion3_req {
-		printCurrentMessage
-		delay 250
-		println("WASTE TRUCK | CAMION 3 REQ (PLASTIC, 4)")
-		request waste_service -m load_req : load_req(P, 4)
-	} Transition t2 whenReply loadaccepted -> camion4_req
-					whenReply loadrejected -> not_as_planned
-					
-	State camion4_req {
-		printCurrentMessage
-		delay 250
-		println("WASTE TRUCK | CAMION 4 REQ (PLASTIC, 3)")
-		request waste_service -m load_req : load_req(P, 3)
-	} Transition t3 whenReply loadaccepted -> camion5_req
-					whenReply loadrejected -> not_as_planned
-				
-	State camion5_req {
-		printCurrentMessage
-		delay 250
-		println("WASTE TRUCK | CAMION 5 REQ (PLASTIC, 8)")
-		request waste_service -m load_req : load_req(P, 8)
-	} Transition t4 whenReply loadrejected -> camion3_accepted
-					whenReply loadaccepted -> not_as_planned
-	
-	State camion3_accepted {
-		printCurrentMessage
-		println("WASTE TRUCK | CAMION 3 ACCETTATO")
-	} Transition t5 whenEvent load_pickup -> camion3_terminazione
-	
-	State camion3_terminazione {
-		printCurrentMessage
-		println("WASTE TRUCK | CAMION 3 TERMINA")
-	} Goto camion4_accepted
-	
-	State camion4_accepted {
-		printCurrentMessage
-		println("WASTE TRUCK | CAMION 4 ACCETTATO")
-	} Transition t6 whenEvent load_pickup -> camion4_terminazione
-	
-	State camion4_terminazione {
-		printCurrentMessage
-		println("WASTE TRUCK | CAMION 4 TERMINA")
 	} Goto fine
 	
 	State fine {
 		printCurrentMessage
 		println("WASTE TRUCK | FINE!")
-	}				
-	
-	
-	State not_as_planned {
-		printCurrentMessage 
-		println("WASTE TRUCK | ERRORE!!!!!")
-	} 
+	}
+					
 }
 
 

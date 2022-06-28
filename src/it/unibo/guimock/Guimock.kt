@@ -27,8 +27,8 @@ class Guimock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("GUI | CARICO PLASTIC: $CaricoP")
 						println("GUI | CARICO GLASS: $CaricoG")
 					}
-					 transition(edgeName="t010",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
-					transition(edgeName="t011",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
+					 transition(edgeName="t020",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
+					transition(edgeName="t021",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
 				}	 
 				state("aggiornamento_trolley") { //this:State
 					action { //it:State
@@ -43,8 +43,8 @@ class Guimock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("GUI | CARICO PLASTIC: $CaricoP")
 						println("GUI | CARICO GLASS: $CaricoG")
 					}
-					 transition(edgeName="t012",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
-					transition(edgeName="t013",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
+					 transition(edgeName="t022",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
+					transition(edgeName="t023",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
 				}	 
 				state("aggiornamento_carico") { //this:State
 					action { //it:State
@@ -60,8 +60,8 @@ class Guimock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("GUI | CARICO PLASTIC: $CaricoP")
 						println("GUI | CARICO GLASS: $CaricoG")
 					}
-					 transition(edgeName="t014",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
-					transition(edgeName="t015",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
+					 transition(edgeName="t024",targetState="aggiornamento_trolley",cond=whenEvent("trolley_state"))
+					transition(edgeName="t025",targetState="aggiornamento_carico",cond=whenEvent("waste_state"))
 				}	 
 			}
 		}
