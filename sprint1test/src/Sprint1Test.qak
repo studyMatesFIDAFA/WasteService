@@ -1,4 +1,4 @@
-System sprint1
+System sprint1test
 
 Request load_req : load_req(TIPO, PESO)
 Reply loadaccepted: loadaccepted(TIPO, PESO)
@@ -11,9 +11,9 @@ Event load_pickup: load_pickup(TIPO, PESO)
 Event waste_state:waste_state(PESOP, PESOG)
 Event trolley_state : trolley_state(STATO)
 
-Context ctxWasteService ip [host="localhost" port=8050]
+Context ctxWasteServiceTest ip [host="localhost" port=8050]
 
-QActor trolley context ctxWasteService {
+QActor trolley context ctxWasteServiceTest {
 	
 	[#
 		var Stato="home"
@@ -98,7 +98,7 @@ QActor trolley context ctxWasteService {
 	Goto home
 }
 
-QActor waste_service context ctxWasteService{
+QActor waste_service context ctxWasteServiceTest{
 	//I VALORI 200 sarebbero MAXPB e MAXGB
 	[#
 		var MAXPB = 10
@@ -228,7 +228,7 @@ QActor waste_service context ctxWasteService{
 }
  
 
- QActor wastetruckmock context ctxWasteService {
+ QActor wastetruckmock context ctxWasteServiceTest {
 	State start initial {
 		printCurrentMessage
 		println("WASTE TRUCK | START")
@@ -294,7 +294,7 @@ QActor waste_service context ctxWasteService{
 	} 
 }
 
-QActor wastetruckmock2 context ctxWasteService{
+QActor wastetruckmock2 context ctxWasteServiceTest{
 	State start initial {
 		printCurrentMessage
 		println("WASTE TRUCK 2 | START")
@@ -329,7 +329,7 @@ QActor wastetruckmock2 context ctxWasteService{
 	}			
 }
 
-QActor wastetruckmock3 context ctxWasteService{
+QActor wastetruckmock3 context ctxWasteServiceTest{
 	State start initial {
 		printCurrentMessage
 		println("WASTE TRUCK 3 | START")

@@ -27,14 +27,13 @@ class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | START")
+						println("WASTE SERVICE, avvio")
 					}
 					 transition( edgeName="goto",targetState="attesa_camion", cond=doswitch() )
 				}	 
 				state("attesa_camion") { //this:State
 					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | ATTESA CAMION")
+						println("WASTE SERVICE, attesa camion")
 						if( checkMsgContent( Term.createTerm("other_load(ARG)"), Term.createTerm("other_load(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								 Trolley_occupato = false  
@@ -47,7 +46,7 @@ class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				state("gestisci_richiesta") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | GESTIONE RICHIESTA")
+						println("WASTE SERVICE, gestisco la richiesta arrivata")
 						if( checkMsgContent( Term.createTerm("load_req(TIPO,PESO)"), Term.createTerm("load_req(TIPO,PESO)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -81,7 +80,7 @@ class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 								  }
 								 }
 								 else
-								  {println("WASTE SERVICE | ERRORE: TIPO CARICO SBAGLIATO")
+								  {println("WASTE SERVICE TIPO SBAGLIATO")
 								  }
 								 }
 						}
@@ -94,9 +93,8 @@ class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				state("gestione_trolley") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | GESTIONE TROLLEY")
 						if(  Trolley_occupato.equals(false)  
-						 ){println("WASTE SERVICE | Gestico trolley LIBERO")
+						 ){println("gestione_trolley trolley libero")
 						if(  Tipo_carico.equals("G")  
 						 ){forward("start_trasf", "start_trasf(6,0,$Tipo_carico,$Peso_carico)" ,"trolley" ) 
 						}
@@ -113,14 +111,14 @@ class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( na
 				state("trolley_occupato") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | TROLLEY OCCUPATO")
+						println("WASTE SERVICE il trolley al momento occupato")
 					}
 					 transition(edgeName="t25",targetState="attesa_trolley",cond=whenRequest("other_load"))
 				}	 
 				state("attesa_trolley") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | ATTESA TROLLEY")
+						println("WASTE SERVICE attendo il trolley")
 						if( checkMsgContent( Term.createTerm("other_load(ARG)"), Term.createTerm("other_load(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								if(  Tipo_carico.equals("P")  

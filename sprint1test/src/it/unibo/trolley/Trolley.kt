@@ -15,15 +15,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
-				val IndoorX = 0
-				val IndoorY = 10
-				val HomeX = 0
-				val HomeY = 0
-				val GlassX = 10
-				val GlassY = 0
-				val PlasticX = 10
-				val PlasticY = 10
-				
 				var Stato="home"
 				var X=0
 				var Y=0
@@ -35,15 +26,14 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | START")
+						println("INITIAL: attivazione del sistema")
 					}
 					 transition( edgeName="goto",targetState="home", cond=doswitch() )
 				}	 
 				state("home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | HOME")
-						println("TROLLEY | Attendo un compito dal Waste Service")
+						println("HOME")
 						Stato = "home" 
 						emit("trolley_state", "trolley_state($Stato)" ) 
 					}
@@ -52,7 +42,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 				state("trasferimento_indoor") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | TRASFERIMENTO INDOOR")
 						 Stato="in_movimento"  
 						emit("trolley_state", "trolley_state($Stato)" ) 
 						if( checkMsgContent( Term.createTerm("start_trasf(X,Y,TIPO,PESO)"), Term.createTerm("start_trasf(X,Y,TIPO,PESO)"), 
@@ -71,6 +60,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 												Tipo_carico = payloadArg(2)
 												Peso_carico = payloadArg(3).toInt()
 						}
+						println("TRASFERIMENTO_INDOOR...")
 						delay(DelayHome)
 					}
 					 transition( edgeName="goto",targetState="carico_rifiuti", cond=doswitch() )
@@ -78,9 +68,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 				state("carico_rifiuti") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | CARICO RIFIUTI")
 						 Stato="fermo"  
 						emit("trolley_state", "trolley_state($Stato)" ) 
+						println("CARICO RIFIUTI=RUSCO...")
 						emit("load_pickup", "load_pickup($Tipo_carico,$Peso_carico)" ) 
 					}
 					 transition( edgeName="goto",targetState="trasferimento_carico", cond=doswitch() )
@@ -88,19 +78,13 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 				state("trasferimento_carico") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | TRASFERIMENTO CARICO")
 						 Stato="in_movimento"  
 						emit("trolley_state", "trolley_state($Stato)" ) 
-						if(  Tipo_carico.equals("P")  
-						 ){println("TROLLEY | Direzione PLASTIC BOX")
-						}
-						else
-						 {println("TROLLEY | Direzione GLASS BOX")
-						 }
+						println("TRASFERIMENTO RUSCO...")
 						delay(DelayBox)
 						 Stato="fermo"  
 						emit("trolley_state", "trolley_state($Stato)" ) 
-						println("TROLLEY | FINE TRASFERIMENTO $Tipo_carico $Peso_carico")
+						println("FINE TRASFERIMENTO $Tipo_carico $Peso_carico")
 						request("other_load", "other_load(x)" ,"waste_service" )  
 					}
 					 transition(edgeName="t11",targetState="trasferimento_indoor",cond=whenReply("yes"))
@@ -109,9 +93,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 				state("ritorno_home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | RITORNO HOME")
 						 Stato="in_movimento"  
 						emit("trolley_state", "trolley_state($Stato)" ) 
+						println("RITORNO HOME...")
 						delay(DelayHome)
 					}
 					 transition( edgeName="goto",targetState="home", cond=doswitch() )
