@@ -198,7 +198,9 @@ div.imagedesc{
 <div class="body"> 
 <h2>Introduction</h2>
 <div class="remark">
-Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna. (SPRINT 1)
+Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna. (SPRINT 1 versione 1)
+<br><br>
+<a href="./Sprint1_v0.html"> Versione 0</a>
 </div>
  
  
@@ -206,54 +208,54 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 <div class="remark">
 Una compagnia intende costruire un WasteService per la raccolta differenziata.<br>
 <ol>
-<li>ZONA_SERVIZIO: una zona di servizio (rettangolare, pianeggiante) che comprende:<br>
+<li>Una zona di servizio (rettangolare, pianeggiante) che comprende:<br>
 <ul>
 <li> una porta INDOOR , per l'immissione di materiale di scarto</li>
-<li> un contenitore PlasticBox , dedicato alla conservazione di oggetti in plastica, fino a MAXPB kg di materiale. (CAPIENZA_PLASTICA)</li>
-<li> un contenitore GlassBox , dedicato alla conservazione di oggetti in vetro, fino a MAXGB kg di materiale. (CAPIENZA_VETRO)</li>
+<li> un contenitore PlasticBox , dedicato alla conservazione di oggetti in plastica, fino a MAXPB kg di materiale.</li>
+<li> un contenitore GlassBox , dedicato alla conservazione di oggetti in vetro, fino a MAXGB kg di materiale.</li>
 </ul>
 L'area di servizio è libera da ostacoli interni.<br><br>
 <img src="./img_Requisiti/areaLavoro.png" alt="mbot" width="90%" height="90%"><br><br>
 </li>
-<li>ROBOT: un robot DDR che funge da carrello di trasporto (Trolley) , che è inizialmente situato nella sua posizione HOME (POSIZIONE_INIZIALE) . <br>
+<li>Un robot DDR che funge da carrello di trasporto (Trolley) , che è inizialmente situato nella sua posizione HOME. <br>
 Il Trolley ha la forma di un quadrato di lunghezza laterale RD. <br>
 
-COMPORTAMENTO_ROBOT: Il Trolley viene utilizzato per svolgere un'azione di deposito che consiste nelle seguenti fasi:<br>
+Il Trolley viene utilizzato per svolgere un'azione di deposito che consiste nelle seguenti fasi:<br>
 <ul>
 <li>raccogliere un carico di rifiuti da un camion dei rifiuti situato all'INDOOR</li>
 <li>passare dall'INDOOR all'apposito contenitore dei rifiuti</li>
 <li>depositare il carico di scarto nel contenitore</li>
 </ul>
 </li>
-<li>GUI: un Service-manager (un essere umano) che supervisiona lo stato dell'area di servizio utilizzando una WasteServiceStatusGUI .</li><br>
+<li>Un Service-manager (un essere umano) che supervisiona lo stato dell'area di servizio utilizzando una WasteServiceStatusGUI .</li><br>
 
-<li>SONAR_LED: un Sonar e un Led collegati a un RaspberryPi. Il Led viene utilizzato come dispositivo di segnalazione , secondo il seguente schema (COMPORTAMENTO_LED):<br>
+<li>Un Sonar e un Led collegati a un RaspberryPi. Il Led viene utilizzato come dispositivo di segnalazione , secondo il seguente schema:<br>
 <ul>
-<li> il Led è spento quando il Trolley è a HOME</li>
+<li>il Led è spento quando il Trolley è in HOME</li>
 
 <li>il Led lampeggia mentre il Trolley è in movimento</li>
 
 <li>il Led è acceso quando il Trolley è fermo. (Stopped)</li>
 
-COMPORTAMENTO_SONAR: Il Sonar viene utilizzato come 'dispositivo di allarme': quando misura una distanza inferiore ad un valore prefissato DLIMT ,<br>
+Il Sonar viene utilizzato come 'dispositivo di allarme': quando misura una distanza inferiore ad un valore prefissato DLIMT ,<br>
 il carrello di trasporto deve essere fermato. Verrà ripreso quando il Sonar rileverà una distanza maggiore di DLIMT .<br><br>
 </ul>
 </li>
-<li>OBIETTIVO: L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
+<li>L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
 
 Il comportamento può essere descritta come segue:<br>
 <ol>
- <li>RICHIESTA_CAMION: Il camion si avvicina all'INDOOR e invia (tramite un dispositivo smart) la richiesta di immagazzinare il carico, specificando la tipologia del materiale (plastica o vetro) e il suo TruckLoad .</li>
+ <li>Il camion si avvicina all'INDOOR e invia (tramite un dispositivo smart) la richiesta di immagazzinare il carico, specificando la tipologia del materiale (plastica o vetro) e il suo TruckLoad .</li>
 
- <li>WasteService invia la risposta loadaccept se il contenuto finale del contenitore appropriato non supererà il valore massimo consentito ( MAXPB o MAXGB )(CARICO_ACCETTATO).</li>
- In caso contrario, invia la risposta loadrejecetd e il camion dei rifiuti lascia l' area INDOOR (CARICO_RIFIUTATO).<br>
+ <li>WasteService invia la risposta loadaccept se il contenuto finale del contenitore appropriato non supererà il valore massimo consentito ( MAXPB o MAXGB ).</li>
+ In caso contrario, invia la risposta loadrejecetd e il camion dei rifiuti lascia l' area INDOOR.<br>
 
-<li>TRASFERIMENTO_CARICO: Quando il carico viene accettato, il Trolley raggiunge l' INDOOR , preleva il materiale, va all'apposito contenitore e deposita il materiale. 
+<li>Quando il carico viene accettato, il Trolley raggiunge l' INDOOR , preleva il materiale, va all'apposito contenitore e deposita il materiale. 
 Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 
-<li>FINE_TRASFERIMENTO: Quando l'azione di deposito è terminata, il robot esegue un altro comando di deposito (se presente) o ritorna alla sua HOME .</li>
+<li>Quando l'azione di deposito è terminata, il robot esegue un altro comando di deposito (se presente) o ritorna alla sua HOME .</li>
 
-<li>GUI: WasteService deve creare una WasteServiceStatusGUI che mostri al Service-manager :<br>
+<li>WasteService deve creare una WasteServiceStatusGUI che mostri al Service-manager :<br>
 <ul>
 <li>lo stato attuale del carrello di trasporto e la sua posizione nella stanza</li>
 <li>il peso attuale del materiale stoccato nei due contenitori per rifiuti</li>
@@ -272,32 +274,25 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 <div class="remark">
 <h3>PUNTI APERTI:</h3>
 <ul>
- <li>Dimensioni e coordinate PlasticBox, GlassBox, INDOOR e HOME, inoltre la piantina della stanza è nota a priori?</li>
- <li>Waste Truck attende fino a che il carico non &eacute stato prelevato (necessit&aacute di comunicazione tra Trolley e Waste Truck)?</li>
- <li>Plastic e Glass Box possono essere "svuotati" oppure il loro carico pu&oacute solo aumentare?</li>
- <li>I valori MAXGB, MAXPB, RD e DLIMIT sono definiti a priori e da chi vengono decisi?</li>
- <li>TruckLoad e il tipo di carico come viene definito e cosa si intende per dispositivo smart?</li>
- <li>Come va rappresentata la posizione corrente del trolley? (Coordinate, Stato, Disegno della stanza, etc)</li>
+ <li>Dimensioni e coordinate PlasticBox, GlassBox, INDOOR e HOME, inoltre la piantina della stanza è nota a priori?<br>
+ Sono note a priori</li>
+ <li>Waste Truck attende fino a che il carico non &eacute stato prelevato?<br>
+ S&iacute</li>
+ <li>Plastic e Glass Box possono essere "svuotati" oppure il loro carico pu&oacute solo aumentare?<br>
+ No, possono solo aumentare</li>
+ <li>I valori MAXGB, MAXPB, RD e DLIMIT sono definiti a priori e da chi vengono decisi?<br>
+ Sono definiti a priori</li>
+ <li>TruckLoad e il tipo di carico come viene definito e cosa si intende per dispositivo smart?<br>
+ Casualmente</li>
 </ul>
- <br><br>
- A questo punto &eacute necessario effettuare un piccolo riassunto per evidenziare ad alto livello le entit&aacute e funzionalit&aacute presenti nel sistema:<br><br>
- <h3>ENTIT&Aacute</h3>
- <ol>
-  <li>WASTE_SERVICE</li>
-  <li>TROLLEY (sinonimo Robot DDR)</li>
-  <li>WASTE_TRUCK (sinonimo camion dei rifiuti)</li>
-  <li>WasteServiceStatusGui</li>
-  <li>LED</li>
-  <li>SONAR</li>
-</ol>
-<br>
+ <br>
 <h3>REQUISITI FUNZIONALI </h3>
 <ol>
   <li>Richiesta ed eventuale Trasferimento del carico (RF1):<br>
   Il WASTE_TRUCK invia una richiesta al WASTE_SERVICE con le caratteristiche del carico (tipo e peso), successivamente il WASTE_SERVICE, 
   in base allo stato attuale (capacit&aacute residua disponibile) accetta (loadaccept) o meno (loadrejecetd) il carico.<br>
   Se il carico viene accettato, il WASTE_SERVICE comunica ciò al TROLLEY che si sposta verso l'area INDOOR per prelevare il carico, dopo aver effettuato il prelievo lo notificher&aacute alle
-  varie enit&aacute [DOMANDA]; poi effettua il trasferimento ed infine richiede al WASTE_SERVICE se &eacute
+  varie enit&aacute; poi effettua il trasferimento ed infine richiede al WASTE_SERVICE se &eacute
   presente un nuovo carico:<br>
   <ul>
    <li>Risposta positiva: il TROLLEY si muove verso l'area INDOOR</li>
@@ -335,15 +330,125 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 	<li>Reattività: in caso di allarmi, in particolare, quando il sonar rileva una distanza minore di DLIMIT, il TROLLEY sospenda il lavoro.</li>
 
 	<li>Raspberry: il LED ed il SONAR sono componenti di un RaspberryPI</li>
+</ul><br>
+<h3>COMPONENTI A DISPOSIZIONE</h3>
+Il committente mette a disposizione un DDR Robot che dovr&aacute fungere da TROLLEY (<a href="..">LINK</a>)<br>
+In pi&uacute viene fortinto il software per l'utilizzo del SONAR e del LED(<a href="..">LINK SONAR</a> e <a href="..">LINK LED</a>)
+<h3> MODELLO REQUISITI </h3> 
+Dopo un'attenta analisi dei requisiti si pu&oacute evincere che:<br>
+Le entit&aacute in gioco sono le seguenti:
+<ul>
+<li> WASTE_SERVICE, TROLLEY, LED e SONAR che vengono modellate logicamente come degli attori in quanto possono operare su nodi differenti.
+<li> WASTE_TRUCK e GUI modellati mediante un POJO visto che operano esternamente al sistema.
 </ul>
+Inoltre WASTE_TRUCK e WASTE_SERVICE comunicano tra di loro mediante uno schema request-response per segnalare l'arrivo di un nuovo carico.<br>
+Il TROLLEY esegue delle azioni di deposito articolate in tre fasi (Pick up, Trasferimento, Deposito) esse vengono innescate dal WASTE_SERVICE, le modalit&aacute di 
+interazioni tra le due entit&aacute non vengono specificate nei requisiti e quindi verranno valutate in fase di analisi del problema. Stesse considerazioni si possono fare 
+per verificare la presenza o meno di un nuovo carico da depositare.<br>
+Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGui, anche in questo caso le modalit&aacute di interazione verranno analizzate
+nella fase successiva. Stesso discoro per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
 
-<h3>OSSERVAZIONE</h3>
- RaspberryPi, Robot e Gui possono essere enti&aacute che operano su nodi differenti, quindi &eacute necessario tenere conto che possono essere distribuiti e perci&oacute tenere in conto che devono comunicare tra loro.
+Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br>
+CODICE: <a href="../src/AnalisiRequisiti.qak">Modello esegibile</a><br><br>
+<img src="./img_Sprint1/architetturaLogica_Requisiti.png" alt="RF2" width="90%" height="90%"><br>
+<h3>PROBLEMATICHE RF1</h3>
+<ul>
+<li><h4>RITIRO</h4>
+Quando una richiesta da parte del WASTE_TRUCK viene accettata dal WASTE_SERVICE (loadaccept), vi &eacute la necessita&aacute di comunicare al TROLLEY
+di andare a prelevare il carico presso l'INDOOR.</li>
+<li><h4>PICK UP EFFETTUATO</h4>
+Quando il TROLLEY effettua il prelievo (pick up) deve comunicarlo al WASTE_SERVICE e al WASTE_TRUCK, in modo tale da liberare l'area di
+INDOOR e consentire di esaminare una nuova richiesta. Anche se sembrano due azioni differenti, su indicazioni del committente, ci &eacute 
+stato comunicato che l'area INDOOR verr&aacute liberata solo al momento del prelievo del carico. 
+</li>
+<li><h4>FINE DEPOSITO</h4>
+Terminato il deposito del carico il Trolley deve comunicare la fine di tale azione.</li>
+<li><h4>NUOVO DEPOSITO</h4>
+Quando il TROLLEY termina il deposito corrente si ha la necessit&aacute di verificare se sono arrivati nuovi WASTE_TRUCK con carichi accettati.</li>
+</ul>
 
 </div>
 
 <h2>Problem analysis</h2>
 <div class="remark">
+<h3> PROBLEMATICHE RF1 EVIDENZIATE DURANTE L'ANALISI DEI REQUISITI</h3>
+<h4> RITIRO </h4>
+Le modalit&aacute di interazione possibili sono le seguenti:
+<ul>
+	<li> DISPATCH:<br>
+	<img src="./img_Sprint1/ritiro_Dispatch.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione) e si utilizza un solo messaggio. </li>
+		<li> CONTRO: si instaura un legame tra le due entit&aacute.
+	</ul></li>
+	<li> REQUEST-RESPONSE:<br>
+	<img src="./img_Sprint1/ritiro_R-R.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione).</li>
+		<li> CONTRO: si instaura un legame tra le due entit&aacute e si utilizzano due messaggi.
+	</ul></li>
+	<li> EVENTO:<br>
+	<img src="./img_Sprint1/ritiro_evento.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: entit&aacute disaccppiate.</li>
+		<li> CONTRO: la connessione non &eacute reliable ( non viene rilevata un'eventuale mancata ricezione).
+	</ul></li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
+in quanto ogni carico accettato deve essere servito. <br>
+
+<h4>PICK UP EFFETTUATO</h4>
+Le modalit&aacute di interazione possibili sono le seguenti:
+<ul>
+	<li> DUE DISPATCH VERSIONE 1:<br>
+	<img src="./img_Sprint1/pickup_DD1.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione). </li>
+		<li> CONTRO: si instaura un legame tra le tre entit&aacute e si genera una "catena" di messaggi (TROLLEY -> WASTE_SERVICE -> WASTE_TRUCK).</li>
+	</ul></li>
+	<li> DUE DISPATCH VERSIONE 2:<br>
+	<img src="./img_Sprint1/pickup_DD2.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione). </li>
+		<li> CONTRO: si instaura un legame tra le tre entit&aacute, quindi il TROLLEY deve conoscere sia il WASTE_SERVICE che il WASTE_TRUCK e sono necessari due messaggi.</li>
+	</ul></li>
+	<li> DISPATCH E RESPONSE:<br>
+	<img src="./img_Sprint1/pickup_D-R.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: si sfrutta una comunicazione gi&aacute presente per comunicare l'azione al WASTE_TRUCK.</li>
+		<li> CONTRO: se viene perso l'evento load_pickup si blocca l'intera comunicazione.
+	</ul></li>
+	<li> DUE REQUEST-RESPONSE:<br>
+	<img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: si utilizza una una connsessione reliable (viene rilevata un'eventuale mancata ricezione) e vengono utilizzati messaggi necessari per altre azioni.</li>
+		<li> CONTRO: si crea un legame tra le tre entit&aacute.
+	</ul></li>
+	<li> EVENTO:<br>
+	<img src="./img_Sprint1/pickup_evento.png" alt="RF2" width="90%" height="90%"><br>
+	<ul>
+		<li> PRO: entit&aacute disaccppiate e si utilizza un unico messaggio.</li>
+		<li> CONTRO: la connessione non &eacute reliable (non viene rilevata un'eventuale mancata ricezione) perci&oacute se viene perso l'evento si blocca l'intero sistema.
+	</ul></li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
+in quanto ogni carico accettato deve essere servito. La soluzione consigliata &eacute quella di utilizzare
+un dispatch in quanto non &eacute richiesta esplicitamente una risposta da parte del TROLLEY e la natura
+di questa interazione &eacute pi&uacute riconducibile ad un mero comando.
+
+
+
+
+
+
+
+
+
+
+
+
 <h3> ARCHITETTURA LOGICA</h3>
 Per ogni requisito funzionale viene riportata di segiuto l'architettura logica per mostrare le interazioni tra le varie entit&aacute: <br><br>
 Richiesta ed eventuale Trasferimento del carico (RF1):<br>
