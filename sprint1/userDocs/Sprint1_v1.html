@@ -346,7 +346,7 @@ Il TROLLEY esegue delle azioni di deposito articolate in tre fasi (Pick up, Tras
 interazioni tra le due entit&aacute non vengono specificate nei requisiti e quindi verranno valutate in fase di analisi del problema. Stesse considerazioni si possono fare 
 per verificare la presenza o meno di un nuovo carico da depositare.<br>
 Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGui, anche in questo caso le modalit&aacute di interazione verranno analizzate
-nella fase successiva. Stesso discoro per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
+nella fase successiva. Stesso discorso per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
 
 Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br>
 CODICE: <a href="../src/AnalisiRequisiti.qak">Modello esegibile</a><br><br>
@@ -354,15 +354,13 @@ CODICE: <a href="../src/AnalisiRequisiti.qak">Modello esegibile</a><br><br>
 <h3>PROBLEMATICHE RF1</h3>
 <ul>
 <li><h4>RITIRO</h4>
-Quando una richiesta da parte del WASTE_TRUCK viene accettata dal WASTE_SERVICE (loadaccept), vi &eacute la necessita&aacute di comunicare al TROLLEY
+Quando una richiesta da parte del WASTE_TRUCK viene accettata dal WASTE_SERVICE (loadaccept), vi &eacute la necessit&aacute di comunicare al TROLLEY
 di andare a prelevare il carico presso l'INDOOR.</li>
 <li><h4>PICK UP EFFETTUATO</h4>
 Quando il TROLLEY effettua il prelievo (pick up) deve comunicarlo al WASTE_SERVICE e al WASTE_TRUCK, in modo tale da liberare l'area di
 INDOOR e consentire di esaminare una nuova richiesta. Anche se sembrano due azioni differenti, su indicazioni del committente, ci &eacute 
 stato comunicato che l'area INDOOR verr&aacute liberata solo al momento del prelievo del carico. 
 </li>
-<li><h4>FINE DEPOSITO</h4>
-Terminato il deposito del carico il Trolley deve comunicare la fine di tale azione.</li>
 <li><h4>NUOVO DEPOSITO</h4>
 Quando il TROLLEY termina il deposito corrente si ha la necessit&aacute di verificare se sono arrivati nuovi WASTE_TRUCK con carichi accettati.</li>
 </ul>
@@ -390,13 +388,13 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 	<li> EVENTO:<br>
 	<img src="./img_Sprint1/ritiro_evento.png" alt="RF2" width="90%" height="90%"><br>
 	<ul>
-		<li> PRO: entit&aacute disaccppiate.</li>
-		<li> CONTRO: la connessione non &eacute reliable ( non viene rilevata un'eventuale mancata ricezione).
+		<li> PRO: entit&aacute disaccoppiate.</li>
+		<li> CONTRO: la connessione non &eacute reliable ( non viene rilevata un'eventuale mancata ricezione) e quindi c'&eacute il rischio di bloccare l'intero sistema.
 	</ul></li>
 </ul>
 <h5>CONCLUSIONI</h5>
 Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
-in quanto ogni carico accettato deve essere servito. <br>
+in quanto ogni carico accettato deve essere servito e non vi &eacute il rischio di bloccare l'intero sistema. <br>
 
 <h4>PICK UP EFFETTUATO</h4>
 Le modalit&aacute di interazione possibili sono le seguenti:
@@ -416,14 +414,14 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 	<li> DISPATCH E RESPONSE:<br>
 	<img src="./img_Sprint1/pickup_D-R.png" alt="RF2" width="90%" height="90%"><br>
 	<ul>
-		<li> PRO: si sfrutta una comunicazione gi&aacute presente per comunicare l'azione al WASTE_TRUCK.</li>
-		<li> CONTRO: se viene perso l'evento load_pickup si blocca l'intera comunicazione.
+		<li> PRO: si sfrutta una comunicazione gi&aacute presente per comunicare l'azione al WASTE_TRUCK, inviando la risposta (loadaccept) solo quando il carico &eacute stato prelevato.</li>
+		<li> CONTRO: il TROLLEY deve conoscere il WASTE_SERVICE.
 	</ul></li>
 	<li> DUE REQUEST-RESPONSE:<br>
 	<img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="90%" height="90%"><br>
 	<ul>
-		<li> PRO: si utilizza una una connsessione reliable (viene rilevata un'eventuale mancata ricezione) e vengono utilizzati messaggi necessari per altre azioni.</li>
-		<li> CONTRO: si crea un legame tra le tre entit&aacute.
+		<li> PRO: si utilizza una una connsessione reliable (viene rilevata un'eventuale mancata ricezione) e vengono utilizzati messaggi gi&aacute presenti, inviando la risposta (loadaccept) solo quando il carico &eacute stato prelevato.</li>
+		<li> CONTRO: il numero di messaggi scambiati &eacute elevato.
 	</ul></li>
 	<li> EVENTO:<br>
 	<img src="./img_Sprint1/pickup_evento.png" alt="RF2" width="90%" height="90%"><br>
@@ -433,25 +431,83 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 	</ul></li>
 </ul>
 <h5>CONCLUSIONI</h5>
-Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
-in quanto ogni carico accettato deve essere servito. La soluzione consigliata &eacute quella di utilizzare
-un dispatch in quanto non &eacute richiesta esplicitamente una risposta da parte del TROLLEY e la natura
-di questa interazione &eacute pi&uacute riconducibile ad un mero comando.
+Visto che non vi sono richieste esplice del committente vi sono due vie possibilit&aacute: 
+<ul>
+	<li> La prima prevede l'utilizzo dell'evento con la consapevolezza che in caso di perdita il sistema potrebbe bloccarsi.</li>
+	<li> La seconda &eacute pi&uacute prudente e prevede l'utilizzo dello schema request-response.</li>
+</ul>
+Sicuramente &eacute sconsigliato l'impiego del doppio dispatch (versione 2) in quanto il TROLLEY deve conoscere esplicitamente il WASTE_TRUCK.
+<h4> NUOVO DEPOSITO </h4>
+Le modalit&aacute di interazione possibili sono le seguenti:
+<ul>
+	<li> DISPATCH:<br>
+	<img src="./img_Sprint1/fineDeposito_Dispatch.png" alt="RF2" width="70%" height="70%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione). </li>
+		<li> CONTRO: il TROLLEY deve conoscere il WASTE_SERVICE.</li>
+	</ul>
+	In questo caso sfrutto l'interazione analizzata nella problematica RITIRO per segnalare la presenza o meno di un nuovo deposito da effettuare
+	</li><br>
+	
+	<li> EVENTO:<br>
+	<img src="./img_Sprint1/fineDeposito_evento.png" alt="RF2" width="70%" height="70%"><br>
+	<ul>
+		<li> PRO: entit&aacute disaccoppiate.</li>
+		<li> CONTRO: la connessione non &eacute reliable ( non viene rilevata un'eventuale mancata ricezione) e quindi c'&eacute il rischio di bloccare l'intero sistema.</li>
+	</ul>
+	In questo caso sfrutto l'interazione analizzata nella problematica RITIRO per segnalare la presenza o meno di un nuovo deposito da effettuare
+	</li><br>
+	<li> REQUEST-RESPONSE:<br>
+	<img src="./img_Sprint1/fineDeposito_R-R.png" alt="RF2" width="70%" height="70%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione).</li>
+		<li> CONTRO: si instaura un legame tra le due entit&aacute, si utilizzano due messaggi e il TROLLEY deve conoscere il WASTE_SERVICE.</li>
+	</ul></li>
+	<li> SFRUTTAMENTO INTERAZIONI GI&Aacute PRESENTI:<br>
+	<img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="70%" height="70%"><br>
+	<ul>
+		<li> PRO: la connessione &eacute reliable (viene rilevata un'eventuale mancata ricezione), si utilizzano messaggi gi&aacute presenti, andando anche a sfruttare il fatto che il TROLLEY &eacute un attore e si riduce il numero di interazioni tra le entit&aacute. </li>
+		<li> CONTRO: meno immediata come soluzione perch&eacute i messaggi rappresentano pi&uacute azioni da eseguire.</li>
+	</ul></li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Non vi sono richieste esplice del committente sicuramente l'ultima soluzione rappresentata un'ottima via per risolvere il problema, utilizzando un numero ridotto di messaggi.
 
-
-
-
-
-
-
-
-
-
+<h4>INFORMAZIONI SULLE COORDINATE DEI BOX</h4>
+<ul>
+	<li> Se questa informazione la possiede il WASTE_SERVICE: il payload del messaggio di start_trasf
+		contine anche le coordinate del box di destinazione</li>
+	<li>Se questa informazione la possiede TROLLEY: il box di destinazione si pu&oacute inferire dal tipo del carico
+	presente nel payload di start_trasf </li>
+</ul>
+In entrambi i casi, un eventuale cambiamento delle coordinate provocherebbe una modifica dell'entit&aacute responsabile
+<h5>CONCLUSIONI</h5>
+Non ci sono richieste esplicite nei requisiti, per questo motivo si consiglia di mantenere queste informazioni all'interno del TROLLEY per 
+facilitare l'implementazione del sistema e lavorare con payload di dimensioni ridotte.
+<br><br><br>
+<h3>SOLUZIONE PROPOSTA</h3>
+Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
+Il nostro obiettivo è quello di rendere il TROLLEY indipendente dagli altri componenti, in modo che non sia a conoscenza delle altre entit&aacute presenti.<br>
+Per risolvere le problematiche di RITIRO e PICK UP EFFETTUATO viene inviata una richiesta al TROLLEY per comunicare di iniziare 
+l'azione di deposito, quest'ultimo risponder&aacute una volta eseguito il pickup.<br>
+Per segnalare al WASTE_TRUCK di liberare l'area di INDOOR in seguito al pickup da parte del TROLLEY viene sfruttata la loadaccept (risposta alla richesta load_req).<br>
+Infine, per risolvere la problematica NUOVO DEPOSITO si sfrutta il fatto che il TROLLEY &eacute un attore, depositando le richieste appena accettate dal WASTE_SERVICE all'interno della coda che il TROLLEY possiede. Quindi al termine dell'azione di deposito il TROLLEY
+andr&aacute a verificare se vi sono nuove richieste da servire all'interno della sua coda, in caso contrario torner&aacute alla HOME.<br><br>
 
 
 <h3> ARCHITETTURA LOGICA</h3>
-Per ogni requisito funzionale viene riportata di segiuto l'architettura logica per mostrare le interazioni tra le varie entit&aacute: <br><br>
-Richiesta ed eventuale Trasferimento del carico (RF1):<br>
+La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
+CODICE: <a href="../src/AnalisiProblema.qak">Modello esegibile</a><br><br>
+<img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="90%" height="90%"><br>
+
+
+
+
+
+
+
+<br><br><br><br><br><br><br><br><br><br>
+
 <img src="./img_Sprint1/RF1.jpg" alt="RF1" width="90%" height="90%"><br>
 Evidenziamo le motivazione per le quali abbiamo scelto tali tipi di messaggio:
 <ul>

@@ -68,54 +68,20 @@ class Wastetruckmock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 						println("WASTE TRUCK | CAMION 3 REQ (PLASTIC, 4)")
 						request("load_req", "load_req(P,4)" ,"waste_service" )  
 					}
-					 transition(edgeName="t212",targetState="camion4_req",cond=whenReply("loadaccepted"))
+					 transition(edgeName="t212",targetState="camion3_accepted",cond=whenReply("loadaccepted"))
 					transition(edgeName="t213",targetState="not_as_planned",cond=whenReply("loadrejected"))
-				}	 
-				state("camion4_req") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						delay(250) 
-						println("WASTE TRUCK | CAMION 4 REQ (PLASTIC, 3)")
-						request("load_req", "load_req(P,3)" ,"waste_service" )  
-					}
-					 transition(edgeName="t314",targetState="camion5_req",cond=whenReply("loadaccepted"))
-					transition(edgeName="t315",targetState="not_as_planned",cond=whenReply("loadrejected"))
-				}	 
-				state("camion5_req") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						delay(250) 
-						println("WASTE TRUCK | CAMION 5 REQ (PLASTIC, 8)")
-						request("load_req", "load_req(P,8)" ,"waste_service" )  
-					}
-					 transition(edgeName="t416",targetState="camion3_accepted",cond=whenReply("loadrejected"))
-					transition(edgeName="t417",targetState="not_as_planned",cond=whenReply("loadaccepted"))
 				}	 
 				state("camion3_accepted") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE TRUCK | CAMION 3 ACCETTATO")
 					}
-					 transition(edgeName="t518",targetState="camion3_terminazione",cond=whenEvent("load_pickup"))
+					 transition(edgeName="t514",targetState="camion3_terminazione",cond=whenEvent("load_pickup"))
 				}	 
 				state("camion3_terminazione") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE TRUCK | CAMION 3 TERMINA")
-					}
-					 transition( edgeName="goto",targetState="camion4_accepted", cond=doswitch() )
-				}	 
-				state("camion4_accepted") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE TRUCK | CAMION 4 ACCETTATO")
-					}
-					 transition(edgeName="t619",targetState="camion4_terminazione",cond=whenEvent("load_pickup"))
-				}	 
-				state("camion4_terminazione") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE TRUCK | CAMION 4 TERMINA")
 					}
 					 transition( edgeName="goto",targetState="fine", cond=doswitch() )
 				}	 
