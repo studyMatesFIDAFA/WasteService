@@ -1,0 +1,105 @@
+System waste_service
+
+Request load_req : load_req(TYPE,WEIGHT)
+Reply loadaccept : loadaccept(TYPE,WEIGHT)
+Reply loadrejected : loadrejected(TYPE,WEIGHT)
+
+
+Context ctx_waste_service ip [ host="localhost" port=8080]
+
+QActor transport_trolley context ctx_waste_service {
+	
+	[# var Another = false #]
+	
+	State home initial {
+		printCurrentMessage
+		println(" TROLLEY | HOME ")
+	}
+	Goto pickup_load_from_indoor
+	
+	State pickup_load_from_indoor {
+		printCurrentMessage
+		println(" TROLLEY | CARICA un WASTE-LOAD da INDOOR ")
+	}
+	Goto deposit_load_incontainer
+	
+	State deposit_load_incontainer {
+		[#
+			Another = ((0..1).random())==1
+		#]
+		printCurrentMessage
+		println(" TROLLEY | deposito WASTE-LOAD nel CONTAINER ")
+	}
+	Goto pickup_load_from_indoor if [# Another #] else home
+}
+
+QActor waste_truck context ctx_waste_service {
+	
+	State start initial {
+		printCurrentMessage
+		println("WASTE_TRUCK | INIT")
+	}
+	Goto indoor_request
+	
+	State indoor_request {
+		printCurrentMessage
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request waste_service -m load_req : load_req(vetro,10)
+		
+	}
+	
+	Transition t0 whenReply loadaccept -> accepted
+					whenReply loadrejected -> rejected
+	
+	State accepted {
+		printCurrentMessage
+		println("Request accepted")
+	}
+	
+	State rejected {
+		printCurrentMessage
+		println("Request rejected")
+	}
+}
+
+QActor waste_service context ctx_waste_service {
+	[#
+		var CurrentPlasticWeight = 0
+		var CurrentGlassWeight   = 0
+		val MAXP				 = 15
+		val MAXG				 = 15
+		var Accepted = false
+	#]
+	
+	State attesa_load_req initial {
+		printCurrentMessage
+	}
+	
+	Transition t0 whenRequest load_req -> gestisci_richiesta
+	
+	State gestisci_richiesta {
+		printCurrentMessage
+		println("WASTE SERVICE | Gestisco richiesta")
+		onMsg(load_req : load_req(TYPE,WEIGHT)) {
+			[#
+				val Type = payloadArg(0)
+				val Weight = payloadArg(1).toInt()
+				if (Type == "plastica") {
+					Accepted = (CurrentPlasticWeight + Weight <= MAXP)
+				} else if (Type == "vetro") {
+					Accepted = ( CurrentGlassWeight + Weight <= MAXG)
+				} else {
+					Accepted = false
+					println("WASTE SERVICE | Tipo sbagliato")
+				}
+			#]
+			if [# Accepted #] {
+				replyTo load_req with loadaccept : loadaccept(Type,Weight)
+			} else {
+				replyTo load_req with loadrejected : loadrejected(Type,Weight)
+			}
+		}
+	}
+	Goto attesa_load_req
+}
+
