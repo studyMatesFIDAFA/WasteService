@@ -349,7 +349,7 @@ Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGui, a
 nella fase successiva. Stesso discorso per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
 
 Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br>
-CODICE: <a href="../src/AnalisiRequisiti.qak">Modello esegibile</a><br><br>
+CODICE: <a href="../src/analisiRequisiti.qakt">Modello esegibile</a><br><br>
 <img src="./img_Sprint1/architetturaLogica_Requisiti.png" alt="RF2" width="90%" height="90%"><br>
 <h3>PROBLEMATICHE RF1</h3>
 In questo Sprint ci concentreremo solamente sul RF1.
@@ -357,6 +357,8 @@ In questo Sprint ci concentreremo solamente sul RF1.
 <li><h4>RITIRO</h4>
 Quando una richiesta da parte del WASTE_TRUCK viene accettata dal WASTE_SERVICE (loadaccept), vi &eacute la necessit&aacute di comunicare al TROLLEY
 di andare a prelevare il carico presso l'INDOOR.</li>
+<li><h4>INVIO LOADACCEPT</h4>
+Definire la fase in cui conviene inviare la loadaccept in caso di carico accettato.</li>
 <li><h4>PICK UP EFFETTUATO</h4>
 Quando il TROLLEY effettua il prelievo (pick up) deve comunicarlo al WASTE_SERVICE e al WASTE_TRUCK, in modo tale da liberare l'area di
 INDOOR e consentire di esaminare una nuova richiesta. Anche se sembrano due azioni differenti, su indicazioni del committente, ci &eacute 
@@ -396,6 +398,24 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 <h5>CONCLUSIONI</h5>
 Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
 in quanto ogni carico accettato deve essere servito e non vi &eacute il rischio di bloccare l'intero sistema. <br>
+
+<h4> INVIO LOADACCEPT</h4>
+<ul>
+	<li> Subito dopo aver controllato la disponibilit&aacute di spazio:
+	<ul>
+		<li> PRO: notifico immediatamente l'accettazione al WASTE_TRUCK.</li>
+		<li> CONTRO: necessito di un'ulteriore interazione per segnalare l'avvenuto pick up.</li>
+	</ul></li>
+	<li> Dopo aver effettuato il pick up:
+	<ul>
+		<li> PRO: utilizzo un unico messaggio per segnalare due informazioni.</li>
+		<li> CONTRO: perdo leggermente di espressivit&aacute.</li>
+	</ul></li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Visto che non vi sono richieste esplice del committente si consiglia per realizzare un'implementazione pi&uacute snella
+di utilizzare la seconda opzione. <br>
+
 
 <h4>PICK UP EFFETTUATO</h4>
 Le modalit&aacute di interazione possibili sono le seguenti:

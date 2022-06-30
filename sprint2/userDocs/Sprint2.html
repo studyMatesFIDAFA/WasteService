@@ -281,7 +281,7 @@ Perci&oacute si consiglia l'utilizzo del SonarObservable che emette eventi, i qu
 		<li>PRO: il WASTE_SERVICE diventa il fulcro del sistema in quanto si incarica di processare tutte le informazioni provenienti dagli altri componenti</li>
 		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione. Inoltre il WASTE_SERVICE deve anche comunicare con il TROLLEY per effettuare l'eventuale sospensione e riavvio</li>
 	</ul></li>
-	<li>ENTIT&Aacute TERZA:<br>
+	<li>ENTIT&Aacute TERZA (DISTANCE_ANALAYZER):<br>
 	<ul>
 		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti sotto forma di dispatch, evento o request-response (allarme), andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
 		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente</li>
