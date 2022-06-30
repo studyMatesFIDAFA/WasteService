@@ -204,7 +204,7 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 </div>
  
  
-<h2>Requirements</h2>
+<h2>Requirements <a name="requisiti"></a></h2>
 <div class="remark">
 Una compagnia intende costruire un WasteService per la raccolta differenziata.<br>
 <ol>
@@ -238,7 +238,7 @@ Il Trolley viene utilizzato per svolgere un'azione di deposito che consiste nell
 <li>il Led è acceso quando il Trolley è fermo. (Stopped)</li>
 
 Il Sonar viene utilizzato come 'dispositivo di allarme': quando misura una distanza inferiore ad un valore prefissato DLIMT ,<br>
-il carrello di trasporto deve essere fermato. Verrà ripreso quando il Sonar rileverà una distanza maggiore di DLIMT .<br><br>
+il Trolley deve essere fermato. Verrà ripreso quando il Sonar rileverà una distanza maggiore di DLIMT .<br><br>
 </ul>
 </li>
 <li>L'obiettivo principale del software WasteService è quello di consentire a un camion dei rifiuti di depositare il proprio carico di TruckLoad kg di plastica o vetro nell'apposito contenitore.<br>
@@ -270,7 +270,7 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 
  
 
-<h2>Requirement analysis</h2>
+<h2>Requirement analysis </h2>
 <div class="remark">
 <h3>PUNTI APERTI:</h3>
 <ul>
@@ -286,7 +286,7 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
  Casualmente</li>
 </ul>
  <br>
-<h3>REQUISITI FUNZIONALI </h3>
+<h3>REQUISITI FUNZIONALI <a name="analisi_requisiti"></a></h3>
 <ol>
   <li>Richiesta ed eventuale Trasferimento del carico (RF1):<br>
   Il WASTE_TRUCK invia una richiesta al WASTE_SERVICE con le caratteristiche del carico (tipo e peso), successivamente il WASTE_SERVICE, 
@@ -352,6 +352,7 @@ Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br
 CODICE: <a href="../src/AnalisiRequisiti.qak">Modello esegibile</a><br><br>
 <img src="./img_Sprint1/architetturaLogica_Requisiti.png" alt="RF2" width="90%" height="90%"><br>
 <h3>PROBLEMATICHE RF1</h3>
+In questo Sprint ci concentreremo solamente sul RF1.
 <ul>
 <li><h4>RITIRO</h4>
 Quando una richiesta da parte del WASTE_TRUCK viene accettata dal WASTE_SERVICE (loadaccept), vi &eacute la necessit&aacute di comunicare al TROLLEY
@@ -501,58 +502,6 @@ CODICE: <a href="../src/AnalisiProblema.qak">Modello esegibile</a><br><br>
 <img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="90%" height="90%"><br>
 
 
-
-
-
-
-
-<br><br><br><br><br><br><br><br><br><br>
-
-<img src="./img_Sprint1/RF1.jpg" alt="RF1" width="90%" height="90%"><br>
-Evidenziamo le motivazione per le quali abbiamo scelto tali tipi di messaggio:
-<ul>
-	<li>La comunicazione da parte del WASTE_SERVICE al TROLLEY di eseguire un trasferimento (start_trasf) avviene attraverso un dispatch, in quanto riteniamo non ci sia bisogno di una risposta da parte del TROLLEY</li>
-	<li>Viceversa la richiesta della presenza di un nuovo carico (other_load) &eacute realizzata mediante uno schema request-response visto che il TROLLEY deve sapere, dopo aver terminato un trasferimento, l'azione da eseguire successivamente</li>
-	<li>Come ultima osservazione, abbiamo deciso di rappresentare mediante un evento (load_pickup) il ritiro del carico, questo per non creare un legame tra il WASTE_TRUCK corrente e il TROLLEY. <br>
-	In tal modo le entit&aacute interessate di questo evento devono solo registrarsi senza che il TROLLEY le debba conoscere</li>
-</ul>
-<br><br>
-Sonar e Led (RF2):<br>
-<img src="./img_Sprint1/RF2.jpg" alt="RF2" width="90%" height="90%"><br>
-Per completezza riportiamo anche una prima rappresentazione delle interazioni che interessano LED e SONAR, anche se queste entit&aacute verranno trattate pi&uacute in dettaglio
-negli Sprint successivi. Al momento SONAR e TROLLEY comunicano tramite eventi (distance e trolley_state) per evitare accoppiamenti, mentre il WASTE_SERVICE invia i comandi tramite dispatch come indicato dai requisiti. <br><br><br>
-GUI (RF3):<br>
-<img src="./img_Sprint1/RF3.jpg" alt="RF3" width="90%" height="90%"><br>
-Abbiamo deciso di rappresentare queste interazioni tramite degli eventi in modo tale che le varie conponenti non debbano conoscere l'entit&aacute GUI per comunicare con essa.
-<br><br><br>
-
-
-<h3>MODELLO ESEGUIBILE</h3>
-Codice: <a href="../src/Sprint1.qak">/src/Sprint1.qak</a>
-<br><br>
-- FSM TROLLEY:<br>
-<img src="./img_Sprint1/fsm_Trolley.png" alt="mbot" width="90%" height="90%"><br><br>
-- FSM WASTE_SERVICE:<br>
-<img src="./img_Sprint1/fsm_Waste_Service.png" alt="mbot" width="90%" height="90%"><br><br><br>
-In questo primo Sprint ci siamo concentratti prettamente sul RF1, cercando di rappresentare formalmente mediante il linguaggio QAK<br>
-il comportamento del TROLLEY e del WASTE_SERVICE senza considerare le componenti presenti nel RaspberryPi (Sonar e Led) che verranno poi trattate negli Sprint successivi.<br>
-Inoltre il RF3 &eacute stato affrontato parzialmente per quanto concerne le parti di stato del TROLLEY e stato dei BOX introducendo un componente GUI mock.<br> 
-<h4> CRITICIT&Aacute EMERSE </h4>
-<ul>
-	<li> L'evento load_pickup in presenza di più richieste in successione presenta un problema. Infatti abbiamo notato che in fase di test tale evento<br>
-		non viene rilevato dai WASTE_TRUCK in quanto fermi in uno stato in cui non sono in attesa di alcun evento.</li>
-	<li> Chi &eacute a conoscenza delle coordinate dell' INDOOR, del PLATIC BOX, del GLASS BOX e di HOME?
-</ul><br><br>
-
-<h4> PIANO DI LAVORO </h4>
-Dopo una prima analisi del problema abbiamo delineato una prima idea di ipostazione del lavoro:<br>
-<ul>
-	<li> SPRINT 1: Definizione del comportamento di WASTE_SERVICE e TROLLEY</li>
-	<li> SPRINT 2: Introduzione delle componenti presenti sul RaspberryPi (LED e SONAR)</li>
-	<li> SPRINT 3: Introduzione della WasteServiceStatusGui</li>
-	<li> SPRINT 4: Introduzione del Virtual Robot</li>
-	<li> SPRINT 5: Introduzione di LED e SONAR fisico e distribuzione del sistema in pi&uacute contesti</li>
-</ul>
 </div>
  
 
@@ -560,12 +509,13 @@ Dopo una prima analisi del problema abbiamo delineato una prima idea di ipostazi
 <div class="remark">
 Codice: <a href="../src/Sprint1Test.qak">/src/Sprint1Test.qak</a><br><br>
 Per verificare il corretto comportamento di WASTE_SERVICE e TROLLEY &eacute stato realizzato un test plan che controlli il loro funzionamento.<br>
-In particolare, sono stati introdotti dei QActor per simulare WASTE_TRUCK che arrivano sequenzialmente o contemporaneamente, le situazioni riprodotte sono le seguenti:
+In particolare, sono stati introdotti i seguenti test (MAXGB=10 MAXPB=10):
 <ul>
-<li> Camion 1: carico di GLASS -> ACCETTATO </li>
-<li> Camion 2: carico di GLASS -> RIFIUTATO </li>
-<li> Camion 3: carico di PLASTIC -> ACCETTATO ma messo in attesa perch&eacute il TROLLEY &eacute occupato</li>
-<li> Caimion 4 e 5: arrivano contemporaneamente -> il primo viene ACCETTATO ma messo in attesa, il secondo viene RIFIUTATO</li>
+<li> Camion 1: carico di 8 GLASS -> ACCETTATO </li>
+<li> Camion 2: carico di 4 GLASS -> RIFIUTATO </li>
+<li> Camion 3: carico di 6 PLASTIC -> ACCETTATO</li>
+<li> Camion 4: carico di 3 PLASTIC -> ACCETTATO</li>
+<li> Camion 5: carico di 4 PLASTIC -> RIFIUTATO</li>
 <ul> 
 </div>
 
