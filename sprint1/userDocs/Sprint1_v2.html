@@ -488,18 +488,17 @@ Vi sono due possibili alternative:
 <br><br><br>
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
-Il nostro obiettivo è quello di rendere il TROLLEY indipendente dagli altri componenti, in modo che non sia a conoscenza delle altre entit&aacute presenti.<br>
-Per risolvere le problematiche di RITIRO e PICK UP EFFETTUATO viene inviata una richiesta al TROLLEY per comunicare di iniziare 
-l'azione di deposito, quest'ultimo risponder&aacute una volta eseguito il pickup.<br>
-Per segnalare al WASTE_TRUCK di liberare l'area di INDOOR in seguito al pickup da parte del TROLLEY viene sfruttata la loadaccept (risposta alla richesta load_req).<br>
-Infine, per risolvere la problematica NUOVO DEPOSITO si sfrutta il fatto che il TROLLEY &eacute un attore, depositando le richieste appena accettate dal WASTE_SERVICE all'interno della coda che il TROLLEY possiede. Quindi al termine dell'azione di deposito il TROLLEY
-andr&aacute a verificare se vi sono nuove richieste da servire all'interno della sua coda, in caso contrario torner&aacute alla HOME.<br><br>
+Il nostro obiettivo è quello di rendere il TROLLEY un attuatore, ossia indipendente dalla logica dell'applicazione.<br>
+A tal proposito il WASTE_SERVICE viene modellato come un controller che comunica passo passo le varie azioni da compiere al TROLLEY attraverso opportune request: pickup, trasf e deposit; e un dispatch: ritorno_home.
+<br>Inoltre, la risposta loadaccept viene utilizzata per comunicare al WASTE_TRUCK, il cui carico &eacute stato accettato, di poter 
+liberare l'area INDOOR in quanto &eacute stato effettuato il pick up.<br>
+Al termine dell'azione di deposito verr&aacute comunicato al TROLLEY se recarsi nuovamente nell'area INDOOR (pickup) oppure in HOME (ritorno_home).<br>
 
 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
 CODICE: <a href="../src/analisiProblema_v2.qak">Modello esegibile</a><br><br>
-<img src="./img_Sprint1/pickup_R-R.png" alt="RF2" width="90%" height="90%"><br>
+<img src="./img_Sprint1/modelloEseguibile_v2.png" alt="RF2" width="90%" height="90%"><br>
 
 
 </div>
@@ -507,16 +506,7 @@ CODICE: <a href="../src/analisiProblema_v2.qak">Modello esegibile</a><br><br>
 
 <h2>Test plans</h2> 
 <div class="remark">
-Codice: <a href="../src/Sprint1Test.qak">/src/Sprint1Test.qak</a><br><br>
-Per verificare il corretto comportamento di WASTE_SERVICE e TROLLEY &eacute stato realizzato un test plan che controlli il loro funzionamento.<br>
-In particolare, sono stati introdotti i seguenti test (MAXGB=10 MAXPB=10):
-<ul>
-<li> Camion 1: carico di 8 GLASS -> ACCETTATO </li>
-<li> Camion 2: carico di 4 GLASS -> RIFIUTATO </li>
-<li> Camion 3: carico di 6 PLASTIC -> ACCETTATO</li>
-<li> Camion 4: carico di 3 PLASTIC -> ACCETTATO</li>
-<li> Camion 5: carico di 4 PLASTIC -> RIFIUTATO</li>
-<ul> 
+
 </div>
 
 <h2>Project</h2> 
