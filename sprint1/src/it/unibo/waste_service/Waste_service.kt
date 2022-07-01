@@ -11,82 +11,46 @@ import kotlinx.coroutines.runBlocking
 class Waste_service ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "start"
+		return "attesa_load_req"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
-				var MAXPB = 10
-				var MAXGB = 10
-				var CurrentPlasticWeight=0
-				var CurrentGlassWeight=0
-				var Trolley_occupato=false	
-				var Carico_accettato = false
-				var Tipo_carico = ""
-				var Peso_carico = 0
+				var CurrentPlasticWeight = 0
+				var CurrentGlassWeight   = 0
+				val MAXP				 = 15
+				val MAXG				 = 15
+				var Accepted = false
 		return { //this:ActionBasciFsm
-				state("start") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | START")
-					}
-					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
-				}	 
 				state("attesa_load_req") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | ATTESA LOAD REQUEST(CAMION)")
 					}
-					 transition(edgeName="t03",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					 transition(edgeName="t00",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
 				}	 
 				state("gestisci_richiesta") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | GESTIONE RICHIESTA")
+						println("WASTE SERVICE | Gestisco richiesta")
 						if( checkMsgContent( Term.createTerm("load_req(TYPE,WEIGHT)"), Term.createTerm("load_req(TYPE,WEIGHT)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												Tipo_carico = payloadArg(0)
-												Peso_carico = payloadArg(1).toInt()
-												if (Tipo_carico  == "plastica") {
-													Carico_accettato = (CurrentPlasticWeight + Peso_carico <= MAXPB)
-												} else if (Tipo_carico  == "vetro") {
-													Carico_accettato = ( CurrentGlassWeight + Peso_carico <= MAXGB)
+												val Type = payloadArg(0)
+												val Weight = payloadArg(1).toInt()
+												if (Type == "plastica") {
+													Accepted = (CurrentPlasticWeight + Weight <= MAXP)
+												} else if (Type == "vetro") {
+													Accepted = ( CurrentGlassWeight + Weight <= MAXG)
 												} else {
-													Carico_accettato = false
+													Accepted = false
 													println("WASTE SERVICE | Tipo sbagliato")
 												}
-								if(  ! Carico_accettato  
-								 ){answer("load_req", "loadrejected", "loadrejected(Type,Weight)"   )  
+								if(  Accepted  
+								 ){answer("load_req", "loadaccept", "loadaccept(Type,Weight)"   )  
 								}
+								else
+								 {answer("load_req", "loadrejected", "loadrejected(Type,Weight)"   )  
+								 }
 						}
-					}
-					 transition( edgeName="goto",targetState="attiva_deposito", cond=doswitchGuarded({ Carico_accettato  
-					}) )
-					transition( edgeName="goto",targetState="attesa_load_req", cond=doswitchGuarded({! ( Carico_accettato  
-					) }) )
-				}	 
-				state("attiva_deposito") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | ATTIVA DEPOSITO")
-						request("start_trasf", "start_trasf($Tipo_carico)" ,"trolley" )  
-					}
-					 transition(edgeName="t14",targetState="libera_indoor",cond=whenReply("load_pickup"))
-				}	 
-				state("libera_indoor") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | LIBERA INDOOR")
-						if( checkMsgContent( Term.createTerm("load_pickup(ok)"), Term.createTerm("load_pickup(ok)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								answer("load_req", "loadaccept", "yes($Tipo_carico,$Peso_carico)"   )  
-						}
-						
-									if (Tipo_carico  == "plastica") {
-											CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
-									} else if (Tipo_carico  == "vetro") {
-											CurrentGlassWeight = CurrentGlassWeight + Peso_carico
-									}
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
 				}	 

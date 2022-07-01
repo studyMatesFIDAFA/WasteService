@@ -11,85 +11,36 @@ import kotlinx.coroutines.runBlocking
 class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "start"
+		return "home"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		
-				val IndoorX = 0
-				val IndoorY = 10
-				val HomeX = 0
-				val HomeY = 0
-				val GlassX = 10
-				val GlassY = 0
-				val PlasticX = 10
-				val PlasticY = 10
-				
-				
-				var Tipo_carico = ""
-				val DelayHome=2000L
-				val DelayBox=3000L
+		 var Another = false  
 		return { //this:ActionBasciFsm
-				state("start") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | START")
-					}
-					 transition( edgeName="goto",targetState="home", cond=doswitch() )
-				}	 
 				state("home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | HOME")
-						println("TROLLEY | Attendo un compito dal Waste Service")
-					}
-					 transition(edgeName="t00",targetState="trasferimento_indoor",cond=whenRequest("start_trasf"))
-				}	 
-				state("trasferimento_indoor") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | TRASFERIMENTO INDOOR")
-						if( checkMsgContent( Term.createTerm("start_trasf(TYPE)"), Term.createTerm("start_trasf(TYPE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								
-												Tipo_carico = payloadArg(0)
-						}
-						delay(DelayHome)
+						println(" TROLLEY | HOME ")
 					}
 					 transition( edgeName="goto",targetState="pickup", cond=doswitch() )
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | PICKUP")
-						answer("start_trasf", "load_pickup", "load_pickup(ok)"   )  
+						println(" TROLLEY | CARICA un WASTE-LOAD da INDOOR ")
 					}
 					 transition( edgeName="goto",targetState="trasferimento_e_deposito", cond=doswitch() )
 				}	 
 				state("trasferimento_e_deposito") { //this:State
 					action { //it:State
+						
+									Another = ((0..1).random())==1
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | TRASFERIMENTO E DEPOSITO CARICO")
-						if(  Tipo_carico.equals("plastica")  
-						 ){println("TROLLEY | Direzione PLASTIC BOX")
-						}
-						else
-						 {println("TROLLEY | Direzione GLASS BOX")
-						 }
-						delay(DelayBox)
-						println("TROLLEY | FINE TRASFERIMENTO $Tipo_carico")
-						stateTimer = TimerActor("timer_trasferimento_e_deposito", 
-							scope, context!!, "local_tout_trolley_trasferimento_e_deposito", 50.toLong() )
+						println(" TROLLEY | trasfermimento e deposito WASTE-LOAD nel CONTAINER ")
 					}
-					 transition(edgeName="t11",targetState="ritorno_home",cond=whenTimeout("local_tout_trolley_trasferimento_e_deposito"))   
-					transition(edgeName="t12",targetState="trasferimento_indoor",cond=whenRequest("start_trasf"))
-				}	 
-				state("ritorno_home") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | RITORNO HOME")
-						delay(DelayHome)
-					}
-					 transition( edgeName="goto",targetState="home", cond=doswitch() )
+					 transition( edgeName="goto",targetState="pickup", cond=doswitchGuarded({ Another  
+					}) )
+					transition( edgeName="goto",targetState="home", cond=doswitchGuarded({! ( Another  
+					) }) )
 				}	 
 			}
 		}
