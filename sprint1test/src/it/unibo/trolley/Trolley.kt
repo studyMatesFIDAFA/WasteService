@@ -15,87 +15,79 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
-				var Stato="home"
-				var X=0
-				var Y=0
-				var Tipo_carico = ""
-				var Peso_carico = 0
-				val DelayHome=2000L
+				var Path = ""
+				val DelayIndoor=2000L
 				val DelayBox=3000L
+				val DelayHome=2000L
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("INITIAL: attivazione del sistema")
+						println("TROLLEY | START")
 					}
 					 transition( edgeName="goto",targetState="home", cond=doswitch() )
 				}	 
 				state("home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("HOME")
-						Stato = "home" 
-						emit("trolley_state", "trolley_state($Stato)" ) 
+						println("TROLLEY | HOME")
+						println("TROLLEY | Attendo un compito dal Waste Service")
 					}
-					 transition(edgeName="t00",targetState="trasferimento_indoor",cond=whenDispatch("start_trasf"))
+					 transition(edgeName="t00",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
-				state("trasferimento_indoor") { //this:State
+				state("pickup") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						 Stato="in_movimento"  
-						emit("trolley_state", "trolley_state($Stato)" ) 
-						if( checkMsgContent( Term.createTerm("start_trasf(X,Y,TIPO,PESO)"), Term.createTerm("start_trasf(X,Y,TIPO,PESO)"), 
+						println("TROLLEY | PICKUP")
+						if( checkMsgContent( Term.createTerm("pickup(PATH_INDOOR)"), Term.createTerm("pickup(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												X=payloadArg(0).toInt()
-												Y=payloadArg(1).toInt()
-												Tipo_carico = payloadArg(2)
-												Peso_carico = payloadArg(3).toInt()
+												Path = payloadArg(0)
+												println(Path)
 						}
-						if( checkMsgContent( Term.createTerm("yes(X,Y,TIPO,PESO)"), Term.createTerm("yes(X,Y,TIPO,PESO)"), 
+						delay(DelayIndoor)
+						answer("pickup", "pickup_done", "pickup_done(yes)"   )  
+					}
+					 transition(edgeName="t11",targetState="trasferimento",cond=whenRequest("trasf"))
+				}	 
+				state("trasferimento") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | TRASFERIMENTO ")
+						if( checkMsgContent( Term.createTerm("trasf(PATH)"), Term.createTerm("trasf(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												X=payloadArg(0).toInt()
-												Y=payloadArg(1).toInt()
-												Tipo_carico = payloadArg(2)
-												Peso_carico = payloadArg(3).toInt()
+												Path = payloadArg(0)
+												println(Path)
 						}
-						println("TRASFERIMENTO_INDOOR...")
-						delay(DelayHome)
-					}
-					 transition( edgeName="goto",targetState="carico_rifiuti", cond=doswitch() )
-				}	 
-				state("carico_rifiuti") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						 Stato="fermo"  
-						emit("trolley_state", "trolley_state($Stato)" ) 
-						println("CARICO RIFIUTI=RUSCO...")
-						emit("load_pickup", "load_pickup($Tipo_carico,$Peso_carico)" ) 
-					}
-					 transition( edgeName="goto",targetState="trasferimento_carico", cond=doswitch() )
-				}	 
-				state("trasferimento_carico") { //this:State
-					action { //it:State
-						println("$name in ${currentState.stateName} | $currentMsg")
-						 Stato="in_movimento"  
-						emit("trolley_state", "trolley_state($Stato)" ) 
-						println("TRASFERIMENTO RUSCO...")
 						delay(DelayBox)
-						 Stato="fermo"  
-						emit("trolley_state", "trolley_state($Stato)" ) 
-						println("FINE TRASFERIMENTO $Tipo_carico $Peso_carico")
-						request("other_load", "other_load(x)" ,"waste_service" )  
+						println("TROLLEY | FINE TRASFERIMENTO")
+						answer("trasf", "trasf_done", "tras_done(ok)"   )  
 					}
-					 transition(edgeName="t11",targetState="trasferimento_indoor",cond=whenReply("yes"))
-					transition(edgeName="t12",targetState="ritorno_home",cond=whenReply("no"))
+					 transition(edgeName="t22",targetState="deposito",cond=whenRequest("deposit"))
+				}	 
+				state("deposito") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | DEPOSITO")
+						if( checkMsgContent( Term.createTerm("deposit(arg)"), Term.createTerm("deposit(arg)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								println("TROLLEY | Ricevuto deposit")
+						}
+						answer("deposit", "deposit_done", "deposit_done(ok)"   )  
+					}
+					 transition(edgeName="t33",targetState="ritorno_home",cond=whenDispatch("ritorno_home"))
+					transition(edgeName="t34",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 				state("ritorno_home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						 Stato="in_movimento"  
-						emit("trolley_state", "trolley_state($Stato)" ) 
-						println("RITORNO HOME...")
+						println("TROLLEY | RITORNO HOME")
+						if( checkMsgContent( Term.createTerm("ritorno_home(PATH_HOME)"), Term.createTerm("ritorno_home(PATH_HOME)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												Path = payloadArg(0)
+						}
 						delay(DelayHome)
 					}
 					 transition( edgeName="goto",targetState="home", cond=doswitch() )

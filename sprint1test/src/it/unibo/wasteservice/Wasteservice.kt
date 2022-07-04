@@ -89,7 +89,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
 						if( checkMsgContent( Term.createTerm("pickup_done(ok)"), Term.createTerm("pickup_done(ok)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								answer("load_req", "loadaccept", "loadaccept($Tipo_carico,$Peso_carico)"   )  
+								answer("load_req", "loadaccept", "yes($Tipo_carico,$Peso_carico)"   )  
 						}
 						
 									if (Tipo_carico  == "plastica") {

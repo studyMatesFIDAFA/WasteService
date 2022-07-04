@@ -46,7 +46,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 												println(Path)
 						}
 						delay(DelayIndoor)
-						answer("pickup", "pickup_done", "pickup_done(yes)"   )  
+						answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 					}
 					 transition(edgeName="t11",targetState="trasferimento",cond=whenRequest("trasf"))
 				}	 
@@ -62,7 +62,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 						delay(DelayBox)
 						println("TROLLEY | FINE TRASFERIMENTO")
-						answer("trasf", "trasf_done", "tras_done(ok)"   )  
+						answer("trasf", "trasf_done", "trasf_done(ok)"   )  
 					}
 					 transition(edgeName="t22",targetState="deposito",cond=whenRequest("deposit"))
 				}	 

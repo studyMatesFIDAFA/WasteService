@@ -50,7 +50,7 @@ QActor trolley context ctxAnalisiProblema {
 			#]
 		}
 		delayVar DelayIndoor
-		replyTo pickup with pickup_done : pickup_done(ok)
+		replyTo pickup with pickup_done : pickup_done(yes)
 	}
 	Transition t1 whenRequest trasf -> trasferimento
 	
@@ -65,7 +65,7 @@ QActor trolley context ctxAnalisiProblema {
 		}
 		delayVar DelayBox
 		println("TROLLEY | FINE TRASFERIMENTO")
-		replyTo trasf with trasf_done : trasf_done(ok)
+		replyTo trasf with trasf_done : tras_done(ok)
 	}
 	Transition t2 whenRequest deposit -> deposito
 	
@@ -162,7 +162,7 @@ QActor wasteservice context ctxAnalisiProblema{
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
 		onMsg (pickup_done: pickup_done(ok)){
-			replyTo load_req with loadaccept : loadaccept($Tipo_carico, $Peso_carico)	
+			replyTo load_req with loadaccept : yes($Tipo_carico, $Peso_carico)	
 		}
 		[#
 			if (Tipo_carico  == "plastica") {
@@ -202,3 +202,90 @@ QActor wasteservice context ctxAnalisiProblema{
 	}
 	Goto attesa_load_req
 }
+
+
+
+//QActor wastetruckmock context ctxAnalisiProblema {
+//	State start initial {
+//		printCurrentMessage
+//		println("WASTE TRUCK | START")
+//	} Goto camion_req
+//	
+//	State camion_req {
+//		printCurrentMessage
+//		[# 
+//			var Peso_carico    = kotlin.random.Random.nextInt(0,10)
+//			var TipoInt = kotlin.random.Random.nextInt(0,1)
+//			var Tipo_carico    = ""
+//			
+//			if(TipoInt == 0) 
+//				Tipo_carico = "vetro"
+//			else
+//				Tipo_carico = "plastica"
+//		#]
+//		println("WASTE TRUCK | CAMION REQ ($Tipo_carico, $Peso_carico)")
+//		request wasteservice -m load_req : load_req($Tipo_carico, $Peso_carico)
+//		//request wasteservice -m load_req : load_req(vetro, 9)
+//	} Transition t0 whenReply loadaccept -> camion_accepted
+//					whenReply loadrejected -> camion_rejected
+//			
+//	State camion_rejected{
+//		printCurrentMessage
+//		println("WASTE TRUCK | CAMION RIFIUTATO")
+//	}Goto fine
+//			
+//	State camion_accepted {
+//		printCurrentMessage
+//		println("WASTE TRUCK | CAMION 1 ACCETTATO CIAOOO")
+//	} Goto fine
+//	
+//	State fine {
+//		printCurrentMessage
+//		println("WASTE TRUCK | FINE!")
+//	}
+//				
+//}
+//
+//QActor wastetruckmock2 context ctxAnalisiProblema {
+//	State start initial {
+//		delay 250
+//		printCurrentMessage
+//		println("WASTE TRUCK 2 | START")
+//	} Goto camion_req
+//	
+//	State camion_req {
+//		printCurrentMessage
+//		[# 
+//			var Peso_carico = kotlin.random.Random.nextInt(0,10)
+//			var TipoInt = kotlin.random.Random.nextInt(0,2)
+//			var Tipo_carico    = ""
+//			
+//			if(TipoInt == 0) 
+//				Tipo_carico = "vetro"
+//			else
+//				Tipo_carico = "plastica"
+//		#]
+//		println("WASTE TRUCK 2 | CAMION REQ ($Tipo_carico, $Peso_carico)")
+//		request wasteservice -m load_req : load_req($Tipo_carico, $Peso_carico)
+//		//request wasteservice -m load_req : load_req(vetro, 15)
+//	} Transition t0 whenReply loadaccept -> camion_accepted
+//					whenReply loadrejected -> camion_rejected
+//			
+//	State camion_rejected{
+//		printCurrentMessage
+//		println("WASTE TRUCK 2 | CAMION 2 RIFIUTATO")
+//	}Goto fine
+//			
+//	State camion_accepted {
+//		printCurrentMessage
+//		println("WASTE TRUCK 2 | CAMION 2 ACCETTATO  CIAOOO")
+//	} Goto fine
+//	
+//	State fine {
+//		printCurrentMessage
+//		println("WASTE TRUCK 2 | FINE!")
+//	}
+//				
+//}
+
+
