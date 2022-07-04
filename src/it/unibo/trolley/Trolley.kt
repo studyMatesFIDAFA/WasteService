@@ -11,36 +11,86 @@ import kotlinx.coroutines.runBlocking
 class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "home"
+		return "start"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		 var Another = false  
+		
+				var Path = ""
+				val DelayIndoor=2000L
+				val DelayBox=3000L
+				val DelayHome=2000L
 		return { //this:ActionBasciFsm
+				state("start") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | START")
+					}
+					 transition( edgeName="goto",targetState="home", cond=doswitch() )
+				}	 
 				state("home") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println(" TROLLEY | HOME ")
+						println("TROLLEY | HOME")
+						println("TROLLEY | Attendo un compito dal Waste Service")
 					}
-					 transition( edgeName="goto",targetState="pickup", cond=doswitch() )
+					 transition(edgeName="t00",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println(" TROLLEY | CARICA un WASTE-LOAD da INDOOR ")
+						println("TROLLEY | PICKUP")
+						if( checkMsgContent( Term.createTerm("pickup(PATH_INDOOR)"), Term.createTerm("pickup(PATH)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												Path = payloadArg(0)
+												println(Path)
+						}
+						delay(DelayIndoor)
+						answer("pickup", "pickup_done", "pickup_done(yes)"   )  
 					}
-					 transition( edgeName="goto",targetState="trasferimento_e_deposito", cond=doswitch() )
+					 transition(edgeName="t11",targetState="trasferimento",cond=whenRequest("trasf"))
 				}	 
-				state("trasferimento_e_deposito") { //this:State
+				state("trasferimento") { //this:State
 					action { //it:State
-						
-									Another = ((0..1).random())==1
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println(" TROLLEY | trasfermimento e deposito WASTE-LOAD nel CONTAINER ")
+						println("TROLLEY | TRASFERIMENTO ")
+						if( checkMsgContent( Term.createTerm("trasf(PATH)"), Term.createTerm("trasf(PATH)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												Path = payloadArg(0)
+												println(Path)
+						}
+						delay(DelayBox)
+						println("TROLLEY | FINE TRASFERIMENTO")
+						answer("trasf", "trasf_done", "tras_done(ok)"   )  
 					}
-					 transition( edgeName="goto",targetState="pickup", cond=doswitchGuarded({ Another  
-					}) )
-					transition( edgeName="goto",targetState="home", cond=doswitchGuarded({! ( Another  
-					) }) )
+					 transition(edgeName="t22",targetState="deposito",cond=whenRequest("deposit"))
+				}	 
+				state("deposito") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | DEPOSITO")
+						if( checkMsgContent( Term.createTerm("deposit(arg)"), Term.createTerm("deposit(arg)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								println("TROLLEY | Ricevuto deposit")
+						}
+						answer("deposit", "deposit_done", "deposit_done(ok)"   )  
+					}
+					 transition(edgeName="t33",targetState="ritorno_home",cond=whenDispatch("ritorno_home"))
+					transition(edgeName="t34",targetState="pickup",cond=whenRequest("pickup"))
+				}	 
+				state("ritorno_home") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | RITORNO HOME")
+						if( checkMsgContent( Term.createTerm("ritorno_home(PATH_HOME)"), Term.createTerm("ritorno_home(PATH_HOME)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												Path = payloadArg(0)
+						}
+						delay(DelayHome)
+					}
+					 transition( edgeName="goto",targetState="home", cond=doswitch() )
 				}	 
 			}
 		}
