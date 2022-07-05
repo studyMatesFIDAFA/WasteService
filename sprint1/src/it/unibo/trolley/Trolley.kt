@@ -45,7 +45,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 												Path = payloadArg(0)
 												println(Path)
 						}
-						delay(DelayIndoor)
+						request("dopath", "dopath(wwww)" ,"pathexec" )  
 						answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 					}
 					 transition(edgeName="t11",targetState="trasferimento",cond=whenRequest("trasf"))

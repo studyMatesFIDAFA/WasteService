@@ -1,4 +1,4 @@
-System analisi_problema
+System analisiproblema
 
 Request load_req : load_req(TYPE,WEIGHT)
 Reply loadaccept : loadaccept(TYPE,WEIGHT)
@@ -15,10 +15,17 @@ Reply deposit_done : deposit_done(ok)
 
 Dispatch ritorno_home: ritorno_home(PATH_HOME)
 
-Context ctxAnalisiProblema ip [ host="localhost" port=8050]
+//Per path executor
+Request  dopath    : dopath( PATH  )
+Reply dopathdone   : dopathdone( ARG )
+Reply dopathfail   : dopathfail( ARG )
 
+Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
+Context ctxanalisiproblema   ip [host="localhost" port=8078]
 
-QActor trolley context ctxAnalisiProblema {
+ExternalQActor pathexec context ctxbasicrobot
+
+QActor trolley context ctxanalisiproblema {
 	
 	[#
 		var Path = ""
@@ -49,7 +56,8 @@ QActor trolley context ctxAnalisiProblema {
 				println(Path)
 			#]
 		}
-		delayVar DelayIndoor
+		request pathexec -m dopath : dopath(wwww) 
+		//delayVar DelayIndoor
 		replyTo pickup with pickup_done : pickup_done(ok)
 	}
 	Transition t1 whenRequest trasf -> trasferimento
@@ -95,7 +103,7 @@ QActor trolley context ctxAnalisiProblema {
 	Goto home
 }
 
-QActor wasteservice context ctxAnalisiProblema{
+QActor wasteservice context ctxanalisiproblema{
 	[#
 		var MAXPB = 10
 		var MAXGB = 10

@@ -15,8 +15,11 @@ Reply deposit_done : deposit_done(ok)
 
 Dispatch ritorno_home: ritorno_home(PATH_HOME)
 
-Context ctxAnalisiProblema ip [ host="localhost" port=8050]
 
+Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
+Context ctxAnalisiProblema   ip [host="localhost" port=8078]
+
+ExternalQActor pathexec context ctxbasicrobot
 
 QActor trolley context ctxAnalisiProblema {
 	
