@@ -23,10 +23,10 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				var Carico_accettato = false
 				var Tipo_carico = ""
 				var Peso_carico = 0
-				val Percorso_vetro = "percorso_to_vetro"
-				val Percorso_plastica = "percorso_to_plastica"
-				val Percorso_home = "percorso_to_home"
-				val Percorso_indoor = "percorso_to_indoor"
+				val Percorso_vetro = "lwwwwwwlwwwwww"
+				val Percorso_plastica = "lwwwwww"
+				val Percorso_home = "lwwwwww"
+				val Percorso_indoor = "wwwwww"
 				var PercorsoCurr = ""
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
@@ -41,7 +41,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | ATTESA LOAD REQUEST(CAMION)")
 					}
-					 transition(edgeName="t05",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					 transition(edgeName="t011",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
 				}	 
 				state("gestisci_richiesta") { //this:State
 					action { //it:State
@@ -81,7 +81,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						 Trolley_home = false  
 						request("pickup", "pickup($Percorso_indoor)" ,"trolley" )  
 					}
-					 transition(edgeName="t16",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
+					 transition(edgeName="t112",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
 				}	 
 				state("attiva_trasferimento") { //this:State
 					action { //it:State
@@ -101,7 +101,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									}
 						request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
 					}
-					 transition(edgeName="t27",targetState="attiva_deposito",cond=whenReply("trasf_done"))
+					 transition(edgeName="t213",targetState="attiva_deposito",cond=whenReply("trasf_done"))
 				}	 
 				state("attiva_deposito") { //this:State
 					action { //it:State
@@ -109,7 +109,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("WASTE SERVICE | ATTIVA DEPOSITO")
 						request("deposit", "deposit(arg)" ,"trolley" )  
 					}
-					 transition(edgeName="t38",targetState="controlla_req",cond=whenReply("deposit_done"))
+					 transition(edgeName="t314",targetState="controlla_req",cond=whenReply("deposit_done"))
 				}	 
 				state("controlla_req") { //this:State
 					action { //it:State
@@ -118,8 +118,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						stateTimer = TimerActor("timer_controlla_req", 
 							scope, context!!, "local_tout_wasteservice_controlla_req", 100.toLong() )
 					}
-					 transition(edgeName="t49",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
-					transition(edgeName="t410",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					 transition(edgeName="t415",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
+					transition(edgeName="t416",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
 				}	 
 				state("go_home") { //this:State
 					action { //it:State

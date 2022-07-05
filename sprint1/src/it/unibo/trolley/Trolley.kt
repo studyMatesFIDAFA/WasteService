@@ -44,11 +44,22 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								
 												Path = payloadArg(0)
 												println(Path)
+								request("dopath", "dopath($Path)" ,"pathexec" )  
 						}
-						request("dopath", "dopath(wwww)" ,"pathexec" )  
-						answer("pickup", "pickup_done", "pickup_done(ok)"   )  
+						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
+						}
 					}
-					 transition(edgeName="t11",targetState="trasferimento",cond=whenRequest("trasf"))
+					 transition(edgeName="t11",targetState="pickup",cond=whenReply("dopathdone"))
+					transition(edgeName="t12",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t13",targetState="trasferimento",cond=whenRequest("trasf"))
+				}	 
+				state("pathfail") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | PATH FAIL : ERRORE!!!!")
+					}
 				}	 
 				state("trasferimento") { //this:State
 					action { //it:State
@@ -59,12 +70,16 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								
 												Path = payloadArg(0)
 												println(Path)
+								request("dopath", "dopath($Path)" ,"pathexec" )  
 						}
-						delay(DelayBox)
-						println("TROLLEY | FINE TRASFERIMENTO")
-						answer("trasf", "trasf_done", "trasf_done(ok)"   )  
+						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								answer("trasf", "trasf_done", "trasf_done(ok)"   )  
+						}
 					}
-					 transition(edgeName="t22",targetState="deposito",cond=whenRequest("deposit"))
+					 transition(edgeName="t34",targetState="trasferimento",cond=whenReply("dopathdone"))
+					transition(edgeName="t35",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t36",targetState="deposito",cond=whenRequest("deposit"))
 				}	 
 				state("deposito") { //this:State
 					action { //it:State
@@ -76,8 +91,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 						answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 					}
-					 transition(edgeName="t33",targetState="ritorno_home",cond=whenDispatch("ritorno_home"))
-					transition(edgeName="t34",targetState="pickup",cond=whenRequest("pickup"))
+					 transition(edgeName="t47",targetState="ritorno_home",cond=whenDispatch("ritorno_home"))
+					transition(edgeName="t48",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 				state("ritorno_home") { //this:State
 					action { //it:State
@@ -87,10 +102,11 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 												Path = payloadArg(0)
+								request("dopath", "dopath($Path)" ,"pathexec" )  
 						}
-						delay(DelayHome)
 					}
-					 transition( edgeName="goto",targetState="home", cond=doswitch() )
+					 transition(edgeName="t59",targetState="home",cond=whenReply("dopathdone"))
+					transition(edgeName="t510",targetState="pathfail",cond=whenReply("dopathfail"))
 				}	 
 			}
 		}
