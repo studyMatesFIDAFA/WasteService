@@ -16,10 +16,10 @@ Reply deposit_done : deposit_done(ok)
 Dispatch ritorno_home: ritorno_home(PATH_HOME)
 
 
-Context ctxAnalisiProblema ip [ host="localhost" port=8050]
+Context ctxanalisiproblema ip [ host="localhost" port=8050]
 
 
-QActor trolley context ctxAnalisiProblema {
+QActor trolley context ctxanalisiproblema {
 	
 	[#
 		var Path = ""
@@ -38,12 +38,14 @@ QActor trolley context ctxAnalisiProblema {
 		printCurrentMessage
 		println("TROLLEY | HOME")
 		println("TROLLEY | Attendo un compito dal Waste Service")
+		updateResource [# "TROLLEY:HOME" #]
 	}
 	Transition t0 whenRequest pickup -> pickup
 	
 	State pickup{
 		printCurrentMessage
 		println("TROLLEY | PICKUP")
+		updateResource [# "TROLLEY:PICKUP" #]
 		onMsg(pickup:pickup(PATH)){
 			[#
 				Path = payloadArg(0)
@@ -58,6 +60,7 @@ QActor trolley context ctxAnalisiProblema {
 	State trasferimento{
 		printCurrentMessage
 		println("TROLLEY | TRASFERIMENTO ")
+		updateResource [# "TROLLEY:TRASFERIMENTO" #]
 		onMsg(trasf : trasf(PATH)){
 			[#
 				Path = payloadArg(0)
@@ -73,11 +76,12 @@ QActor trolley context ctxAnalisiProblema {
 	State deposito {
 		printCurrentMessage
 		println("TROLLEY | DEPOSITO")
+		updateResource [# "TROLLEY:DEPOSITO" #]
 		onMsg(deposit : deposit(arg)) {
 			println("TROLLEY | Ricevuto deposit")
 		}
 		replyTo deposit with deposit_done : deposit_done(ok)
-	}
+	} 
 	Transition t3 
 		whenMsg ritorno_home -> ritorno_home
 		whenRequest pickup -> pickup
@@ -96,7 +100,7 @@ QActor trolley context ctxAnalisiProblema {
 	Goto home
 }
 
-QActor wasteservice context ctxAnalisiProblema{
+QActor wasteservice context ctxanalisiproblema{
 	[#
 		var MAXPB = 10
 		var MAXGB = 10
