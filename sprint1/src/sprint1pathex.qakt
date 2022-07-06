@@ -20,10 +20,17 @@ Request  dopath    : dopath( PATH  )
 Reply dopathdone   : dopathdone( ARG )
 Reply dopathfail   : dopathfail( ARG )
 
+//Per basicrobot
+Request step       : step( TIME )	
+Reply   stepdone   : stepdone(V)  
+Reply   stepfail   : stepfail(DURATION, CAUSE)
+Dispatch cmd       	: cmd(MOVE)     
+Dispatch end       	: end(ARG) 
+
 Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
 Context ctxanalisiproblema   ip [host="localhost" port=8078]
 
-ExternalQActor pathexec context ctxbasicrobot
+ExternalQActor basicrobot context ctxbasicrobot
 
 QActor trolley context ctxanalisiproblema {
 	
@@ -61,6 +68,7 @@ QActor trolley context ctxanalisiproblema {
 		}
 		
 		onMsg (dopathdone   : dopathdone( ARG )) {
+			delay 500
 			replyTo pickup with pickup_done : pickup_done(ok)
 		}
 		
@@ -89,6 +97,7 @@ QActor trolley context ctxanalisiproblema {
 		}
 		
 		onMsg (dopathdone   : dopathdone( ARG )) {
+			delay 500
 			replyTo trasf with trasf_done : trasf_done(ok)
 		}
 		
@@ -104,6 +113,7 @@ QActor trolley context ctxanalisiproblema {
 		onMsg(deposit : deposit(arg)) {
 			println("TROLLEY | Ricevuto deposit")
 		}
+		delay 500
 		replyTo deposit with deposit_done : deposit_done(ok)
 	}
 	Transition t4
@@ -137,15 +147,27 @@ QActor wasteservice context ctxanalisiproblema{
 		var Carico_accettato = false
 		var Tipo_carico = ""
 		var Peso_carico = 0
-		val Percorso_vetro = "lwwwwwwlwwwwww"
-		val Percorso_plastica = "lwwwwww"
-		val Percorso_home = "lwwwwww"
-		val Percorso_indoor = "wwwwww"
+		val Percorso_vetro = "lwwwwwwwlwwwww"
+		val Percorso_plastica = "lwwww"
+		val Percorso_home = "lwwwwwl"
+		val Percorso_indoor = "wwwww"
 		var PercorsoCurr = ""
+		val XIndoor = 0
+		val YIndoor = 5
+		val XVetro = 7
+		val YVetro = 0
+		val XPlastica = 7
+		val YPlastica = 5
+		val XHome = 0
+		val YHome = 0
 	#]
 	
 	State start initial{
 		printCurrentMessage
+		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	
+// 		run unibo.kotlin.planner22Util.createRoomMapFromTextfile( "$Inmapname.txt" )	  
+   		run unibo.kotlin.planner22Util.initAI() 
+  		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")
 	}
 	Goto attesa_load_req
@@ -186,7 +208,14 @@ QActor wasteservice context ctxanalisiproblema{
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA DEPOSITO")
 		[# Trolley_home = false #]
-		request trolley -m pickup : pickup($Percorso_indoor)  // chiedo al trolley di prelevare il carico
+		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor)  //---x--->
+		[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+		#]  
+		request trolley -m pickup : pickup($PercorsoCurr)  // chiedo al trolley di prelevare il carico
 	}
 	Transition t1 whenReply pickup_done -> attiva_trasferimento // trolley ha prelevato il carico da INDOOR
 	
@@ -196,15 +225,28 @@ QActor wasteservice context ctxanalisiproblema{
 		onMsg (pickup_done: pickup_done(ok)){
 			replyTo load_req with loadaccept : loadaccept($Tipo_carico, $Peso_carico)	
 		}
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
+//		run unibo.kotlin.planner22Util.saveRoomMap("xxx")
 		[#
 			if (Tipo_carico  == "plastica") {
 					CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
-					PercorsoCurr = Percorso_plastica
+					#]
+					run unibo.kotlin.planner22Util.setGoal(XPlastica,YPlastica) 
+			[#		
 			} else if (Tipo_carico  == "vetro") {
 					CurrentGlassWeight = CurrentGlassWeight + Peso_carico
-					PercorsoCurr = Percorso_vetro
+					#]
+					run unibo.kotlin.planner22Util.setGoal(XVetro,YVetro) 
+					[#
 			}
-		#]
+		
+		PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+		#]  
 		
 		request trolley -m trasf : trasf($PercorsoCurr)
 	}
@@ -213,6 +255,8 @@ QActor wasteservice context ctxanalisiproblema{
 	State attiva_deposito {
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA DEPOSITO")
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
 		request trolley -m deposit : deposit(arg)
 	}
 	Transition t3 whenReply deposit_done -> controlla_req
@@ -229,7 +273,15 @@ QActor wasteservice context ctxanalisiproblema{
 	State go_home {
 		printCurrentMessage
 		println("WASTE SERVICE | GO HOME")
-		forward trolley -m ritorno_home: ritorno_home($Percorso_home)
+		run unibo.kotlin.planner22Util.setGoal(XHome,YHome) 
+		[#
+		PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+			#]
+		forward trolley -m ritorno_home: ritorno_home($PercorsoCurr)
 		[# Trolley_home = true #]
 	}
 	Goto attesa_load_req
@@ -246,7 +298,7 @@ QActor waste_truck_mock context ctxanalisiproblema {
 	State indoor_request {
 		printCurrentMessage
 		println("WASTE_TRUCK | richiesta di prelievo carico")
-		request wasteservice -m load_req : load_req(vetro,10)
+		request wasteservice -m load_req : load_req(vetro,9)
 		
 	}
 	
@@ -262,5 +314,71 @@ QActor waste_truck_mock context ctxanalisiproblema {
 		printCurrentMessage
 		println("Request rejected")
 	}
+}
+
+QActor pathexec context ctxanalisiproblema{
+	[# var CurMoveTodo = ""    //Upcase, since var to be used in guards
+   	var StepTime    = "345"
+	#]
+	State s0 initial{  	
+		//printCurrentMessage
+		[#  CurMoveTodo = "" 
+		#]
+		println("pathexec ready. StepTime=$StepTime") 
+	}	
+	Transition t0 whenRequest dopath -> doThePath
+  	
+	State doThePath{
+		printCurrentMessage 
+		//[# prinln( currentMsg ) #]
+		onMsg ( dopath : dopath( PATH )){
+			run pathut.setPath( payloadArg(0) )  //se payloadArg fallisce non da eccezione! (ma non fa nulla)
+		}		 
+		println("pathexec pathTodo = ${pathut.getPathTodo()}") 
+ 	}
+	Goto nextMove    
+	
+	
+	State nextMove{ 
+		[# CurMoveTodo = pathut.nextMove() #]	
+		//println("pathexec curMoveTodo=$CurMoveTodo" )
+	} 
+	Goto endWorkOk if [# CurMoveTodo.length == 0 #] else doMove
+	
+	State doMove{
+		//printCurrentMessage
+ 		delay 500  //avoid too fast ...
+ 	}
+	Goto doMoveW if [# CurMoveTodo == "w" #] else doMoveTurn
+	
+	State doMoveTurn{
+		//printCurrentMessage
+		forward basicrobot -m cmd : cmd($CurMoveTodo) //asynch !!!		
+	}
+	Transition t0 whenTime 500 ->  nextMove  //wait for move done ...
+  
+ 	State doMoveW{
+		//printCurrentMessage
+		request basicrobot -m step : step( $StepTime )
+	}	
+	Transition t0 whenReply stepdone  -> nextMove  
+	              whenReply stepfail  -> endWorkKo                       
+	              
+	State endWorkOk{
+		//printCurrentMessage
+		println("endWorkOk: PATH DONE - BYE")
+		replyTo dopath with dopathdone : dopathdone( ok )
+	}
+	Goto s0 
+
+	State endWorkKo{
+		printCurrentMessage
+		[# var PathStillTodo = pathut.getPathTodo() #]
+		println("PATH FAILURE - SORRY. PathStillTodo=$PathStillTodo")
+		replyTo dopath with dopathfail : dopathfail( $PathStillTodo )
+	}	
+	Goto s0
+
+	
 }
 

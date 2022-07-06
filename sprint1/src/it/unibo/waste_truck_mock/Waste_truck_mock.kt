@@ -26,7 +26,7 @@ class Waste_truck_mock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE_TRUCK | richiesta di prelievo carico")
-						request("load_req", "load_req(vetro,10)" ,"wasteservice" )  
+						request("load_req", "load_req(plastica,9)" ,"wasteservice" )  
 					}
 					 transition(edgeName="t017",targetState="accepted",cond=whenReply("loadaccept"))
 					transition(edgeName="t018",targetState="rejected",cond=whenReply("loadrejected"))

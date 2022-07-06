@@ -23,15 +23,26 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				var Carico_accettato = false
 				var Tipo_carico = ""
 				var Peso_carico = 0
-				val Percorso_vetro = "lwwwwwwlwwwwww"
-				val Percorso_plastica = "lwwwwww"
-				val Percorso_home = "lwwwwww"
-				val Percorso_indoor = "wwwwww"
+				val Percorso_vetro = "lwwwwwwwlwwwww"
+				val Percorso_plastica = "lwwww"
+				val Percorso_home = "lwwwwwl"
+				val Percorso_indoor = "wwwww"
 				var PercorsoCurr = ""
+				val XIndoor = 0
+				val YIndoor = 5
+				val XVetro = 7
+				val YVetro = 0
+				val XPlastica = 7
+				val YPlastica = 5
+				val XHome = 0
+				val YHome = 0
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
+						unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt"  )
+						unibo.kotlin.planner22Util.initAI(  )
+						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						println("WASTE SERVICE | START")
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
@@ -79,7 +90,13 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | ATTIVA DEPOSITO")
 						 Trolley_home = false  
-						request("pickup", "pickup($Percorso_indoor)" ,"trolley" )  
+						unibo.kotlin.planner22Util.setGoal( XIndoor, YIndoor  )
+						 PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
+									.replace(" ","")
+									.replace(",","")
+									.replace("[","")
+									.replace("]","")
+						request("pickup", "pickup($PercorsoCurr)" ,"trolley" )  
 					}
 					 transition(edgeName="t112",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
 				}	 
@@ -91,14 +108,24 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								answer("load_req", "loadaccept", "loadaccept($Tipo_carico,$Peso_carico)"   )  
 						}
+						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						
 									if (Tipo_carico  == "plastica") {
 											CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
-											PercorsoCurr = Percorso_plastica
+						unibo.kotlin.planner22Util.setGoal( XPlastica, YPlastica  )
+								
 									} else if (Tipo_carico  == "vetro") {
 											CurrentGlassWeight = CurrentGlassWeight + Peso_carico
-											PercorsoCurr = Percorso_vetro
+						unibo.kotlin.planner22Util.setGoal( XVetro, YVetro  )
+						
 									}
+								
+								PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+									.replace(" ","")
+									.replace(",","")
+									.replace("[","")
+									.replace("]","")
 						request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
 					}
 					 transition(edgeName="t213",targetState="attiva_deposito",cond=whenReply("trasf_done"))
@@ -107,6 +134,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | ATTIVA DEPOSITO")
+						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						request("deposit", "deposit(arg)" ,"trolley" )  
 					}
 					 transition(edgeName="t314",targetState="controlla_req",cond=whenReply("deposit_done"))
@@ -125,7 +154,14 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | GO HOME")
-						forward("ritorno_home", "ritorno_home($Percorso_home)" ,"trolley" ) 
+						unibo.kotlin.planner22Util.setGoal( XHome, YHome  )
+						
+								PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+									.replace(" ","")
+									.replace(",","")
+									.replace("[","")
+									.replace("]","")
+						forward("ritorno_home", "ritorno_home($PercorsoCurr)" ,"trolley" ) 
 						 Trolley_home = true  
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )

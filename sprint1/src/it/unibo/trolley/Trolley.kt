@@ -48,6 +48,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
+								delay(500) 
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
 					}
@@ -74,6 +75,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
+								delay(500) 
 								answer("trasf", "trasf_done", "trasf_done(ok)"   )  
 						}
 					}
@@ -89,6 +91,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("TROLLEY | Ricevuto deposit")
 						}
+						delay(500) 
 						answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 					}
 					 transition(edgeName="t47",targetState="ritorno_home",cond=whenDispatch("ritorno_home"))
