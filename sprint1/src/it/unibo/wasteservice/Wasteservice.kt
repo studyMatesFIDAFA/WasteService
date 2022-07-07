@@ -15,8 +15,9 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
-				var MAXPB = 10
-				var MAXGB = 10
+				WasteServiceConfigurator.setTheConfiguration("./resources/WasteServiceConfig.json")
+				var MAXPB = WasteServiceConfigurator.MAXPB
+				var MAXGB = WasteServiceConfigurator.MAXGB
 				var CurrentPlasticWeight=0
 				var CurrentGlassWeight=0
 				var Trolley_home=true	
@@ -28,20 +29,18 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				val Percorso_home = "lwwwwwl"
 				val Percorso_indoor = "wwwww"
 				var PercorsoCurr = ""
-				val XIndoor = 0
-				val YIndoor = 5
-				val XVetro = 7
-				val YVetro = 0
-				val XPlastica = 7
-				val YPlastica = 5
-				val XHome = 0
-				val YHome = 0
+				val XIndoor = WasteServiceConfigurator.XIndoor
+				val YIndoor = WasteServiceConfigurator.YIndoor
+				val XVetro =  WasteServiceConfigurator.XGBox
+				val YVetro =  WasteServiceConfigurator.YGBox
+				val XPlastica = WasteServiceConfigurator.XPBox		
+				val YPlastica = WasteServiceConfigurator.YPBox
+				val XHome = WasteServiceConfigurator.XHome
+				val YHome = WasteServiceConfigurator.YHome
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						
-									it.unibo.pojos.WasteServiceConfigurator.setTheConfiguration("../resources/WasteServiceConfig.json")
 						unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt"  )
 						unibo.kotlin.planner22Util.initAI(  )
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )
