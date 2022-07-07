@@ -13,7 +13,8 @@ Reply trasf_done : trasf_done(ok)
 Request deposit : deposit(arg)
 Reply deposit_done : deposit_done(ok)
 
-Dispatch ritorno_home: ritorno_home(PATH_HOME)
+Request ritorno_home: ritorno_home(PATH_HOME)
+Reply home_done: home_done(ok)
 
 //Per path executor
 Request  dopath    : dopath( PATH  )
@@ -46,6 +47,7 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | Attendo un compito dal Waste Service")
 	}
 	Transition t0 whenRequest pickup -> pickup
+					whenRequest ritorno_home -> ritorno_home
 	
 	State pickup{
 		printCurrentMessage
@@ -110,7 +112,7 @@ QActor trolley context ctxanalisiproblema {
 		replyTo deposit with deposit_done : deposit_done(ok)
 	}
 	Transition t4
-		whenMsg ritorno_home -> ritorno_home
+		whenRequest ritorno_home -> ritorno_home
 		whenRequest pickup -> pickup
 			
 				
@@ -123,11 +125,16 @@ QActor trolley context ctxanalisiproblema {
 			#]
 			request pathexec -m dopath : dopath($Path) 
 		}
+		onMsg (dopathdone   : dopathdone( ARG )) {
+			println("Trolley home ok")
+			replyTo ritorno_home with home_done : home_done(ok)
+		}
 		
 		//delayVar DelayHome
 	}
-	Transition t5 whenReply dopathdone -> home
+	Transition t5 whenReply dopathdone -> ritorno_home
 				  whenReply dopathfail -> pathfail
+				  whenRequest pickup -> pickup
 }
 
 QActor wasteservice context ctxanalisiproblema{
@@ -140,20 +147,20 @@ QActor wasteservice context ctxanalisiproblema{
 		var Carico_accettato = false
 		var Tipo_carico = ""
 		var Peso_carico = 0
+		var PercorsoCurr=""
 		val XIndoor = 0
-		val YIndoor = 5
-		val XVetro = 7
+		val YIndoor = 4
+		val XVetro = 6
 		val YVetro = 0
-		val XPlastica = 7
-		val YPlastica = 5
+		val XPlastica = 6
+		val YPlastica = 4
 		val XHome = 0
 		val YHome = 0
 	#]
 	
 	State start initial{
 		printCurrentMessage
-		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	
-// 		run unibo.kotlin.planner22Util.createRoomMapFromTextfile( "$Inmapname.txt" )	  
+		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	  
    		run unibo.kotlin.planner22Util.initAI() 
   		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")
@@ -181,22 +188,31 @@ QActor wasteservice context ctxanalisiproblema{
 					println("WASTE SERVICE | Tipo sbagliato")
 				}
 			#]
-			if [# ! Carico_accettato #] {
-				replyTo load_req with loadrejected : loadrejected($Tipo_carico,$Peso_carico)
-				if [# ! Trolley_home #] {
-					forward trolley -m ritorno_home: ritorno_home($Percorso_home)
-					[# Trolley_home = true #]
-				}
-			}
 		}
+		if [# ! Carico_accettato #] {
+                replyTo load_req with loadrejected : loadrejected($Tipo_carico,$Peso_carico)
+//                if [# ! Trolley_home #] {
+//                   run unibo.kotlin.planner22Util.setGoal(XHome,YHome) 
+//					[#
+//					PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+//						.replace(" ","")
+//						.replace(",","")
+//						.replace("[","")
+//						.replace("]","")
+//						#]
+//					request trolley -m ritorno_home: ritorno_home($PercorsoCurr)
+//					[# Trolley_home = true #]
+//             }
+        }
 	}
-	Goto attiva_pickup if [# Carico_accettato #] else attesa_load_req 
+//	Transition t6 whenReply home_done -> ritorno_done 
+	Goto attiva_pickup if [# Carico_accettato #] else go_home 
 	
 	State attiva_pickup{
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA DEPOSITO")
 		[# Trolley_home = false #]
-		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor)  //---x--->
+		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor) 
 		[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 			.replace(" ","")
 			.replace(",","")
@@ -215,7 +231,6 @@ QActor wasteservice context ctxanalisiproblema{
 		}
 		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
 		run  unibo.kotlin.planner22Util.showCurrentRobotState()
-//		run unibo.kotlin.planner22Util.saveRoomMap("xxx")
 		[#
 			if (Tipo_carico  == "plastica") {
 					CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
@@ -269,8 +284,15 @@ QActor wasteservice context ctxanalisiproblema{
 			.replace("[","")
 			.replace("]","")
 			#]
-		forward trolley -m ritorno_home: ritorno_home($PercorsoCurr)
+		request trolley -m ritorno_home: ritorno_home($PercorsoCurr)
 		[# Trolley_home = true #]
+	}
+	Transition t5 whenReply home_done -> ritorno_done
+	
+	State ritorno_done{
+		printCurrentMessage
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
 	}
 	Goto attesa_load_req
 }
@@ -296,8 +318,20 @@ QActor waste_truck_mock context ctxanalisiproblema {
 	State accepted {
 		printCurrentMessage
 		println("Request accepted")
-	}
+	}Goto altrarichiesta
 	
+	State altrarichiesta{
+		printCurrentMessage
+		delay 10000
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request wasteservice -m load_req : load_req(vetro,9)
+	}
+	Transition t1 whenReply loadaccept -> fine
+					whenReply loadrejected -> rejected
+	
+	State fine{
+		printCurrentMessage
+	}
 	State rejected {
 		printCurrentMessage
 		println("Request rejected")

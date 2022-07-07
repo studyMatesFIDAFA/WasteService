@@ -18,16 +18,12 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				WasteServiceConfigurator.setTheConfiguration("./resources/WasteServiceConfig.json")
 				var MAXPB = WasteServiceConfigurator.MAXPB
 				var MAXGB = WasteServiceConfigurator.MAXGB
-				var CurrentPlasticWeight=0
-				var CurrentGlassWeight=0
+				var CurrentPlasticWeight=WasteServiceConfigurator.CurPWeight
+				var CurrentGlassWeight=WasteServiceConfigurator.CurGWeight
 				var Trolley_home=true	
 				var Carico_accettato = false
 				var Tipo_carico = ""
 				var Peso_carico = 0
-				val Percorso_vetro = "lwwwwwwwlwwwww"
-				val Percorso_plastica = "lwwww"
-				val Percorso_home = "lwwwwwl"
-				val Percorso_indoor = "wwwww"
 				var PercorsoCurr = ""
 				val XIndoor = WasteServiceConfigurator.XIndoor
 				val YIndoor = WasteServiceConfigurator.YIndoor
@@ -53,7 +49,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | ATTESA LOAD REQUEST(CAMION)")
 					}
-					 transition(edgeName="t011",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					 transition(edgeName="t013",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
 				}	 
 				state("gestisci_richiesta") { //this:State
 					action { //it:State
@@ -74,16 +70,12 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 												}
 								if(  ! Carico_accettato  
 								 ){answer("load_req", "loadrejected", "loadrejected($Tipo_carico,$Peso_carico)"   )  
-								if(  ! Trolley_home  
-								 ){forward("ritorno_home", "ritorno_home($Percorso_home)" ,"trolley" ) 
-								 Trolley_home = true  
-								}
 								}
 						}
 					}
 					 transition( edgeName="goto",targetState="attiva_pickup", cond=doswitchGuarded({ Carico_accettato  
 					}) )
-					transition( edgeName="goto",targetState="attesa_load_req", cond=doswitchGuarded({! ( Carico_accettato  
+					transition( edgeName="goto",targetState="go_home", cond=doswitchGuarded({! ( Carico_accettato  
 					) }) )
 				}	 
 				state("attiva_pickup") { //this:State
@@ -99,7 +91,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									.replace("]","")
 						request("pickup", "pickup($PercorsoCurr)" ,"trolley" )  
 					}
-					 transition(edgeName="t112",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
+					 transition(edgeName="t114",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
 				}	 
 				state("attiva_trasferimento") { //this:State
 					action { //it:State
@@ -129,7 +121,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									.replace("]","")
 						request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
 					}
-					 transition(edgeName="t213",targetState="attiva_deposito",cond=whenReply("trasf_done"))
+					 transition(edgeName="t215",targetState="attiva_deposito",cond=whenReply("trasf_done"))
 				}	 
 				state("attiva_deposito") { //this:State
 					action { //it:State
@@ -139,7 +131,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						request("deposit", "deposit(arg)" ,"trolley" )  
 					}
-					 transition(edgeName="t314",targetState="controlla_req",cond=whenReply("deposit_done"))
+					 transition(edgeName="t316",targetState="controlla_req",cond=whenReply("deposit_done"))
 				}	 
 				state("controlla_req") { //this:State
 					action { //it:State
@@ -148,8 +140,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						stateTimer = TimerActor("timer_controlla_req", 
 							scope, context!!, "local_tout_wasteservice_controlla_req", 100.toLong() )
 					}
-					 transition(edgeName="t415",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
-					transition(edgeName="t416",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					 transition(edgeName="t417",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
+					transition(edgeName="t418",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
 				}	 
 				state("go_home") { //this:State
 					action { //it:State
@@ -162,8 +154,16 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									.replace(",","")
 									.replace("[","")
 									.replace("]","")
-						forward("ritorno_home", "ritorno_home($PercorsoCurr)" ,"trolley" ) 
+						request("ritorno_home", "ritorno_home($PercorsoCurr)" ,"trolley" )  
 						 Trolley_home = true  
+					}
+					 transition(edgeName="t519",targetState="ritorno_done",cond=whenReply("home_done"))
+				}	 
+				state("ritorno_done") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
 				}	 

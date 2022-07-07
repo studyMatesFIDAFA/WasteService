@@ -19,6 +19,8 @@ class WasteServiceConfigurator {
         var YGBox = 0;
         var XHome = 0 ;
         var YHome = 0;
+        var CurPWeight = 0;
+        var CurGWeight = 0;
         fun setTheConfiguration(resourceName: String) {
             var fis: FileInputStream? = null
             try {
@@ -38,6 +40,8 @@ class WasteServiceConfigurator {
                 YGBox = obj.getInt("YGBox")
                 XHome = obj.getInt("XHome")
                 YHome = obj.getInt("YHome")
+                CurPWeight = obj.getInt("CurPWeight")
+                CurGWeight = obj.getInt("CurGWeight")
                 //rd = object.getInt("rd");
                 //dlimit = object.getInt("dlimit");
             } catch (e: FileNotFoundException) {
