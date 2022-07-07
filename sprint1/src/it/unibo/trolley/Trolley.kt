@@ -34,7 +34,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("TROLLEY | Attendo un compito dal Waste Service")
 					}
 					 transition(edgeName="t00",targetState="pickup",cond=whenRequest("pickup"))
-					transition(edgeName="t01",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
@@ -53,9 +52,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t12",targetState="pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t13",targetState="pathfail",cond=whenReply("dopathfail"))
-					transition(edgeName="t14",targetState="trasferimento",cond=whenRequest("trasf"))
+					 transition(edgeName="t11",targetState="pickup",cond=whenReply("dopathdone"))
+					transition(edgeName="t12",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t13",targetState="trasferimento",cond=whenRequest("trasf"))
 				}	 
 				state("pathfail") { //this:State
 					action { //it:State
@@ -80,9 +79,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								answer("trasf", "trasf_done", "trasf_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t35",targetState="trasferimento",cond=whenReply("dopathdone"))
-					transition(edgeName="t36",targetState="pathfail",cond=whenReply("dopathfail"))
-					transition(edgeName="t37",targetState="deposito",cond=whenRequest("deposit"))
+					 transition(edgeName="t34",targetState="trasferimento",cond=whenReply("dopathdone"))
+					transition(edgeName="t35",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t36",targetState="deposito",cond=whenRequest("deposit"))
 				}	 
 				state("deposito") { //this:State
 					action { //it:State
@@ -95,8 +94,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						delay(500) 
 						answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 					}
-					 transition(edgeName="t48",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
-					transition(edgeName="t49",targetState="pickup",cond=whenRequest("pickup"))
+					 transition(edgeName="t47",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
+					transition(edgeName="t48",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 				state("ritorno_home") { //this:State
 					action { //it:State
@@ -114,9 +113,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								answer("ritorno_home", "home_done", "home_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t510",targetState="ritorno_home",cond=whenReply("dopathdone"))
-					transition(edgeName="t511",targetState="pathfail",cond=whenReply("dopathfail"))
-					transition(edgeName="t512",targetState="pickup",cond=whenRequest("pickup"))
+					 transition(edgeName="t59",targetState="ritorno_home",cond=whenReply("dopathdone"))
+					transition(edgeName="t510",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t511",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 			}
 		}

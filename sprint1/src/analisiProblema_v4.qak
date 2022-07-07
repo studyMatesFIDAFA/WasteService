@@ -53,7 +53,7 @@ QActor trolley context ctxanalisiproblema {
 //		}
 	}
 	Transition t0 whenRequest pickup -> pickup
-				whenRequest ritorno_home -> ritorno_home	
+						
 	State pickup{
 		printCurrentMessage
 		println("TROLLEY | PICKUP")
