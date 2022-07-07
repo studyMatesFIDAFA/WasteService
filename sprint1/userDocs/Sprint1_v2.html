@@ -472,7 +472,7 @@ Non ci sono richieste esplicite nei requisiti, la realizzazione dipende dalle sc
 <h4>TROLLEY COME ATTUATORE</h4>
 <ul>
 	<li> Il TROLLEY &eacute un attuatore quindi non possiede logica di business, ci&oacute implica che esso deve ricevere dall'esterno tutte le azioni che dovr&aacute compiere. Questo 
-	aspetto complicher&aacute l'implementazione del sistema. Infine sar&aacute necessario introdurre una coppia request-response per ogni fase del TROLLEY (Pick up, Trasferimento, Deposito) e un dispatch per il ritorno alla HOME.</li>
+	aspetto complicher&aacute l'implementazione del sistema. Infine sar&aacute necessario introdurre una coppia request-response per ogni fase del TROLLEY (Pick up, Trasferimento, Deposito) e un dispatch per segnalare di rientrare alla HOME.</li>
 	<img src="./img_Sprint1/attuatore.png" alt="RF2" width="40%" height="40%"><br>
 	<li>Il TROLLEY non viene considerato come un attuatore, perci&oacute contiene logica di business che definisce le azioni da compiere. In questo modo 
 	si semplifica l'implementazione del WASTE_SERVICE ma il TROLLEY non &eacute riutilizzabile perch&eacute dipendente dal sistema.</li>
@@ -489,7 +489,7 @@ Vi sono due possibili alternative:
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
 Il nostro obiettivo è quello di rendere il TROLLEY un attuatore, ossia indipendente dalla logica dell'applicazione.<br>
-A tal proposito il WASTE_SERVICE viene modellato come un controller che comunica passo passo le varie azioni da compiere al TROLLEY attraverso opportune request: pickup, trasf e deposit; e un dispatch: ritorno_home.
+A tal proposito il WASTE_SERVICE viene modellato come un controller che comunica passo passo le varie azioni da compiere al TROLLEY attraverso opportune request: pickup, trasf, deposit; e un dispatch: ritorno_home.
 <br>Inoltre, la risposta loadaccept viene utilizzata per comunicare al WASTE_TRUCK, il cui carico &eacute stato accettato, di poter 
 liberare l'area INDOOR in quanto &eacute stato effettuato il pick up.<br>
 Al termine dell'azione di deposito verr&aacute comunicato al TROLLEY se recarsi nuovamente nell'area INDOOR (pickup) oppure in HOME (ritorno_home).<br>
@@ -526,8 +526,11 @@ Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacut
 <h4>FILE DI CONFIGURAZIONE</h4>
 Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del sistema (Capacit&aacute massima, Coordinate dei box, Situazione iniziale dei box, etc) possono essere cablati
 all'interno di esso.<br>
-Successivamnete, in un secondo momento potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON,
+Successivamnete, in un secondo momento potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON e letto da un POJO apposito,
 per consentire la definizione dei paramentri del sistema in fase di avvio dell'applicazione.In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
+<a href="../resources/WasteServiceConfig.json">File di configurazione json</a><br>
+<a href="../resources/pojos/WasteServiceConfig.java">Pojo dedicato alla configurazione</a><br>
+<a href="../src/analisiProblema_v4.qak">Modello eseguibile con file di configurazione</a><br>
 <br>
 <h3>INTRODUZIONE DEL BASIC ROBOT</h3>
 Il committente oltre al bascic robot, mette a disposizione altri componenti che potrebbero essere sfruttati per 
@@ -573,6 +576,9 @@ CODICE: <a href="../test/it/unibo/testApplExt.java">Test plan</a><br><br>
 
 <h2>Project</h2> 
 <div class="remark">
+Con l'introduzione del planner &eacute stato necessario sostituire il dispatch ritrono_home con una comunicazione con schema
+request-response, ci&oacute viene fatto per indicare al WASTE_SERVICE la posizione corrente del TROLLEY dopo che &eacute stato
+effettuato il rientro alla HOME.<br>
 CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
 <img src="./img_Sprint1/modelloEseguibile_v3.png" alt="RF2" width="90%" height="90%"><br><br>
 
