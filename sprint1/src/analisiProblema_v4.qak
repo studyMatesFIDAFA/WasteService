@@ -132,22 +132,28 @@ QActor trolley context ctxanalisiproblema {
 
 QActor wasteservice context ctxanalisiproblema{
 	[#
-		var MAXPB = 10
-		var MAXGB = 10
+		WasteServiceConfigurator.setTheConfiguration("./resources/WasteServiceConfig.json")
+		var MAXPB = WasteServiceConfigurator.MAXPB
+		var MAXGB = WasteServiceConfigurator.MAXGB
 		var CurrentPlasticWeight=0
 		var CurrentGlassWeight=0
 		var Trolley_home=true	
 		var Carico_accettato = false
 		var Tipo_carico = ""
 		var Peso_carico = 0
-		val XIndoor = 0
-		val YIndoor = 5
-		val XVetro = 7
-		val YVetro = 0
-		val XPlastica = 7
-		val YPlastica = 5
-		val XHome = 0
-		val YHome = 0
+		val Percorso_vetro = "lwwwwwwwlwwwww"
+		val Percorso_plastica = "lwwww"
+		val Percorso_home = "lwwwwwl"
+		val Percorso_indoor = "wwwww"
+		var PercorsoCurr = ""
+		val XIndoor = WasteServiceConfigurator.XIndoor
+		val YIndoor = WasteServiceConfigurator.YIndoor
+		val XVetro =  WasteServiceConfigurator.XGBox
+		val YVetro =  WasteServiceConfigurator.YGBox
+		val XPlastica = WasteServiceConfigurator.XPBox		
+		val YPlastica = WasteServiceConfigurator.YPBox
+		val XHome = WasteServiceConfigurator.XHome
+		val YHome = WasteServiceConfigurator.YHome
 	#]
 	
 	State start initial{
@@ -207,7 +213,7 @@ QActor wasteservice context ctxanalisiproblema{
 	}
 	Transition t1 whenReply pickup_done -> attiva_trasferimento // trolley ha prelevato il carico da INDOOR
 	
-	State attiva_trasferimento{
+	State attiva_trasferimento{ 
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
 		onMsg (pickup_done: pickup_done(ok)){
