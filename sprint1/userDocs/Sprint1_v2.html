@@ -332,7 +332,7 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
 	<li>Raspberry: il LED ed il SONAR sono componenti di un RaspberryPI</li>
 </ul><br>
 <h3>COMPONENTI A DISPOSIZIONE</h3>
-Il committente mette a disposizione un DDR Robot che dovr&aacute fungere da TROLLEY (<a href="..">LINK</a>)<br>
+Il committente mette a disposizione un DDR Robot che dovr&aacute fungere da TROLLEY (<a href="../../basicrobot22/src/basicrobot.qak">LINK</a>)<br>
 <h3> MODELLO REQUISITI </h3> 
 Dopo un'attenta analisi dei requisiti si pu&oacute evincere che:<br>
 Le entit&aacute in gioco sono le seguenti:
@@ -344,11 +344,12 @@ Inoltre WASTE_TRUCK e WASTE_SERVICE comunicano tra di loro mediante uno schema r
 Il TROLLEY esegue delle azioni di deposito articolate in tre fasi (Pick up, Trasferimento, Deposito) esse vengono innescate dal WASTE_SERVICE, le modalit&aacute di 
 interazioni tra le due entit&aacute non vengono specificate nei requisiti e quindi verranno valutate in fase di analisi del problema. Stesse considerazioni si possono fare 
 per verificare la presenza o meno di un nuovo carico da depositare.<br>
-Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGui, anche in questo caso le modalit&aacute di interazione verranno analizzate
+Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGUI, anche in questo caso le modalit&aacute di interazione verranno analizzate
 nella fase successiva. Stesso discorso per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
 
 Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br>
 CODICE: <a href="../src/analisiRequisiti_v2.qakt">Modello esegibile</a><br><br>
+TEST: <a href="../test/it/unibo/TestAnalisiRequisiti.java">Test analisi requisiti</a><br><br>
 <img src="./img_Sprint1/architetturaLogica_Requisiti.png" alt="RF2" width="90%" height="90%"><br>
 <h3>PROBLEMATICHE RF1</h3>
 In questo Sprint ci concentreremo solamente sul RF1.
@@ -360,8 +361,7 @@ di andare a prelevare il carico presso l'INDOOR.</li>
 Definire la fase in cui conviene inviare la loadaccept in caso di carico accettato.</li>
 <li><h4>PICK UP EFFETTUATO</h4>
 Quando il TROLLEY effettua il prelievo (pick up) deve comunicarlo al WASTE_SERVICE e al WASTE_TRUCK, in modo tale da liberare l'area di
-INDOOR e consentire di esaminare una nuova richiesta. Anche se sembrano due azioni differenti, su indicazioni del committente, ci &eacute 
-stato comunicato che l'area INDOOR verr&aacute liberata solo al momento del prelievo del carico. 
+INDOOR nel momento pi&uacute appropriato. 
 </li>
 <li><h4>COORDINATE DEI BOX</h4>
 Chi &eacute a conoscenza delle coordinate dei box.</li>
@@ -400,7 +400,7 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 Visto che non vi sono richieste esplice del committente si sconsiglia l'utilizzo dell'evento 
 in quanto ogni carico accettato deve essere servito e non vi &eacute il rischio di bloccare l'intero sistema. <br>
 
-<h4> INVIO LOADACCEPT</h4>
+<h4>INVIO LOADACCEPT</h4>
 <ul>
 	<li> Subito dopo aver controllato la disponibilit&aacute di spazio:
 	<ul>
@@ -453,7 +453,7 @@ Le modalit&aacute di interazione possibili sono le seguenti:
 	</ul></li>
 </ul>
 <h5>CONCLUSIONI</h5>
-Visto che non vi sono richieste esplice del committente vi sono due vie possibilit&aacute: 
+Visto che non vi sono richieste esplice del committente vi sono due vie possibili: 
 <ul>
 	<li> La prima prevede l'utilizzo dell'evento con la consapevolezza che in caso di perdita il sistema potrebbe bloccarsi.</li>
 	<li> La seconda &eacute pi&uacute prudente e prevede l'utilizzo dello schema request-response.</li>
@@ -462,10 +462,10 @@ Sicuramente &eacute sconsigliato l'impiego del doppio dispatch (versione 2) in q
 
 <h4>INFORMAZIONI SULLE COORDINATE DEI BOX</h4>
 <ul>
-	<li> Se questa informazione la possiede il WASTE_SERVICE: il payload dei messaggi inviati da quest'ultimo devono contenere anche indicazioni sui movimenti da compiere per raggiungere le varie aree.
+	<li>Se questa informazione la possiede il WASTE_SERVICE: deve in un qualche modo comunicare al TROLLEY le azioni da compiere per raggiungere le varie aree.
 	Inoltre in questo modo &eacute possibilie realizzare un TROLLEY come semplice attuatore.</li>
 	<li>Se questa informazione la possiede TROLLEY: il box di destinazione si pu&oacute inferire dal tipo del carico
-	presente nel payload di pickup. Il TROLLEY possiede parte della logica di business e quindi non pu&oacute essere trattato com attuatore.</li>
+	presente nel payload di pickup. Il TROLLEY possiede parte della logica di business e quindi non pu&oacute essere trattato come attuatore.</li>
 </ul>
 <h5>CONCLUSIONI</h5>
 Non ci sono richieste esplicite nei requisiti, la realizzazione dipende dalle scelte che verranno fatte per la problematica "TROLLEY COME ATTUATORE".
@@ -474,8 +474,8 @@ Non ci sono richieste esplicite nei requisiti, la realizzazione dipende dalle sc
 	<li> Il TROLLEY &eacute un attuatore quindi non possiede logica di business, ci&oacute implica che esso deve ricevere dall'esterno tutte le azioni che dovr&aacute compiere. Questo 
 	aspetto complicher&aacute l'implementazione del sistema. Infine sar&aacute necessario introdurre una coppia request-response per ogni fase del TROLLEY (Pick up, Trasferimento, Deposito) e un dispatch per il ritorno alla HOME.</li>
 	<img src="./img_Sprint1/attuatore.png" alt="RF2" width="40%" height="40%"><br>
-	<li>Il TROLLEY non viene considerato come un attuatore, perci&oacute contiene logica di business che definisce le azioni da compiere durante le azioni di deposito. In questo modo 
-	si semplifica l'implementazione del WASTE_SERVICE ma il TROLLEY non &eacute riutilizzabile.</li>
+	<li>Il TROLLEY non viene considerato come un attuatore, perci&oacute contiene logica di business che definisce le azioni da compiere. In questo modo 
+	si semplifica l'implementazione del WASTE_SERVICE ma il TROLLEY non &eacute riutilizzabile perch&eacute dipendente dal sistema.</li>
 	<img src="./img_Sprint1/non_attuatore.png" alt="RF2" width="20%" height="20%"><br>
 </ul>
 <h5>CONCLUSIONI</h5>
@@ -498,7 +498,64 @@ Al termine dell'azione di deposito verr&aacute comunicato al TROLLEY se recarsi 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
 CODICE: <a href="../src/analisiProblema_v2.qak">Modello esegibile</a><br><br>
-<img src="./img_Sprint1/modelloEseguibile_v2.png" alt="RF2" width="90%" height="90%"><br>
+TEST: <a href="../test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
+<img src="./img_Sprint1/modelloEseguibile_v2.png" alt="RF2" width="90%" height="90%"><br><br>
+
+<h3>PROBLEMATICHE RISCONTATE DURANTE LA FASE DI TEST</h3>
+<h4>GRANULARIT&Aacute DEL TEST</h4>
+In fase di verifica della correttezza dell'azione di deposito vi possono essere due alternative di testing:
+<ul>
+	<li>Granularit&aacute FINE: per ogni azione di deposito si controlla il corretto ordine delle sotto-operazioni che vengono effettuate, quindi vi &eacute la neccessit&aacute dopo ogni azione (Pick up, Trasferimento, Deposito, Ritorno alla HOME)
+		di conoscere lo stato in cui si trova il TROLLY.</li>
+	<li>Granularit&aacute GROSSA: &eacute suffciente verificare, terminata l'azione di deposito, che il TROLLEY ritorni alla HOME oppure
+		inizi una nuova operazione di pickup.</li>
+</ul>
+<h5>CONCLUSIONI</h5>
+La prima opzione implica il bisogno di conoscere in un qualche modo lo stato in cui si trova il TROLLEY, questa problematica verr&aacute analizzata al punto successivo.<br>
+La seconda alternativa, invece, prevede un'implementazione pi&uacute semplice, per&oacute comporta un livello di idettaglio inferiore.
+<h4>RILEVAZIONE DELLO STATO DEL TROLLEY</h4>
+Per ottenre questa informazione in fase di test vi sono due possibilit&aacute:
+<ul>
+	<li>Utilizzo di EVENTI: il TROLLEY ad ogni transizione di stato emette un evento che la segnala. In questo caso &eacute necessario
+		realizzare una test unit sensibile a tali eventi.</li>
+	<li>Sfruttamento dell'OSSERVABILIT&Aacute COAP: visto che il TROLLEY &eacute modellato come un attore QAK (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html">link</a>)
+		&eacute una risorsa COAP, perci&oacute si pu&oacute sfruttare questa caratteristica mediante un COAP Observer per verificare questa informazione. </li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacute pulita senza dover introdurre interazioni non previste dai requisiti.<br>
+<h4>FILE DI CONFIGURAZIONE</h4>
+Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del sistema (Capacit&aacute massima, Coordinate dei box, Situazione iniziale dei box, etc) possono essere cablati
+all'interno di esso.<br>
+Successivamnete, in un secondo momento potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON,
+per consentire la definizione dei paramentri del sistema in fase di avvio dell'applicazione.In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
+<br>
+<h3>INTRODUZIONE DEL BASIC ROBOT</h3>
+Il committente oltre al bascic robot, mette a disposizione altri componenti che potrebbero essere sfruttati per 
+realizzare la definizione e l'esecuzione delle azioni che il TROLLEY deve compiere.In particolare sono presenti:
+<ul>
+	<li>un planner (<a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.planner20">link</a>) che consente di definire il percorso pi&uacute breve, intenso come sequenza di azioni, per raggiungere un determinato
+		punto.</li>
+	<li>un path executor (<a href="../../basicrobot22/src/basicrobot.qak">link</a>) che ricevuta una sequenza di azioni &eacute in grado di eseguirle una alla volta.</li>
+</ul>
+Di seguito sono riportate le problematiche principali dovute all'introduzione del basic robot.<br>
+<h4>RAPPRESENTAZIONE DELL'AREA DI LAVORO</h4>
+Inizialmente la rappresentazione dell'area di lavoro mediante una mappa, per facilit&aacute di implementazione, pu&oacute essere definita a priori.<br>
+In un secondo momento, potrebbe essere opportuno ottenere questa informazione, mediante di un ulteriore componente (mapperQak22 <a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">[link]</a>).
+Esso, all'avvio del sistema, esegue una perlustrazione dell'area fornendone una rappresentazione sotto forma mappa all'interno di un file di testo.
+Sicuramente questa soluzione conferisce maggiore flessibilit&aacute al sistema, per&oacute viene appesantita la fase di avvio del sistema.<br>
+<h4>PERCORSO STATICO O DINAMICO</h4>
+Il percorso (path), inteso come sequenza di azioni di spostamento che il TROLLEY deve eseguire, pu&oacute essere definito in due modi possibili:
+<ul>
+	<li>PATH STATICO: il percorso viene cablato all'interno del sistema, facilitando l'implementazione del sistema. Inoltre
+		non &eacute neccesario aggiungere il planner per calcolare il percorso.</li>
+	<li>PATH DINAMICO: viene introdotto il planner, con cui il WASTE_SERVICE dovr&aacute interfacciarsi per ottenere i percorsi da comunicare
+		al TROLLEY. In questo modo aumenta notevolemente la flessibilit&aacute del sistema.</li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacute flessibilit&aacute a fronte di cambiamenti dell'area di lavoro, ovviamente 
+sar&aacute necessaria l'aggiunta del planner, ma esso ci &eacute gi&aacute stato fornito dal commitente.<br>
+
+
 
 
 </div>
@@ -516,6 +573,8 @@ CODICE: <a href="../test/it/unibo/testApplExt.java">Test plan</a><br><br>
 
 <h2>Project</h2> 
 <div class="remark">
+CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
+<img src="./img_Sprint1/modelloEseguibile_v3.png" alt="RF2" width="90%" height="90%"><br><br>
 
 </div>
 
