@@ -14,7 +14,7 @@ public class TestAnalisiRequisiti {
     public void up() {
         new Thread(){
             public void run(){
-                it.unibo.ctxanalisiproblema.MainCtxanalisiproblemaKt.main();
+                it.unibo.ctxanalisiproblema.MainCtxanalisirequisitiKt.main();
             }
         }.start();
         waitForApplStarted();
