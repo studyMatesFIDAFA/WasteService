@@ -157,6 +157,9 @@ QActor wasteservice context ctxanalisiproblema{
 	
 	State start initial{
 		printCurrentMessage
+		[#
+			it.unibo.pojos.WasteServiceConfigurator.setTheConfiguration("../resources/WasteServiceConfig.json")
+		#]
 		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	
 // 		run unibo.kotlin.planner22Util.createRoomMapFromTextfile( "$Inmapname.txt" )	  
    		run unibo.kotlin.planner22Util.initAI() 
@@ -212,7 +215,7 @@ QActor wasteservice context ctxanalisiproblema{
 	}
 	Transition t1 whenReply pickup_done -> attiva_trasferimento // trolley ha prelevato il carico da INDOOR
 	
-	State attiva_trasferimento{
+	State attiva_trasferimento{ 
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
 		onMsg (pickup_done: pickup_done(ok)){

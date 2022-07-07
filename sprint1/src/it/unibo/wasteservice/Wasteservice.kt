@@ -40,6 +40,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
+						
+									it.unibo.pojos.WasteServiceConfigurator.setTheConfiguration("../resources/WasteServiceConfig.json")
 						unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt"  )
 						unibo.kotlin.planner22Util.initAI(  )
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )

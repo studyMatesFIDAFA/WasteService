@@ -1,0 +1,14 @@
+{
+    "maxPB" : 10,
+    "maxPG" : 10,
+    "XIndoor" : 0,
+    "YIndoor" : 5,
+    "XPBox" : 7,
+    "YPBox" : 0,
+    "XGBox" : 7,
+    "YGBox" : 5,
+    "XHome" : 0,
+    "YHome" : 0
+    //"rd" : 1
+    //"dlimit" : 20
+}
