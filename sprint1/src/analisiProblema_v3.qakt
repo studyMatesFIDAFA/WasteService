@@ -131,6 +131,7 @@ QActor trolley context ctxanalisiproblema {
 		onMsg (dopathdone   : dopathdone( ARG )) {
 			println("Trolley home ok")
 			replyTo ritorno_home with home_done : home_done(ok)
+			updateResource [# "TROLLEY:HOME" #]
 		}
 		
 		//delayVar DelayHome

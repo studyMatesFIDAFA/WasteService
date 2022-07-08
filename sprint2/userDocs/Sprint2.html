@@ -204,7 +204,7 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
  
 <h2>Requirements</h2>
 <div class="remark">
-Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v1.html#requisiti">sezione Requirement dello Sprint 1</a>
+Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v2.html#requisiti">sezione Requirement dello Sprint 1</a>
 
 </div>
 
@@ -215,14 +215,18 @@ Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v1.
 <h3>PUNTI APERTI:</h3>
 <ul>
  <li>il Service-manager &eacute l'utilizzatore del SONAR e lo utilizza per bloccare il robot?</li>
- <li>Il LED &eacute accesso quando il TROLLEY &eacute STOPPED, inteso quando fermato a causa del SONAR oppure anche davanti ai box per scaricare il carico?</li>
+ <li>Il LED &eacute accesso quando il TROLLEY &eacute STOPPED, inteso quando fermato a causa del SONAR oppure anche davanti ai box per scaricare?</li>
  <li>Il WASTE_SERVICE deve pilotare il LED o pu&oacute delegare un'altra entit&aacute?</li>
  <li>Lo stato di LED e TROLLEY &eacute un'informazione di fondamentale importanza per l'applicazione oppure ci possono essere delle imprecisioni?</li> 
+ <li>&Eacute possibile introdurre un'entit&aacute aggiuntiva per processare i dati provenienti dal SONAR?</li>
+ <li>Come trattare lo stato STOPPED del TROLLEY (fermo subito oppure finisce azione e si ferma)?</li>
 </ul>
  <br><br>
-Per le considerazioni fatte su Requisiti funzionali, Requisiti non funzionali, Componenti a disposizione e modello eseguibile si vedano
-i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v1.html#analisi_requisiti">Sprint 1</a><br><br>
+Per le considerazioni fatte su Requisiti funzionali e Requisiti non funzionali si vedano
+i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#analisi_requisiti">Sprint 1</a><br><br>
 
+<h3>COMPONENTI A DISPOSIZIONE</h3>
+Viene fortinto il software per l'utilizzo del <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">SONAR</a> e del <a href="https://github.com/anatali/issLab2022/tree/main/unibo.ledqak22">LED</a>.<br>
 <h3>PROBLEMATICHE RF2</h3>
 In questo Sprint ci concentreremo solamente sul RF2.
 <ul>
@@ -243,48 +247,42 @@ Il WASTE_SERVICE deve inviare un comando on/off/blink al LED.</li>
 <div class="remark">
 <h3> PROBLEMATICHE RF2 EVIDENZIATE DURANTE L'ANALISI DEI REQUISITI</h3>
 <h4> STATO TROLLEY </h4>
-Lo stato del TROLLEY pu&oacute essere memorizzato da diverse entit&aacute:
-<ol>
-	<li> STATO MEMORIZZATO DAL TROLLEY:<br>
-	<ul>
-		<li>PRO: non c'&eacute bisogno di comunicare lo stato ad altre entit&aacute </li>
-		<li>CONTRO: a meno che non si utilizzi un evento, il TROLLEY deve conscere le entit&aacute interessate al suo stato </li>
-	
-	</ul></li>
-	<li> STATO MEMORIZZATO DAL WASTE_SERVICE:<br>
-	<ul>
-		<li>PRO: si utilizza il WASTE_SERVICE per centralizzare tutte le informazioni relative allo stato dei vari componenti (BOX e TROLLY ed eventualmente anche del LED) </li>
-		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione, inoltre vi &eacute la necessit&aacute di comunicare con il TROLLEY</li>
-	</ul></li>
-	<li> STATO MEMORIZZATO DA UN'ENTIT&Aacute TERZA:<br>
-	<ul>
-		<li>PRO: si utilizza un'entit&aacute dedicata per mantenere lo stato del TROLLEY e di conseguenza per pilotare il LED, andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
-		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente. Inoltre vi &eacute la necessit&aacute di comunicare con il TROLLEY</li>
-	</ul></li>
-</ol>
+Attualmente, nel <a href="../../sprint1/src/analisiProblema_v4.qak">modello realizzato nello Sprint 1</a>, lo stato del
+TROLLEY &eacute noto a due entit&aacute, ossia il TROLLEY stesso e il WASTE_SERVICE. Con l'introduzione del RF2,
+per&oacute bisogna considerare un nuovo stato in cui il TROLLEY si pu&oacute trovare, lo stato STOPPED.
+La problematica che sorge &eacute chi &eacute a conoscenza dello stato reale del TROLLEY e quindi chi andare ad interrogare
+per conoscerlo. In particolare:
+<ul>
+	<li>TROLLEY: &eacute sempre a conoscenza dello stato in cui si trova. D'altro canto per&oacute in questo caso il TROLLEY deve comunicare il suo stato agli interessati (LED). 
+		In base a come viene effettuata la comunicazione il TROLLEY pu&oacute perdere la caratteristica di essere un attuatore e pu&oacute non essere rispettato
+		il requisito che il WASTE_SERVICE deve pilotare il LED ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
+	<li>WASTE_SERVICE: nel modello attuale esso pu&oacute inferire lo stato in cui si trova il TROLLEY in base allo stato in cui esso stesso si trova. Aggiungendo lo 
+		stato STOPPED per&oacute, &eacute necessario che il WASTE_SERVICE riceva le informazioni di quando fermare e riavviare il TROLLEY sulla base delle distanze rilevate dal SONAR.</li>
+</ul>
+
 <h5>CONCLUSIONI</h5>
 Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
 
 <h4> TRATTAMENTO DISTANZA </h4>
-Abbiamo a disposizione diverse implementazioni del SONAR messe a disposizione dal committente (<a href="">Sonar</a> e <a href="">SonarObservable</a> ). Dovendo lavorare
+Abbiamo a disposizione diverse implementazioni del SONAR messe a disposizione dal committente (<a href="https://github.com/anatali/issLab2022/blob/main/unibo.actor22/test/unibo/actor22/events/SonarActor22.java">Sonar</a> e <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">SonarObservable</a> ). Dovendo lavorare
 con un flusso continuo di informazioni (sequenza di distanze rilevate) non è consigliato interagire con il SONAR mediante dispatch oppure con uno schema request-response.<br>
 Perci&oacute si consiglia l'utilizzo del SonarObservable che emette eventi, i quali possono essere rilevanti per entit&aacute diverse:
 <ol>
 	<li>TROLLEY:<br>
 	<ul>
 		<li>PRO: il TROLLEY gestisce autonomamente il proprio stato in  base alle indicazioni del SONAR. </li>
-		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto dovr&aacute processare gli eventi emessi dal SONAR </li>
+		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto dovr&aacute processare gli eventi emessi dal SONAR, perdendo cos&iacute la caratteristica di attuatore.</li>
 	
 	</ul></li>
 	<li>WASTE_SERVICE:<br>
 	<ul>
 		<li>PRO: il WASTE_SERVICE diventa il fulcro del sistema in quanto si incarica di processare tutte le informazioni provenienti dagli altri componenti</li>
-		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione. Inoltre il WASTE_SERVICE deve anche comunicare con il TROLLEY per effettuare l'eventuale sospensione e riavvio</li>
+		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione. Inoltre il WASTE_SERVICE deve anche comunicare con il TROLLEY per effettuare l'eventuale sospensione e riavvio.</li>
 	</ul></li>
 	<li>ENTIT&Aacute TERZA (DISTANCE_ANALAYZER):<br>
 	<ul>
-		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti sotto forma di dispatch, evento o request-response (allarme), andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
-		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente</li>
+		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti agli interessati sotto forma di dispatch, evento o request-response (allarme), andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
+		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente.</li>
 	</ul></li>
 <h5>CONCLUSIONI</h5>
 Si attende il colloquio con il committente per trarre delle conclusioni valide. Sicuramente in caso di entit&aacute terza la comunicazione delle informazioni rilevanti &eacute consigliato che 
@@ -295,10 +293,11 @@ Il TROLLEY in base alla distanza rilevata dal SONAR deve eventualmente mutare il
 La comunicazione di ci&oacute &eacute influenzata dalle scelte che verranno fatte nelle problematiche affrontate in precedenza:
 <ol>
 	<li>GESTITO DAL TROLLEY:<br>
-	Il TROLLEY riceve gli eventi direttamente (TRATTAMENTO DISTANZA punto 1) e in base ad esso commuta il suo stato (comando interno).
+	Il TROLLEY riceve gli eventi emessi dal SONAR direttamente (TRATTAMENTO DISTANZA punto 1) e in base ad essi commuta il suo stato (comando interno).
 	<ul>
 		<li>PRO: disccoppiamento, il TROLLEY gestisce autonomamente il proprio stato in  base alle indicazioni ricevute. </li>
-		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto esso deve essere sensibile agli eventi del SONAR </li>
+		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto esso deve essere sensibile agli eventi del SONAR ed inoltre deve possedere logica di business,
+			perdendo cos&iacute la caratteristica di attuatore.</li>
 	
 	</ul></li>
 	<li>COMANDO INVIATO DAL WASTE_SERVICE:<br>
@@ -309,52 +308,40 @@ La comunicazione di ci&oacute &eacute influenzata dalle scelte che verranno fatt
 		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione</li>
 	</ul></li>
 	<li>COMANDO INVIATO DA ENTIT&Aacute TERZA:<br>
-	L'entit&aacute terza processa le informazioni provenienti dal SONAR e in base ad esse comunica al TROLLEY il comando attraverso una delle tre
+	L'entit&aacute terza processa le informazioni provenienti dal SONAR e in base ad esse comunica direttamente al TROLLEY o tramite il WASTE_SERVICE il comando da effettuare attraverso una delle tre
 	forme di comunicazioni affrontate fino ad ora.
 	<ul>
 		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti, andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
 		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente</li>
 	</ul></li>
+</ol>
 <h5>CONCLUSIONI</h5>
 Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
 
 <h4> COMANDO ON/OFF/BLINK </h4>
 Il LED deve ricevere un comando per commutare il proprio stato, esso pu&oacute essere inviato da diverse entit&aacute
 che devono essere a conoscenza dello stato del TROLLEY in quanto il comportamento del LED dipende da esso. I casi possono essere i seguenti:
-<!--<ol>
-	 <li>GESTITO DAL TROLLEY:<br>
-	Il TROLLEY riceve gli eventi direttamente (TRATTAMENTO DISTANZA punto 1) e in base ad esso commuta il suo stato (comando interno).
+<ul>
+	<li> LED pilotato dal TROLLEY: 
 	<ul>
-		<li>PRO: disccoppiamento, il TROLLEY gestisce autonomamente il proprio stato in  base alle indicazioni ricevute. </li>
-		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto esso deve essere sensibile agli eventi del SONAR </li>
-	
+		<li>PRO: il TROLLEY conosce sempre il suo stato, non &eacute necessario condividerlo con nessun altra entit&aacute. </li>
+		<li>CONTRO: il TROLLEY non &eacute pi&uacute un attuatore e si rischi di non soddisfare il requisito dato dal commitente ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
 	</ul></li>
-	<li>COMANDO INVIATO DAL WASTE_SERVICE:<br>
-	Il WASTE_SERVICE riceve l'evento/allarme e comunica al TROLLEY il comando da effettuare mediante una delle tre forme (dispatch, evento, request-response)
-	viste fino ad ora. I PRO e i CONTRO delle tre forme non verranno analizzate nel dettaglio in quanto gi&aacute studiate ampiamente nello Sprint precedente.
+	<li> LED pilotato dal WASTE_SERVICE: 
 	<ul>
-		<li>PRO: il WASTE_SERVICE diventa il controllore dell'intero sistema essendo a conoscenza dello stato di ogni componente.</li>
-		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione</li>
+		<li>PRO: il TROLLEY resta un attuatore e il WASTE_SERVICE funge da controller dell'intero sistema. </li>
+		<li>CONTRO: il WASTE_SERVICE deve mantenere lo stato del TROLLEY anche quando esso &eacute nello stato STOPPED.</li>
 	</ul></li>
-	<li>COMANDO INVIATO DA ENTIT&Aacute TERZA:<br>
-	L'entit&aacute terza processa le informazioni provenienti dal SONAR e in base ad esse comunica al TROLLEY il comando attraverso una delle tre
-	forme di comunicazioni affrontate fino ad ora.
-	<ul>
-		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti, andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
-		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente</li>
-	</ul></li>
+</ul>
 <h5>CONCLUSIONI</h5>
-Si attende il colloquio con il committente per trarre delle conclusioni valide.<br> 
-
-</ol> -->
-
+Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
 
 </div>
  
 
 <h2>Test plans</h2> 
 <div class="remark">
-Codice: <a href="../src/Sprint1Test.qak"></a><br><br>
+
 </div>
 
 <h2>Project</h2> 

@@ -54,6 +54,7 @@ QActor trolley context ctxanalisiproblema {
 //		}
 	}
 	Transition t0 whenRequest pickup -> pickup
+				whenRequest ritorno_home -> ritorno_home
 						
 	State pickup{
 		printCurrentMessage
@@ -136,6 +137,7 @@ QActor trolley context ctxanalisiproblema {
 		onMsg (dopathdone   : dopathdone( ARG )) {
 			println("Trolley home ok")
 			replyTo ritorno_home with home_done : home_done(ok)
+			updateResource [# "TROLLEY:HOME" #]
 		}
 		
 		//delayVar DelayHome
@@ -292,7 +294,7 @@ QActor wasteservice context ctxanalisiproblema{
 	}
 	Goto attesa_load_req
 }
-
+/* WASTE TRUCK MOCK
 QActor waste_truck_mock context ctxanalisiproblema {
 	
 	State start initial {
@@ -332,5 +334,5 @@ QActor waste_truck_mock context ctxanalisiproblema {
 		printCurrentMessage
 		println("Request rejected")
 	}
-}
+}*/
 
