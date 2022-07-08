@@ -474,7 +474,7 @@ Non ci sono richieste esplicite nei requisiti, la realizzazione dipende dalle sc
 	<li> Il TROLLEY &eacute un attuatore quindi non possiede logica di business, ci&oacute implica che esso deve ricevere dall'esterno tutte le azioni che dovr&aacute compiere. Questo 
 	aspetto complicher&aacute l'implementazione del sistema. Infine sar&aacute necessario introdurre una coppia request-response per ogni fase del TROLLEY (Pick up, Trasferimento, Deposito) e un dispatch per segnalare di rientrare alla HOME.</li>
 	<img src="./img_Sprint1/attuatore.png" alt="RF2" width="40%" height="40%"><br>
-	<li>Il TROLLEY non viene considerato come un attuatore, perci&oacute contiene logica di business che definisce le azioni da compiere. In questo modo 
+	<li>Il TROLLEY non viene considerato come un attuatore, perci&oacute contiene la logica di business che definisce le azioni da compiere. In questo modo 
 	si semplifica l'implementazione del WASTE_SERVICE ma il TROLLEY non &eacute riutilizzabile perch&eacute dipendente dal sistema.</li>
 	<img src="./img_Sprint1/non_attuatore.png" alt="RF2" width="20%" height="20%"><br>
 </ul>
@@ -482,7 +482,7 @@ Non ci sono richieste esplicite nei requisiti, la realizzazione dipende dalle sc
 Vi sono due possibili alternative:
 <ul>
 	<li>Realizzare un TROLLEY come attuatore, gestendo una nuova richiesta solo dopo aver terminato l'azione di deposito.</li>
-	<li>Introdurre logica di business nel TROLLEY (oppure in un'entit&aacute terza), gestendo la richiesta di carico successiva dopo aver effettuato il pick up. </li>
+	<li>Introdurre logica di business nel TROLLEY, gestendo la richiesta di carico successiva dopo aver effettuato il pick up. </li>
 	
 </ul>
 <br><br><br>
@@ -497,7 +497,7 @@ Al termine dell'azione di deposito verr&aacute comunicato al TROLLEY se recarsi 
 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
-CODICE: <a href="../src/analisiProblema_v2.qak">Modello esegibile</a><br><br>
+CODICE: <a href="../src/analisiProblema_v2.qakt">Modello esegibile</a><br><br>
 TEST: <a href="../test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
 <img src="./img_Sprint1/modelloEseguibile_v2.png" alt="RF2" width="90%" height="90%"><br><br>
 
@@ -512,47 +512,47 @@ In fase di verifica della correttezza dell'azione di deposito vi possono essere 
 </ul>
 <h5>CONCLUSIONI</h5>
 La prima opzione implica il bisogno di conoscere in un qualche modo lo stato in cui si trova il TROLLEY, questa problematica verr&aacute analizzata al punto successivo.<br>
-La seconda alternativa, invece, prevede un'implementazione pi&uacute semplice, per&oacute comporta un livello di idettaglio inferiore.
+La seconda alternativa, invece, prevede un'implementazione pi&uacute semplice, per&oacute comporta un livello di dettaglio inferiore.
 <h4>RILEVAZIONE DELLO STATO DEL TROLLEY</h4>
 Per ottenre questa informazione in fase di test vi sono due possibilit&aacute:
 <ul>
 	<li>Utilizzo di EVENTI: il TROLLEY ad ogni transizione di stato emette un evento che la segnala. In questo caso &eacute necessario
 		realizzare una test unit sensibile a tali eventi.</li>
 	<li>Sfruttamento dell'OSSERVABILIT&Aacute COAP: visto che il TROLLEY &eacute modellato come un attore QAK (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html">link</a>)
-		&eacute una risorsa COAP, perci&oacute si pu&oacute sfruttare questa caratteristica mediante un COAP Observer per verificare questa informazione. </li>
+		che &eacute una risorsa COAP, perci&oacute si pu&oacute sfruttare questa caratteristica mediante un COAP Observer per verificare questa informazione. </li>
 </ul>
 <h5>CONCLUSIONI</h5>
 Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacute pulita senza dover introdurre interazioni non previste dai requisiti.<br>
 <h4>FILE DI CONFIGURAZIONE</h4>
 Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del sistema (Capacit&aacute massima, Coordinate dei box, Situazione iniziale dei box, etc) possono essere cablati
 all'interno di esso.<br>
-Successivamnete, in un secondo momento potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON e letto da un POJO apposito,
-per consentire la definizione dei paramentri del sistema in fase di avvio dell'applicazione.In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
+Successivamnete, potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON e letto da un POJO apposito,
+per consentire la definizione dei paramentri del sistema in fase di avvio dell'applicazione. In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
 <a href="../resources/WasteServiceConfig.json">File di configurazione json</a><br>
-<a href="../resources/pojos/WasteServiceConfig.java">Pojo dedicato alla configurazione</a><br>
+<a href="../src/it/unibo/pojos/WasteServiceConfigurator.kt">Pojo dedicato alla configurazione</a><br>
 <a href="../src/analisiProblema_v4.qak">Modello eseguibile con file di configurazione</a><br>
 <br>
 <h3>INTRODUZIONE DEL BASIC ROBOT</h3>
 Il committente oltre al bascic robot, mette a disposizione altri componenti che potrebbero essere sfruttati per 
-realizzare la definizione e l'esecuzione delle azioni che il TROLLEY deve compiere.In particolare sono presenti:
+realizzare la definizione e l'esecuzione delle azioni che il TROLLEY deve compiere. In particolare sono presenti:
 <ul>
-	<li>un planner (<a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.planner20">link</a>) che consente di definire il percorso pi&uacute breve, intenso come sequenza di azioni, per raggiungere un determinato
+	<li>un <a href="https://github.com/anatali/issLab2022/tree/main/it.unibo.planner20">Planner</a> che consente di definire il percorso pi&uacute breve, intenso come sequenza di azioni, per raggiungere un determinato
 		punto.</li>
-	<li>un path executor (<a href="../../basicrobot22/src/basicrobot.qak">link</a>) che ricevuta una sequenza di azioni &eacute in grado di eseguirle una alla volta.</li>
+	<li>un <a href="../../basicrobot22/src/basicrobot.qak">path executor</a> che ricevuta una sequenza di azioni &eacute in grado di eseguirle una alla volta.</li>
 </ul>
 Di seguito sono riportate le problematiche principali dovute all'introduzione del basic robot.<br>
 <h4>RAPPRESENTAZIONE DELL'AREA DI LAVORO</h4>
 Inizialmente la rappresentazione dell'area di lavoro mediante una mappa, per facilit&aacute di implementazione, pu&oacute essere definita a priori.<br>
-In un secondo momento, potrebbe essere opportuno ottenere questa informazione, mediante di un ulteriore componente (mapperQak22 <a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">[link]</a>).
+In un secondo momento, potrebbe essere opportuno ottenere questa informazione, mediante di un ulteriore componente (<a href="https://github.com/anatali/issLab2022/tree/main/unibo.mapperQak22">mapperQak22</a>).
 Esso, all'avvio del sistema, esegue una perlustrazione dell'area fornendone una rappresentazione sotto forma mappa all'interno di un file di testo.
-Sicuramente questa soluzione conferisce maggiore flessibilit&aacute al sistema, per&oacute viene appesantita la fase di avvio del sistema.<br>
+Sicuramente questa soluzione conferisce maggiore flessibilit&aacute al sistema, per&oacute viene appesantita la fase di avvio.<br>
 <h4>PERCORSO STATICO O DINAMICO</h4>
 Il percorso (path), inteso come sequenza di azioni di spostamento che il TROLLEY deve eseguire, pu&oacute essere definito in due modi possibili:
 <ul>
-	<li>PATH STATICO: il percorso viene cablato all'interno del sistema, facilitando l'implementazione del sistema. Inoltre
+	<li>PATH STATICO: il percorso viene cablato all'interno del sistema, facilitandone l'implementazione. Inoltre
 		non &eacute neccesario aggiungere il planner per calcolare il percorso.</li>
 	<li>PATH DINAMICO: viene introdotto il planner, con cui il WASTE_SERVICE dovr&aacute interfacciarsi per ottenere i percorsi da comunicare
-		al TROLLEY. In questo modo aumenta notevolemente la flessibilit&aacute del sistema.</li>
+		al TROLLEY, attraverso il payload dei messaggi. In questo modo aumenta notevolemente la flessibilit&aacute del sistema.</li>
 </ul>
 <h5>CONCLUSIONI</h5>
 Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacute flessibilit&aacute a fronte di cambiamenti dell'area di lavoro, ovviamente 
@@ -564,14 +564,31 @@ sar&aacute necessaria l'aggiunta del planner, ma esso ci &eacute gi&aacute stato
 </div>
  
 
-<h2>Test plans</h2> 
+<h2>Test plans <a name="testPlan"></h2> 
 <div class="remark">
-CODICE: <a href="../test/it/unibo/testApplExt.java">Test plan</a><br><br>
-&Eacute stato realizzato un test plan nel quale vengono effettuate due richieste:
-<ol>
-	<li> VETRO, 2 => ACCETTATA
-	<li> VETRO, 9 => RIFIUTATA
-</ol>
+CODICE: <a href="../test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
+Sono state effettuate due tipologie di test:
+<ul>
+	<li>La prima per verifcare la correttezza della risposta a load_req: con l'introduzione del file di configurazione
+		&eacute possibile definire in fase di avvio la capacit&aacute iniziale dei due box e quindi si possono realizzare
+		svariate prove per verificare il corretto comportamento. A titolo di esempio nel test plan realizzato vi sono
+		due casi particolari:
+		<ol>
+			<li> Il primo effettua una richiesta che verr&aacute ACCETTATA in quanto c'&eacute ancora spazio disponibile</li>
+			<li> Il secondo effettua una richiesta con una quantit&aacute superiore rispetto alla capacit&aacute del box e quindi verr&aacute RIFIUTATA.</li>
+		</ol></li>
+	<li> La seconda tipologia va a verificare la corretta sequenza di sotto-azioni che compongono un'azione di deposito del TROLLEY.
+		In paricolare si sfrutta il fatto che il TROLLEY &eacute un attore QAK e quindi una risorsa COAP, quindi si inserisce nel test
+		plan un osservatore COAP che monitora le transizioni di stato del TROLLEY e controlla che l'ordine delle azioni sia sempre quello previsto.
+		A titolo d'esempio sono stati riportati due casi:
+		<ol>
+			<li>Nel primo caso viene effettuata una sola richiesta (accettatta) e si verifica la corretta sequenza (Pick up -> Trasferimento -> Deposito -> Home) </li>
+			<li>Nel secondo caso si effettuano due richieste contemporanee e si va a controllare che dopo aver effettuato il primo deposito, il TROLLEY 
+				effettui un secondo pick up.</li>
+		</ol>
+	
+	</li>
+</ul>
 </div>
 
 <h2>Project</h2> 
@@ -586,14 +603,17 @@ CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
 
 
 <h2>Testing</h2> 
- 
-
+ <div class="remark">
+ I test utilizzati per verificare il corretto funzionamento del sistema sono quelli riportati nella sezione
+ <a href="#testPlan">"Test plans"</a>
+ </div>
+<!-- USEFUL
 <h2>Deployment</h2> 
 
  
 <h2>Maintenance</h2> 
  
-<!-- USEFUL
+
 <table style="width:100%" border="1">
 <tr>
 <td style="width:50%">
