@@ -45,6 +45,7 @@ QActor trolley context ctxanalisiproblema {
 		printCurrentMessage
 		println("TROLLEY | HOME")
 		println("TROLLEY | Attendo un compito dal Waste Service")
+		updateResource [# "TROLLEY:HOME" #]
 	}
 	Transition t0 whenRequest pickup -> pickup
 					whenRequest ritorno_home -> ritorno_home
@@ -53,7 +54,7 @@ QActor trolley context ctxanalisiproblema {
 		printCurrentMessage
 		println("TROLLEY | PICKUP")
 		
-		
+		updateResource [# "TROLLEY:PICKUP" #]
 		onMsg(pickup:pickup(PATH)){
 			[#
 				Path = payloadArg(0)
@@ -83,6 +84,7 @@ QActor trolley context ctxanalisiproblema {
 	State trasferimento{
 		printCurrentMessage
 		println("TROLLEY | TRASFERIMENTO ")
+		updateResource [# "TROLLEY:TRASFERIMENTO" #]
 		onMsg(trasf : trasf(PATH)){
 			[#
 				Path = payloadArg(0)
@@ -105,6 +107,7 @@ QActor trolley context ctxanalisiproblema {
 	State deposito {
 		printCurrentMessage
 		println("TROLLEY | DEPOSITO")
+		updateResource [# "TROLLEY:DEPOSITO" #]
 		onMsg(deposit : deposit(arg)) {
 			println("TROLLEY | Ricevuto deposit")
 		}

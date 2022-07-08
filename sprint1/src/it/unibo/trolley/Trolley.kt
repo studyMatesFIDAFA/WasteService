@@ -32,6 +32,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | HOME")
 						println("TROLLEY | Attendo un compito dal Waste Service")
+						updateResourceRep( "TROLLEY:HOME"  
+						)
 					}
 					 transition(edgeName="t00",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
@@ -39,6 +41,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | PICKUP")
+						updateResourceRep( "TROLLEY:PICKUP"  
+						)
 						if( checkMsgContent( Term.createTerm("pickup(PATH_INDOOR)"), Term.createTerm("pickup(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -66,6 +70,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | TRASFERIMENTO ")
+						updateResourceRep( "TROLLEY:TRASFERIMENTO"  
+						)
 						if( checkMsgContent( Term.createTerm("trasf(PATH)"), Term.createTerm("trasf(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -87,6 +93,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | DEPOSITO")
+						updateResourceRep( "TROLLEY:DEPOSITO"  
+						)
 						if( checkMsgContent( Term.createTerm("deposit(arg)"), Term.createTerm("deposit(arg)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								println("TROLLEY | Ricevuto deposit")
