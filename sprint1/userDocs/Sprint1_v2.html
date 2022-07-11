@@ -513,6 +513,19 @@ In fase di verifica della correttezza dell'azione di deposito vi possono essere 
 <h5>CONCLUSIONI</h5>
 La prima opzione implica il bisogno di conoscere in un qualche modo lo stato in cui si trova il TROLLEY, questa problematica verr&aacute analizzata al punto successivo.<br>
 La seconda alternativa, invece, prevede un'implementazione pi&uacute semplice, per&oacute comporta un livello di dettaglio inferiore.
+
+<h4> STATO TROLLEY </h4>
+Lo stato del TROLLEY &eacute noto a due entit&aacute, ossia il TROLLEY stesso e il WASTE_SERVICE.
+La problematica che sorge &eacute chi gestisce lo stato del TROLLEY e quindi chi andare ad interrogare
+per conoscerlo. In particolare:
+<ul>
+	<li>TROLLEY: &eacute sempre a conoscenza dello stato in cui si trova. D'altro canto per&oacute in questo caso il TROLLEY deve comunicare il suo stato agli interessati.</li>
+	<li>WASTE_SERVICE: nel modello attuale esso pu&oacute inferire lo stato in cui si trova il TROLLEY in base allo stato in cui esso stesso si trova.</li>
+</ul>
+
+<h5>CONCLUSIONI</h5>
+Attualmente, visto che tale caratteristica viene sfruttata solo per effettuare i test, si opta di interrogare il TROLLEY stesso per conoscere tale informazione.<br>
+
 <h4>RILEVAZIONE DELLO STATO DEL TROLLEY</h4>
 Per ottenre questa informazione in fase di test vi sono due possibilit&aacute:
 <ul>
@@ -521,6 +534,7 @@ Per ottenre questa informazione in fase di test vi sono due possibilit&aacute:
 	<li>Sfruttamento dell'OSSERVABILIT&Aacute COAP: visto che il TROLLEY &eacute modellato come un attore QAK (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/QakIntro.html">link</a>)
 		che &eacute una risorsa COAP, perci&oacute si pu&oacute sfruttare questa caratteristica mediante un COAP Observer per verificare questa informazione. </li>
 </ul>
+
 <h5>CONCLUSIONI</h5>
 Sicuramente la seconda alternativa permette di realizzare una soluzione pi&uacute pulita senza dover introdurre interazioni non previste dai requisiti.<br>
 <h4>FILE DI CONFIGURAZIONE</h4>
@@ -610,15 +624,25 @@ CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
 
 <h2>Final summary</h2> 
 <div class="remark">
-Con l'introduzione del planner &eacute stato necessario sostituire il dispatch ritrono_home con una comunicazione con schema
-request-response, ci&oacute viene fatto per indicare al WASTE_SERVICE la posizione corrente del TROLLEY dopo che &eacute stato
-effettuato il rientro alla HOME.<br>
-CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
-<img src="./img_Sprint1/modelloEseguibile_v3.png" alt="RF2" width="90%" height="90%"><br><br>
+&Eacute stato introdotto un osservatore COAP per segnalare che il TROLLEY, essendo modellato come un attore, &eacute anche una risorsa COAP.<br>
+Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe risultare un'alternativa interessante per quanto
+riguarda i requisiti affrontati negli Sprint successivi.<br><br>
+
+<img src="./img_Sprint1/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
 
 </div>
  
-<h2>Work surface</h2> 
+<h2>Work plan</h2> 
+ <div class="remark">
+ Al termine dello Sprint 1 si nota che sono necessari due Sprint successivi per completare il lavoro:
+ <ul>
+	<li>Sprint 2: introduzione di LED e SONAR</li>
+	<li>Sprint 3: introduzione della GUI</li>
+ </ul>
+ In una prima parte, i due Sprint possono essere trattati anche in parallelo. Successivamnete per terminare lo Sprint 3 sar&aacute necessario prima
+ completare lo Sprint precedente.
+ </div>
+
  
 <!--
 <table style="width:100%" border="1">

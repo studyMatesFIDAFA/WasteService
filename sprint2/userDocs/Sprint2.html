@@ -203,6 +203,10 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 
 <h2>Sprint 1 results</h2>
 <div class="remark">
+Di seguito &eacute riportato il risultato finale ottenuto al termine dello Sprint 1:<br>
+<img src="./img_Sprint2/sintesiFinale_Sprint1.png" alt="RF2" width="90%" height="90%"><br>
+CODICE: <a href="../../sprint1/src/analisiProblema_v4.qak">modello eseguibile</a><br>
+TEST: <a href="../../sprint1/test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
 
 </div>
  
@@ -258,7 +262,7 @@ Il WASTE_SERVICE deve inviare un comando on/off/blink al LED.</li>
 <div class="remark">
 <h3> PROBLEMATICHE RF2 EVIDENZIATE DURANTE L'ANALISI DEI REQUISITI</h3>
 <h4> STATO TROLLEY </h4>
-Attualmente, nel <a href="../../sprint1/src/analisiProblema_v4.qak">modello realizzato nello Sprint 1</a>, lo stato del
+Attualmente, nel modello realizzato nello Sprint 1, lo stato del
 TROLLEY &eacute noto a due entit&aacute, ossia il TROLLEY stesso e il WASTE_SERVICE. Con l'introduzione del RF2,
 per&oacute bisogna considerare un nuovo stato in cui il TROLLEY si pu&oacute trovare, lo stato STOPPED.
 La problematica che sorge &eacute chi &eacute a conoscenza dello stato reale del TROLLEY e quindi chi andare ad interrogare
@@ -272,16 +276,19 @@ per conoscerlo. In particolare:
 </ul>
 
 <h5>CONCLUSIONI</h5>
-Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
+Visto che il WASTE_SERVICE &eacute il responsabile del comportamento che il LED deve assumenre in ogni istante, &eacute consigliato che anche le informazioni
+che riguardono lo stato del TROLLEY siano mantenute e aggiornate dal WASTE_SERVICE stesso. In questo modo il TROLLEY non deve neanche 
+occuparsi della gestione del LED, mantenendo la caratteristica di attuatore.<br>
+
 
 <h4> TRATTAMENTO DISTANZA </h4>
-Abbiamo a disposizione diverse implementazioni del SONAR messe a disposizione dal committente (<a href="https://github.com/anatali/issLab2022/blob/main/unibo.actor22/test/unibo/actor22/events/SonarActor22.java">Sonar</a> e <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">SonarObservable</a> ). Dovendo lavorare
-con un flusso continuo di informazioni (sequenza di distanze rilevate) non è consigliato interagire con il SONAR mediante dispatch oppure con uno schema request-response.<br>
+Abbiamo a disposizione diverse implementazioni del SONAR fornite dal committente (<a href="https://github.com/anatali/issLab2022/blob/main/unibo.actor22/test/unibo/actor22/events/SonarActor22.java">Sonar</a> e <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">SonarObservable</a> ). 
+Dovendo lavorare con un flusso continuo di informazioni (sequenza di distanze rilevate) non è consigliato interagire con il SONAR mediante dispatch oppure con uno schema request-response.<br>
 Perci&oacute si consiglia l'utilizzo del SonarObservable che emette eventi, i quali possono essere rilevanti per entit&aacute diverse:
 <ol>
 	<li>TROLLEY:<br>
 	<ul>
-		<li>PRO: il TROLLEY gestisce autonomamente il proprio stato in  base alle indicazioni del SONAR. </li>
+		<li>PRO: il TROLLEY gestisce autonomamente il proprio stato in base alle indicazioni del SONAR. </li>
 		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto dovr&aacute processare gli eventi emessi dal SONAR, perdendo cos&iacute la caratteristica di attuatore.</li>
 	
 	</ul></li>
@@ -290,13 +297,15 @@ Perci&oacute si consiglia l'utilizzo del SonarObservable che emette eventi, i qu
 		<li>PRO: il WASTE_SERVICE diventa il fulcro del sistema in quanto si incarica di processare tutte le informazioni provenienti dagli altri componenti</li>
 		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione. Inoltre il WASTE_SERVICE deve anche comunicare con il TROLLEY per effettuare l'eventuale sospensione e riavvio.</li>
 	</ul></li>
-	<li>ENTIT&Aacute TERZA (DISTANCE_ANALAYZER):<br>
+	<li>ENTIT&Aacute DEDICATA : con entit&aacute dedicata si intende sia una nuova componente ma anche
+	una pipeline di attori che filtra il contenuto degli eventi emessi dal SONAR<br>
 	<ul>
 		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti agli interessati sotto forma di dispatch, evento o request-response (allarme), andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
-		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente.</li>
+		<li>CONTRO: si aggiunge un'ulteriore entit&aacute .</li>
 	</ul></li>
+</ol>
 <h5>CONCLUSIONI</h5>
-Si attende il colloquio con il committente per trarre delle conclusioni valide. Sicuramente in caso di entit&aacute terza la comunicazione delle informazioni rilevanti &eacute consigliato che 
+In caso di entit&aacute dedicata, la comunicazione delle informazioni rilevanti &eacute consigliato che 
 avvenga mediante un dispatch in modo tale da assicurare la ricezione del messaggio e riducendo al minimo il numero di interazioni.<br>
 
 <h4> COMANDO STOP/RESUME </h4>
@@ -306,28 +315,72 @@ La comunicazione di ci&oacute &eacute influenzata dalle scelte che verranno fatt
 	<li>GESTITO DAL TROLLEY:<br>
 	Il TROLLEY riceve gli eventi emessi dal SONAR direttamente (TRATTAMENTO DISTANZA punto 1) e in base ad essi commuta il suo stato (comando interno).
 	<ul>
-		<li>PRO: disccoppiamento, il TROLLEY gestisce autonomamente il proprio stato in  base alle indicazioni ricevute. </li>
+		<li>PRO: disccoppiamento, il TROLLEY gestisce autonomamente il proprio stato in base alle indicazioni ricevute. </li>
 		<li>CONTRO: viene complicata la struttura del TROLLEY, in quanto esso deve essere sensibile agli eventi del SONAR ed inoltre deve possedere logica di business,
 			perdendo cos&iacute la caratteristica di attuatore.</li>
 	
-	</ul></li>
-	<li>COMANDO INVIATO DAL WASTE_SERVICE:<br>
-	Il WASTE_SERVICE riceve l'evento/allarme e comunica al TROLLEY il comando da effettuare mediante una delle tre forme (dispatch, evento, request-response)
-	viste fino ad ora. I PRO e i CONTRO delle tre forme non verranno analizzate nel dettaglio in quanto gi&aacute studiate ampiamente nello Sprint precedente.
-	<ul>
-		<li>PRO: il WASTE_SERVICE diventa il controllore dell'intero sistema essendo a conoscenza dello stato di ogni componente.</li>
-		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione</li>
 	</ul></li>
 	<li>COMANDO INVIATO DA ENTIT&Aacute TERZA:<br>
 	L'entit&aacute terza processa le informazioni provenienti dal SONAR e in base ad esse comunica direttamente al TROLLEY o tramite il WASTE_SERVICE il comando da effettuare attraverso una delle tre
 	forme di comunicazioni affrontate fino ad ora.
 	<ul>
-		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti, andando a soddisfare il principio di "Singola Responasbilit&aacute" e facilitando la realizzazione del sistema, visto che riduciamo i compiti del WASTE_SERVICE.</li>
-		<li>CONTRO: si aggiunge un'ulteriore entit&aacute non prevista dai requisiti, perci&oacute &eacute necessario un confronto con il committente</li>
+		<li>PRO: si utilizza un'entit&aacute dedicata per processare le informazioni provenienti dal SONAR e comunicarle solo quando sono rilevanti, andando a soddisfare il principio di "Singola Responasbilit&aacute". </li>
+		<li>CONTRO: si aggiunge un'ulteriore entit&aacute. </li>
+	</ul></li>
+	<li>COMANDO INVIATO DAL WASTE_SERVICE:<br>
+	Il WASTE_SERVICE riceve gli eventi direttamente dal SONAR o l'allarme dall'entit&aacute terza e comunica al TROLLEY il comando da effettuare mediante una delle tre forme (dispatch, evento, request-response)
+	viste fino ad ora. I PRO e i CONTRO delle tre forme non verranno analizzate nel dettaglio in quanto gi&aacute studiate ampiamente nello Sprint precedente.
+	<ul>
+		<li>PRO: il WASTE_SERVICE diventa il controllore dell'intero sistema essendo a conoscenza dello stato di ogni componente.</li>
+		<li>CONTRO: si aggiunge un ulteriore compito al WASTE_SERVICE complicando la sua realizzazione</li>
 	</ul></li>
 </ol>
 <h5>CONCLUSIONI</h5>
-Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
+Visto che non vi sono particolari richieste, si sconsiglia di non far gestire tale comando direttamente al TROLLEY.<br>
+
+<h4>DOVE MEMORIZZARE LO STATO IN CUI SI STOPPA IL TROLLEY</h4>
+Visto che con l'aggiunta del RF2 &eacute necessario gestire la fermata e la ripartenza del TROLLEY, &eacute fondamentale
+essere a conoscenza dello stato in cui si trovava il TROLLEY prima di ricevere il comando di stop, per garantire la corretta ripartenza
+ed eseguire la giusta sequenza di operazioni che compone un'azione di deposito (Pickup, Trasferimento, Deposito).<br>
+Innanzitutto bisogna distinguere due tipologie di stati in cui si pu&oacute trovare il TROLLEY:
+<ul>
+	<li> Stato in cui sta eseguendo un MOVIMENTO: Pickup (considerando solo lo spostamento all'INDOOR [leggere dopo]), Trasferimento 
+		e Ritorno_home.</li>
+	<li>Stato STATICI: Home, Pickup (considerando la parte di prelievo) e Deposito.</li>
+</ul>
+Dopo questa osservazione, notiamo che lo stato denominato "pickup" nei modelli eseguibili realizzati nello Sprint 1, in realt&aacute
+incorpora in s&eacute due stati differenti che possiamo chiamare "go_indoor" e "pickup". Per questo riteniamo opportuno scinderlo, in
+modo tale da facilitare l'introduzione delle nuove funzionalit&aacute. <br>
+In uno stato "di MOVIMENTO" vi &eacute la necessit&aacute di comunicare con il pathexecutor di interrompere le azioni che stata svolegendo e di memorizzare quelle rimanenti per effettuarle 
+nella fase di resume. Questa complicazione invece non &eacute presente negli stati STATICI dove &eacute sufficiente "ricordarsi", in fase di resume, solo lo stato in cui ci trovavamo.<br>
+In base a quanto appena detto &eacute fondamentale, in fase di resume, sapere lo stato in cui siamo stati bloccati. Ci&oacute pu&oacute essere fatto 
+da due entit&aacute differenti:
+<ul>
+	<li>TROLLEY: 
+	<ul>
+		<li>PRO: vengono ridotti i compiti del WASTE_SERVICE in quanto non deve memorizzare lo stato in cui si trova il TROLLEY e si occupa solo di effettuare il resume. </li>
+		<li>CONTRO: con alte probabilit&aacute il WASTE_SERVICE deve sapere in tutti i modi lo stato in cui si trova il TROLLEY e quindi memorizzarsi comunque questa informazione </li>
+	</ul></li>
+	<li>WASTE_SERVICE: 
+	<ul>
+		<li>PRO: deve conoscere lo stato del TROLLEY per regolare il comportamento degli altri componenti (LED) </li>
+		<li>CONTRO: aumenta il carico di lavoro del WASTE_SERVICE ed &eacute necessario, in fase di resume, comunicarlo al TROLLEY</li>
+	</ul></li>
+</ul> 
+
+<h4>COME MEMORIZZARE LO STATO IN CUI SI STOPPA IL TROLLEY</h4>
+L'informazione riguardante lo stato in cui si trova il TROLLEY pu&oacute essere memorizzata in vari modi:
+<ul>
+	<li>DUPLICAZIONE DEGLI STATI PRESENTI: per ogni stato presente nella FSM viene introdotto il corrispondente stato STOPPED, in 
+		questo modo, all'arrivo di una resume, &eacute semplice stabilire da quale stato ripartire.</li>
+	<li>INTERRUPT (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/RobotCleaner.html#stop-resume-un-nuovo-abstraction-gap">link</a>): 
+		modellare per il linguaggio QAK un meccanismo di chiamata a procedura, in maniera tale da memorizzarsi lo stato in cui ci trovavamo prima del comando di stop
+		e poterlo ripristinare correttamente dopo l'arrivo di una resume.</li>
+</ul>
+<h5>CONCLUSIONI</h5>
+La soluzione pi&uacute "elegante", in quanto riduce l'abstaction gap, sarebbe quella di utilizzare gli interrupt, ma questa richiederebbe molto tempo per realizzarla.<br>
+Perci&oacute si consiglia di gestire lo stato lato WASTE_SERVICE, in quanto deve comunque mantenerlo per pilotare il LED, mentre per quanto concerne la
+modalit&aacute di implementazione si lascia potere decisionale al progettista.<br>
 
 <h4> COMANDO ON/OFF/BLINK </h4>
 Il LED deve ricevere un comando per commutare il proprio stato, esso pu&oacute essere inviato da diverse entit&aacute
@@ -336,7 +389,7 @@ che devono essere a conoscenza dello stato del TROLLEY in quanto il comportament
 	<li> LED pilotato dal TROLLEY: 
 	<ul>
 		<li>PRO: il TROLLEY conosce sempre il suo stato, non &eacute necessario condividerlo con nessun altra entit&aacute. </li>
-		<li>CONTRO: il TROLLEY non &eacute pi&uacute un attuatore e si rischi di non soddisfare il requisito dato dal commitente ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
+		<li>CONTRO: il TROLLEY non &eacute pi&uacute un attuatore e si rischia di non soddisfare il requisito dato dal commitente ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
 	</ul></li>
 	<li> LED pilotato dal WASTE_SERVICE: 
 	<ul>
@@ -345,7 +398,8 @@ che devono essere a conoscenza dello stato del TROLLEY in quanto il comportament
 	</ul></li>
 </ul>
 <h5>CONCLUSIONI</h5>
-Si attende il colloquio con il committente per trarre delle conclusioni valide.<br>
+Per rispettare i requisiti dati dal committente &eacute necessario che il WASTE_SERVICE sia il responsabile del comportamento del LED e quindi
+sia esso a prendere le decisioni che lo riguardano (invio del comando).<br>
 
 </div>
  
