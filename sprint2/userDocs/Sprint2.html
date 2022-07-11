@@ -200,6 +200,11 @@ div.imagedesc{
 <div class="remark">
 Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna. (SPRINT 2)
 </div>
+
+<h2>Sprint 1 results</h2>
+<div class="remark">
+
+</div>
  
  
 <h2>Requirements</h2>
@@ -214,12 +219,18 @@ Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v2.
 <div class="remark">
 <h3>PUNTI APERTI:</h3>
 <ul>
- <li>il Service-manager &eacute l'utilizzatore del SONAR e lo utilizza per bloccare il robot?</li>
- <li>Il LED &eacute accesso quando il TROLLEY &eacute STOPPED, inteso quando fermato a causa del SONAR oppure anche davanti ai box per scaricare?</li>
- <li>Il WASTE_SERVICE deve pilotare il LED o pu&oacute delegare un'altra entit&aacute?</li>
- <li>Lo stato di LED e TROLLEY &eacute un'informazione di fondamentale importanza per l'applicazione oppure ci possono essere delle imprecisioni?</li> 
- <li>&Eacute possibile introdurre un'entit&aacute aggiuntiva per processare i dati provenienti dal SONAR?</li>
- <li>Come trattare lo stato STOPPED del TROLLEY (fermo subito oppure finisce azione e si ferma)?</li>
+ <li>il Service-manager &eacute l'utilizzatore del SONAR e lo utilizza per bloccare il robot?<br>
+ S&iacute, viene usato come una sorta di pulsante.</li>
+ <li>Il LED &eacute accesso quando il TROLLEY &eacute STOPPED, inteso quando fermato a causa del SONAR oppure anche davanti ai box per scaricare?<br>
+ Per stato STOPPED si intende quando il TROLLEY &eacute fermo a causa del SONAR</li>
+ <li>Il WASTE_SERVICE deve pilotare il LED o pu&oacute delegare un'altra entit&aacute?<br>
+ Il WASTE_SERVICE d&aacute il comando questo poi pu&oacute essere delegato ad un'altra entit&aacute </li>
+ <li>Lo stato di LED e TROLLEY &eacute un'informazione di fondamentale importanza per l'applicazione oppure ci possono essere delle imprecisioni?<br>
+ Non sono informazioni fondamentali per il sistema, possono esserci delle imprecisioni</li> 
+ <li>&Eacute possibile introdurre un'entit&aacute aggiuntiva per processare i dati provenienti dal SONAR?<br>
+ L'importante &eacute che ci siano le entit&aacute richieste dai requisiti, delle entit&aacute aggiuntive non sono un problema</li>
+ <li>Come trattare lo stato STOPPED del TROLLEY (fermo subito oppure finisce azione e si ferma)?<br>
+ Il TROLLEY si deve fermare subito</li>
 </ul>
  <br><br>
 Per le considerazioni fatte su Requisiti funzionali e Requisiti non funzionali si vedano
