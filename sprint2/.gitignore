@@ -6,6 +6,7 @@ bin/default
 build
 logs 
 
+/.gradle
 log4jInfo.log
 
 #node
@@ -16,6 +17,7 @@ package-lock.json
 # MQTT generated
 *-tcp*
 
+/.gradle
 
 /ReadMe.html
 .lck/ 
