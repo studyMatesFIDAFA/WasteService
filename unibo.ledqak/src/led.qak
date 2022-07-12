@@ -1,0 +1,85 @@
+System provaled
+
+Dispatch cmd : cmd (CMD)
+
+Context ctxled ip [ host="localhost" port=8015]
+
+QActor led context ctxled {
+	[#
+		var Cmd = ""
+		var Blink = false
+	#]
+	
+	State wait_cmd initial {
+		printCurrentMessage
+		println("LED | WAIT CMD")
+		[# //Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] // led inizialmente spento
+	}
+	Transition t0 whenMsg cmd -> esegui_cmd
+	
+	State esegui_cmd {
+		onMsg(cmd : cmd (CMD)){
+			[#
+				Cmd = payloadArg(0)
+				println(Cmd)
+				Blink = false
+					
+			
+			if ( Cmd=="on" ){
+				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+				println("LED | ON")
+			}
+							
+			 else if ( Cmd == "off" ) {
+				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh)
+				println("LED | OFF")
+			}
+			else {
+				Blink = true
+			}
+			#]
+		}
+	}
+	Goto blink if [# Blink #] else wait_cmd
+	
+	State blink {
+		[#
+			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+			println("LED | ON")	
+		#]
+		delay 500
+		[#
+			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+			println("LED | OFF")	
+		#]
+		
+	}
+	Transition t1 whenTime 500 -> blink
+				  whenMsg cmd -> esegui_cmd
+}
+
+/* 
+QActor utilizzatoremock context ctxled {
+	State start initial {
+		println(" MOCK | START")
+	} 
+	Goto on
+	
+	State on {
+		forward led -m cmd : cmd(on)
+	}
+	Transition t0 whenTime 2000 -> off
+	
+	State off {
+		forward led -m cmd : cmd(off)
+	} Transition t0 whenTime 2000 -> blink
+	
+	State blink {
+		forward led -m cmd : cmd(blink)
+	} Transition t0 whenTime 5000 -> fine
+	
+	State fine {
+		forward led -m cmd : cmd(off)
+	}
+	
+}*/

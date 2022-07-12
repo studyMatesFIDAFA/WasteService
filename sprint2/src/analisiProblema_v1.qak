@@ -4,7 +4,10 @@ Request load_req : load_req(TYPE,WEIGHT)
 Reply loadaccept : loadaccept(TYPE,WEIGHT)
 Reply loadrejected : loadrejected(TYPE,WEIGHT)
 
-Request pickup : pickup(PATH_INDOOR)
+Request go_indoor : go_indoor(PATH_INDOOR)
+Reply indoor_done : indoor_done(ok)
+
+Request pickup : pickup(arg)
 Reply pickup_done : pickup_done(ok)
 
 Request trasf : trasf(PATH)
@@ -21,6 +24,15 @@ Request  dopath    : dopath( PATH  )
 Reply dopathdone   : dopathdone( ARG )
 Reply dopathfail   : dopathfail( ARG )
 
+//Comando stop/resume
+Dispatch stop : stop(AGR)
+Dispatch resume : resume(STATE)
+
+//Evento alarm
+Event alarm : alarm(STOP)
+
+ 
+
 Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
 Context ctxanalisiproblema   ip [host="localhost" port=8078]
 
@@ -33,6 +45,9 @@ QActor trolley context ctxanalisiproblema {
 		val DelayIndoor=2000L
 		val DelayBox=3000L
 		val DelayHome=2000L
+		
+		var RemainPath = ""
+		var LastState = ""
 	#]
 	
 	State start initial{
@@ -55,10 +70,12 @@ QActor trolley context ctxanalisiproblema {
 	}
 	Transition t0 whenRequest pickup -> go_indoor
 				whenRequest ritorno_home -> ritorno_home
+				whenMsg stop -> stopped
 	
 	State go_indoor{
 		printCurrentMessage
 		println("TROLLEY | GO INDOOR")
+		updateResource [# "TROLLEY:GO_INDOOR" #]
 		onMsg(pickup:pickup(PATH)){
 			[#
 				Path = payloadArg(0)
@@ -66,19 +83,23 @@ QActor trolley context ctxanalisiproblema {
 			#]
 			request pathexec -m dopath : dopath($Path) 
 		}
-	}Transition t1 whenReply dopathdone -> pickup
-					 whenReply dopathfail -> pathfail
+		onMsg (dopathdone   : dopathdone( ARG )) {
+			replyTo go_indoor with indoor_done : indoor_done(ok)
+		}
+	}Transition t1 whenReply dopathdone -> go_indoor
+				   whenReply dopathfail -> pathfail
+				   whenMsg stop -> alarm 
+				   whenRequest pickup -> pickup
 				
 	State pickup{
 		printCurrentMessage
 		println("TROLLEY | PICKUP")
 		updateResource [# "TROLLEY:PICKUP" #]
-		onMsg (dopathdone   : dopathdone( ARG )) {
-			delay 500
-			replyTo pickup with pickup_done : pickup_done(ok)
-		}
+		delay 500
+		replyTo pickup with pickup_done : pickup_done(ok)
 	}
 	Transition t2 whenRequest trasf -> trasferimento
+				  whenMsg stop -> stopped
 	
 				  
 	State pathfail {
@@ -109,6 +130,7 @@ QActor trolley context ctxanalisiproblema {
 	Transition t3 whenReply dopathdone -> trasferimento
 				  whenReply dopathfail -> pathfail
 				  whenRequest deposit -> deposito
+				  whenMsg stop -> alarm
 	
 	State deposito {
 		printCurrentMessage
@@ -116,18 +138,21 @@ QActor trolley context ctxanalisiproblema {
 		updateResource [# "TROLLEY:DEPOSITO" #]
 		onMsg(deposit : deposit(arg)) {
 			println("TROLLEY | Ricevuto deposit")
+			delay 500
+			replyTo deposit with deposit_done : deposit_done(ok)
 		}
-		delay 500
-		replyTo deposit with deposit_done : deposit_done(ok)
+		
 	}
 	Transition t4
 		whenRequest ritorno_home -> ritorno_home
 		whenRequest pickup -> pickup
+		whenMsg stop -> stopped
 			
 				
 	State ritorno_home{
 		printCurrentMessage
 		println("TROLLEY | RITORNO HOME")
+		updateResource [# "TROLLEY:RITORNO_HOME" #]
 		onMsg(ritorno_home : ritorno_home(PATH_HOME)){
 			[#
 				Path = payloadArg(0)
@@ -145,6 +170,57 @@ QActor trolley context ctxanalisiproblema {
 	Transition t5 whenReply dopathdone -> ritorno_home
 				  whenReply dopathfail -> pathfail
 				  whenRequest pickup -> pickup
+				  whenMsg stop -> alarm
+				  
+	State alarm {
+		printCurrentMessage
+		println("TROLLEY | ALARM")
+		emit alarm : alarm(STOP)	
+	}
+	Transition t6 whenReply dopathfail -> savepath
+	
+	State savepath {
+		printCurrentMessage
+		onMsg(dopathfail: dopathfail(PATH)){
+			[#
+				$RemainPath = payloadArg(0)
+			#]	
+		}
+		println("TROLLEY | SAVE PATH: $RemainPath")
+	} 
+	Goto stopped
+	
+	State stopped {
+		printCurrentMessage
+		println("TROLLEY | STOPPED")
+		updateResource [# "TROLLEY:STOPPED" #]
+	}
+	Transition t7 whenMsg resume -> resume
+	
+	State resume {
+		printCurrentMessage
+		println("TROLLEY | RESUME")
+		onMsg(resume : resume(STATE)){
+			[#
+				$LastState = payloadArg(0)
+			#]	
+		}
+		println("TROLLEY | $StateResume")
+		
+		//if [# RemainPath != "" #]{
+		request pathexec -m dopath : dopath($RemainPath) 
+		//}
+		[# RemainPath = "" #]
+		
+	}
+	Transition t8 whenReply dopathdone and [# LastState == "HOME" #] -> home
+				  whenReply dopathdone and [# LastState == "GO_INDOOR" #] -> pickup
+				  whenReply dopathdone and [# LastState == "PICKUP" #] -> trasferimento
+				  whenReply dopathdone and [# LastState == "TRASFERIMENTO" #] -> deposito
+				  whenReply dopathdone and [# LastState == "DEPOSITO" #] -> deposito
+				  whenReply dopathdone and [# LastState == "RITORNO_HOME" #] -> home
+				  whenReply dopathfail -> pathfail
+				  
 }
 
 QActor wasteservice context ctxanalisiproblema{
@@ -167,6 +243,8 @@ QActor wasteservice context ctxanalisiproblema{
 		val YPlastica = WasteServiceConfigurator.YPBox
 		val XHome = WasteServiceConfigurator.XHome
 		val YHome = WasteServiceConfigurator.YHome
+		
+		var LastState = "HOME"
 	#]
 	
 	State start initial{
@@ -181,8 +259,12 @@ QActor wasteservice context ctxanalisiproblema{
 	State attesa_load_req{
 		printCurrentMessage
 		println("WASTE SERVICE | ATTESA LOAD REQUEST(CAMION)")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
 	}
 	Transition t0 whenRequest load_req -> gestisci_richiesta
+				  whenMsg stop -> stopped
 	
 	State gestisci_richiesta{
 		printCurrentMessage
@@ -204,12 +286,16 @@ QActor wasteservice context ctxanalisiproblema{
 			}
 		}
 	}
-	Goto attiva_pickup if [# Carico_accettato #] else go_home 
+	Goto attiva_indoor if [# Carico_accettato #] else go_home 
 	
-	State attiva_pickup{
+	State attiva_indoor {
 		printCurrentMessage
-		println("WASTE SERVICE | ATTIVA DEPOSITO")
-		[# Trolley_home = false #]
+		println("WASTE SERVICE | ATTIVA INDOOR")
+		[# 
+			Trolley_home = false
+			LastState = "GO_INDOOR"
+			
+		#]
 		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor) 
 		[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 			.replace(" ","")
@@ -217,13 +303,30 @@ QActor wasteservice context ctxanalisiproblema{
 			.replace("[","")
 			.replace("]","")
 		#]  
-		request trolley -m pickup : pickup($PercorsoCurr)  // chiedo al trolley di prelevare il carico
+		request trolley -m go_indoor : go_indoor($PercorsoCurr)  // chiedo al trolley di prelevare il carico
+	}
+	Transition t1 whenReply indoor_done -> attiva_pickup
+				  whenMsg stop -> stopped
+	
+	State attiva_pickup{
+		printCurrentMessage
+		println("WASTE SERVICE | ATTIVA PICKUP")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
+		request trolley -m pickup : pickup(arg)
+		[# LastState = "PICKUP"#]
+		
 	}
 	Transition t1 whenReply pickup_done -> attiva_trasferimento // trolley ha prelevato il carico da INDOOR
+				  whenMsg stop -> stopped
 	
 	State attiva_trasferimento{ 
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
 		onMsg (pickup_done: pickup_done(ok)){
 			replyTo load_req with loadaccept : loadaccept($Tipo_carico, $Peso_carico)	
 		}
@@ -250,25 +353,36 @@ QActor wasteservice context ctxanalisiproblema{
 		#]  
 		
 		request trolley -m trasf : trasf($PercorsoCurr)
+		[# LastState = "TRASFERIMENTO" #]
 	}
 	Transition t2 whenReply trasf_done -> attiva_deposito
+			      whenMsg stop -> stopped
 	
 	State attiva_deposito {
 		printCurrentMessage
 		println("WASTE SERVICE | ATTIVA DEPOSITO")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
 		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
 		run  unibo.kotlin.planner22Util.showCurrentRobotState()
 		request trolley -m deposit : deposit(arg)
+		[# LastState = "DEPOSITO" #]
 	}
 	Transition t3 whenReply deposit_done -> controlla_req
+				  whenMsg stop -> stopped
 	
 	
 	State controlla_req{
 		printCurrentMessage
 		println("WASTE SERVICE | CONTROLLA NUOVE RICHIESTE")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
 	}
 	Transition t4 whenTime 100 -> go_home
 				whenRequest load_req -> gestisci_richiesta
+				whenMsg stop -> stopped
 
 
 	State go_home {
@@ -283,17 +397,40 @@ QActor wasteservice context ctxanalisiproblema{
 			.replace("]","")
 			#]
 		request trolley -m ritorno_home: ritorno_home($PercorsoCurr)
-		[# Trolley_home = true #]
+		[# 
+			Trolley_home = true
+			LastState = "RITORNO_HOME"
+		#]
 	}
 	Transition t5 whenReply home_done -> ritorno_done
+				   whenMsg stop -> stopped
 	
 	State ritorno_done{
 		printCurrentMessage
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+		}
 		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
 		run  unibo.kotlin.planner22Util.showCurrentRobotState()
+		[# LastState = "HOME" #]
 	}
 	Goto attesa_load_req
+	
+	State stopped {
+		printCurrentMessage
+		println("WASTE SERVICE | STOPPED")
+		forward trolley -m stop : stop(STOP)
+	}
+	Transition t6 whenMsg resume and [# LastState == "HOME" #] -> attesa_load_req
+				  whenMsg resume and [# LastState == "GO_INDOOR" #] -> attiva_pickup
+				  whenMsg resume and [# LastState == "PICKUP" #] -> attiva_trasferimento
+				  whenMsg resume and [# LastState == "TRASFERIMENTO" #] -> attiva_deposito
+				  whenMsg resume and [# LastState == "DEPOSITO" #] -> controlla_req
+				  whenMsg resume and [# LastState == "RITORNO_HOME" #] -> ritorno_done
+	
 }
+
+
 // WASTE TRUCK MOCK
 QActor waste_truck_mock context ctxanalisiproblema {
 	

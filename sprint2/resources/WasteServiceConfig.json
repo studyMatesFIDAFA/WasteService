@@ -1,0 +1,14 @@
+{
+    "maxPB" : 10,
+    "maxPG" : 10,
+    "XIndoor" : 0,
+    "YIndoor" : 4,
+    "XPBox" : 6,
+    "YPBox" : 4,
+    "XGBox" : 6,
+    "YGBox" : 0,
+    "XHome" : 0,
+    "YHome" : 0,
+    "CurPWeight" : 0,
+    "CurGWeight" : 0,
+};
