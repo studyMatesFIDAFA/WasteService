@@ -53,13 +53,13 @@ QActor trolley context ctxanalisiproblema {
 //			request pathexec -m dopath : dopath($Path) 
 //		}
 	}
-	Transition t0 whenRequest pickup -> pickup
+	Transition t0 whenRequest pickup -> go_indoor
 				whenRequest ritorno_home -> ritorno_home
 						
-	State pickup{
+	State go_indoor{
 		printCurrentMessage
 		println("TROLLEY | PICKUP")
-		updateResource [# "TROLLEY:PICKUP" #]
+		
 		
 		onMsg(pickup:pickup(PATH)){
 			[#
@@ -70,16 +70,20 @@ QActor trolley context ctxanalisiproblema {
 		}
 		
 		onMsg (dopathdone   : dopathdone( ARG )) {
-			delay 500
-			replyTo pickup with pickup_done : pickup_done(ok)
+			//stampo
 		}
 		
 		
 	}
 	Transition t1 whenReply dopathdone -> pickup
 				  whenReply dopathfail -> pathfail
-				  whenRequest trasf -> trasferimento
+				 
 	
+	State pickup{
+		replyTo pickup with pickup_done : pickup_done(ok)
+		updateResource [# "TROLLEY:PICKUP" #]
+		delay 500
+	} whenRequest trasf -> trasferimento
 				  
 	State pathfail {
 		printCurrentMessage
@@ -122,7 +126,7 @@ QActor trolley context ctxanalisiproblema {
 	}
 	Transition t4
 		whenRequest ritorno_home -> ritorno_home
-		whenRequest pickup -> pickup
+		whenRequest pickup -> go_indoor
 			
 				
 	State ritorno_home{
@@ -144,7 +148,7 @@ QActor trolley context ctxanalisiproblema {
 	}
 	Transition t5 whenReply dopathdone -> ritorno_home
 				  whenReply dopathfail -> pathfail
-				  whenRequest pickup -> pickup
+				  whenRequest pickup -> go_indoor
 }
 
 QActor wasteservice context ctxanalisiproblema{

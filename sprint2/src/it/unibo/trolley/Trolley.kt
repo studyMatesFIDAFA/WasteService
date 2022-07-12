@@ -35,15 +35,13 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:HOME"  
 						)
 					}
-					 transition(edgeName="t00",targetState="pickup",cond=whenRequest("pickup"))
+					 transition(edgeName="t00",targetState="go_indoor",cond=whenRequest("pickup"))
 					transition(edgeName="t01",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
 				}	 
-				state("pickup") { //this:State
+				state("go_indoor") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("TROLLEY | PICKUP")
-						updateResourceRep( "TROLLEY:PICKUP"  
-						)
+						println("TROLLEY | GO INDOOR")
 						if( checkMsgContent( Term.createTerm("pickup(PATH_INDOOR)"), Term.createTerm("pickup(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
@@ -51,15 +49,23 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 												println(Path)
 								request("dopath", "dopath($Path)" ,"pathexec" )  
 						}
+					}
+					 transition(edgeName="t12",targetState="pickup",cond=whenReply("dopathdone"))
+					transition(edgeName="t13",targetState="pathfail",cond=whenReply("dopathfail"))
+				}	 
+				state("pickup") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
+						println("TROLLEY | PICKUP")
+						updateResourceRep( "TROLLEY:PICKUP"  
+						)
 						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								delay(500) 
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t12",targetState="pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t13",targetState="pathfail",cond=whenReply("dopathfail"))
-					transition(edgeName="t14",targetState="trasferimento",cond=whenRequest("trasf"))
+					 transition(edgeName="t24",targetState="trasferimento",cond=whenRequest("trasf"))
 				}	 
 				state("pathfail") { //this:State
 					action { //it:State
