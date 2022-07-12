@@ -18,7 +18,9 @@ QActor led context ctxled {
 	Transition t0 whenMsg cmd -> esegui_cmd
 	
 	State esegui_cmd {
+		printCurrentMessage
 		onMsg(cmd : cmd (CMD)){
+			
 			[#
 				Cmd = payloadArg(0)
 				println(Cmd)
@@ -37,12 +39,19 @@ QActor led context ctxled {
 			else {
 				Blink = true
 			}
-			#]
+			#] 
 		}
+		if [# Cmd == "on" #] {
+				updateResource [# "LED:ON" #]
+			}
+			if [# Cmd == "off" #] {
+				updateResource [# "LED:OFF" #]
+			}
 	}
 	Goto blink if [# Blink #] else wait_cmd
 	
 	State blink {
+		updateResource [# "LED:BLINK" #]
 		[#
 			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
 			println("LED | ON")	
