@@ -6,13 +6,14 @@ import unibo.actor22.annotations.Context
 
 
 class distanceFilter (name : String ) : ActorBasic( name ) {
-	val DLIMIT = 15
+	val DLIMIT = 75
 	val LimitDistance = DLIMIT
 	var sospeso = false
-	var conn = ConnTcp("127.0.0.1", 8058)
+	var conn = ConnTcp("127.0.0.1", 8078)
 
     override suspend fun actorBody(msg: IApplMessage) {
 		if( msg.msgSender() == name) return //AVOID to handle the event emitted by itself
+		if( msg.msgContent().contains("alarm") )return
   		elabData( msg )
  	}
 
@@ -34,8 +35,8 @@ class distanceFilter (name : String ) : ActorBasic( name ) {
 	 		val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($data)")
 			println("$tt $name |  emit m1= $m1")
 			//emit(m1)
-			//sospeso=true
-			val m2 = MsgUtil.buildDispatch(name, "stop", "stop($data)", "trolley")
+			sospeso=true
+			val m2 = MsgUtil.buildDispatch(name, "stop", "stop($data)", "wasteservice")
 		 	conn.forward(m2.toString())
 
 			//emitLocalStreamEvent( m1 ) //propagate event obstacle
@@ -45,7 +46,7 @@ class distanceFilter (name : String ) : ActorBasic( name ) {
 			println("$tt $name |  emit m1= $m1")
 			//emit(m1)
 			sospeso=false
-			val m2 = MsgUtil.buildDispatch(name, "resume", "resume($data)", "trolley")
+			val m2 = MsgUtil.buildDispatch(name, "resume", "resume($data)", "wasteservice")
 			//sendMessageToActor(m2, "trolley")
 			conn.forward(m2.toString())
 			//forward("resume", "resume($data)", "trolley")

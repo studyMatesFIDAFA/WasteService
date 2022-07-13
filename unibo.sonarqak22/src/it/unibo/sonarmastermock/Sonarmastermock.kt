@@ -18,8 +18,6 @@ class Sonarmastermock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( 
 				state("s0") { //this:State
 					action { //it:State
 						forward("sonaractivate", "info(ok)" ,"sonarqak22" ) 
-						delay(10000) 
-						forward("sonardeactivate", "info(ok)" ,"sonarqak22" ) 
 					}
 				}	 
 			}

@@ -18,12 +18,12 @@ Event noobstacle : noobstacle(V)
 Dispatch cmd : cmd (CMD)
 
 
-Context ctxanalisiproblema ip [host="127.0.0.1" port=8058]
-Context ctxrapsy ip [host="localhost" port=8080] 
+Context ctxanalisiproblema ip [host="127.0.0.1" port=8078]
+Context ctxraspy ip [host="localhost" port=8080] 
 
 //DATA SOURCES
-CodedQActor sonarsimulator  context ctxrapsy className "sonarSimulator"  
-CodedQActor sonardatasource context ctxrapsy className "sonarHCSR04Support2021"
+CodedQActor sonarsimulator  context ctxraspy className "sonarSimulator"  
+CodedQActor sonardatasource context ctxraspy className "sonarHCSR04Support2021"
 
 /*
  * Actors for the sonar-data handling pipe
@@ -31,11 +31,11 @@ CodedQActor sonardatasource context ctxrapsy className "sonarHCSR04Support2021"
  * we could do it by introducing an observer that emits the event
  */
 //CodedQActor datalogger     context ctxsonaronrasp className "dataLogger"
-CodedQActor datacleaner    context ctxrapsy className "dataCleaner"
-CodedQActor distancefilter context ctxrapsy className "distanceFilter"
+CodedQActor datacleaner    context ctxraspy className "dataCleaner"
+CodedQActor distancefilter context ctxraspy className "distanceFilter"
 
 
-QActor sonarqak22 context ctxrapsy{
+QActor sonarqak22 context ctxraspy{
 	[# val simulate       = true
 	   val sonarActorName = "sonarqak22"
 	   val usingDomain    = false
@@ -82,15 +82,15 @@ QActor sonarqak22 context ctxrapsy{
 	}
 }
 
-QActor sonarmastermock context ctxrapsy{
+QActor sonarmastermock context ctxraspy{
 	State s0 initial {
 		forward sonarqak22 -m sonaractivate : info(ok)
-		delay 10000 
-		forward sonarqak22 -m sonardeactivate : info(ok)
+//		delay 20000 
+//		forward sonarqak22 -m sonardeactivate : info(ok)
 	}
 } 
 
-QActor led context ctxrapsy {
+QActor led context ctxraspy {
 	[#
 		var Cmd = ""
 		var Blink = false
@@ -99,7 +99,7 @@ QActor led context ctxrapsy {
 	State wait_cmd initial {
 		printCurrentMessage
 		println("LED | WAIT CMD")
-		println("LED | OFF")
+		//println("LED | OFF")
 		// [# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd
@@ -138,6 +138,7 @@ QActor led context ctxrapsy {
 	Goto blink if [# Blink #] else wait_cmd
 	
 	State blink {
+		printCurrentMessage
 		updateResource [# "LED:BLINK" #]
 		[#
 			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")

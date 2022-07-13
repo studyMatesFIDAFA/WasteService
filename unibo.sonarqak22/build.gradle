@@ -109,7 +109,7 @@ eclipse {
 
 application {
     // Define the main class for the application.
-    mainClass = 'it.unibo.ctxsonarqak22.MainCtxsonarqak22Kt'
+    mainClass = 'it.unibo.ctxraspy.MainCtxraspyKt'
 }
 
  jar {

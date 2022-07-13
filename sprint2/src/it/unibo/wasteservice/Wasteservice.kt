@@ -25,6 +25,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				var Tipo_carico = ""
 				var Peso_carico = 0
 				var PercorsoCurr = ""
+				var Resumed = false
 				val XIndoor = WasteServiceConfigurator.XIndoor
 				val YIndoor = WasteServiceConfigurator.YIndoor
 				val XVetro =  WasteServiceConfigurator.XGBox
@@ -34,7 +35,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				val XHome = WasteServiceConfigurator.XHome
 				val YHome = WasteServiceConfigurator.YHome
 				
-				var LastState = "HOME"
+				var LastState = "home"
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
@@ -53,6 +54,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								forward("resume", "resume($LastState)" ,"trolley" ) 
+								delay(200) 
 						}
 					}
 					 transition(edgeName="t030",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
@@ -88,19 +90,31 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				state("attiva_indoor") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("WASTE SERVICE | ATTIVA INDOOR")
+						println("WASTE SERVICE | ATTIVA INDOOR $Resumed")
 						 
 									Trolley_home = false
-									LastState = "GO_INDOOR"
+									LastState = "go_indoor"
 									
-						forward("cmd", "cmd(BLINK)" ,"led" ) 
+						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								forward("resume", "resume($LastState)" ,"trolley" ) 
+								delay(200) 
+						}
+						forward("cmd", "cmd(blink)" ,"led" ) 
+						if(  Resumed==false  
+						 ){println("ATTIVA INDOOR RESUMED FALSE")
 						unibo.kotlin.planner22Util.setGoal( XIndoor, YIndoor  )
 						 PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
-									.replace(" ","")
-									.replace(",","")
-									.replace("[","")
-									.replace("]","")
+										.replace(" ","")
+										.replace(",","")
+										.replace("[","")
+										.replace("]","")
 						request("go_indoor", "go_indoor($PercorsoCurr)" ,"trolley" )  
+						}
+						else
+						 { Resumed = false  
+						 }
+						println("ATTIVA INDOOR ALGISE")
 					}
 					 transition(edgeName="t132",targetState="attiva_pickup",cond=whenReply("indoor_done"))
 					transition(edgeName="t133",targetState="stopped",cond=whenDispatch("stop"))
@@ -112,9 +126,15 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								forward("resume", "resume($LastState)" ,"trolley" ) 
+								forward("cmd", "cmd(blink)" ,"led" ) 
+								delay(200) 
 						}
-						request("pickup", "pickup(arg)" ,"trolley" )  
-						 LastState = "PICKUP" 
+						if( checkMsgContent( Term.createTerm("indoor_done(ok)"), Term.createTerm("indoor_done(ok)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								request("pickup", "pickup(arg)" ,"trolley" )  
+						}
+						 LastState = "pickup"
+									Resumed = false 
 					}
 					 transition(edgeName="t134",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
 					transition(edgeName="t135",targetState="stopped",cond=whenDispatch("stop"))
@@ -126,31 +146,34 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								forward("resume", "resume($LastState)" ,"trolley" ) 
+								forward("cmd", "cmd(blink)" ,"led" ) 
+								delay(200) 
 						}
 						if( checkMsgContent( Term.createTerm("pickup_done(ok)"), Term.createTerm("pickup_done(ok)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								answer("load_req", "loadaccept", "loadaccept($Tipo_carico,$Peso_carico)"   )  
+								unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+								unibo.kotlin.planner22Util.showCurrentRobotState(  )
+								
+												if (Tipo_carico  == "plastica") {
+														CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
+								unibo.kotlin.planner22Util.setGoal( XPlastica, YPlastica  )
+										
+												} else if (Tipo_carico  == "vetro") {
+														CurrentGlassWeight = CurrentGlassWeight + Peso_carico
+								unibo.kotlin.planner22Util.setGoal( XVetro, YVetro  )
+								
+												}
+											
+											PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+												.replace(" ","")
+												.replace(",","")
+												.replace("[","")
+												.replace("]","")
+								request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
 						}
-						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
-						unibo.kotlin.planner22Util.showCurrentRobotState(  )
-						
-									if (Tipo_carico  == "plastica") {
-											CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
-						unibo.kotlin.planner22Util.setGoal( XPlastica, YPlastica  )
-								
-									} else if (Tipo_carico  == "vetro") {
-											CurrentGlassWeight = CurrentGlassWeight + Peso_carico
-						unibo.kotlin.planner22Util.setGoal( XVetro, YVetro  )
-						
-									}
-								
-								PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
-									.replace(" ","")
-									.replace(",","")
-									.replace("[","")
-									.replace("]","")
-						request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
-						 LastState = "TRASFERIMENTO"  
+						 LastState = "trasferimento" 
+										Resumed = false 
 					}
 					 transition(edgeName="t236",targetState="attiva_deposito",cond=whenReply("trasf_done"))
 					transition(edgeName="t237",targetState="stopped",cond=whenDispatch("stop"))
@@ -162,11 +185,17 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								forward("resume", "resume($LastState)" ,"trolley" ) 
+								forward("cmd", "cmd(blink)" ,"led" ) 
+								delay(200) 
 						}
-						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
-						unibo.kotlin.planner22Util.showCurrentRobotState(  )
-						request("deposit", "deposit(arg)" ,"trolley" )  
-						 LastState = "DEPOSITO"  
+						if( checkMsgContent( Term.createTerm("trasf_done(ok)"), Term.createTerm("trasf_done(ok)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+								unibo.kotlin.planner22Util.showCurrentRobotState(  )
+								request("deposit", "deposit(arg)" ,"trolley" )  
+						}
+						 LastState = "deposito" 
+									Resumed = false  
 					}
 					 transition(edgeName="t338",targetState="controlla_req",cond=whenReply("deposit_done"))
 					transition(edgeName="t339",targetState="stopped",cond=whenDispatch("stop"))
@@ -175,10 +204,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | CONTROLLA NUOVE RICHIESTE")
-						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
-						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("resume", "resume($LastState)" ,"trolley" ) 
-						}
+						Resumed = false 
 						stateTimer = TimerActor("timer_controlla_req", 
 							scope, context!!, "local_tout_wasteservice_controlla_req", 100.toLong() )
 					}
@@ -190,17 +216,28 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | GO HOME")
-						unibo.kotlin.planner22Util.setGoal( XHome, YHome  )
+						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								forward("resume", "resume($LastState)" ,"trolley" ) 
+								forward("cmd", "cmd(blink)" ,"led" ) 
+								delay(200) 
+						}
+						if(  ! Resumed  
+						 ){unibo.kotlin.planner22Util.setGoal( XHome, YHome  )
 						
-								PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
-									.replace(" ","")
-									.replace(",","")
-									.replace("[","")
-									.replace("]","")
+									PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+										.replace(" ","")
+										.replace(",","")
+										.replace("[","")
+										.replace("]","")
 						request("ritorno_home", "ritorno_home($PercorsoCurr)" ,"trolley" )  
 						 
-									Trolley_home = true
-									LastState = "RITORNO_HOME"
+										Trolley_home = true
+										LastState = "ritorno_home"
+						}
+						else
+						 { Resumed = false 
+						 }
 					}
 					 transition(edgeName="t543",targetState="ritorno_done",cond=whenReply("home_done"))
 					transition(edgeName="t544",targetState="stopped",cond=whenDispatch("stop"))
@@ -208,14 +245,14 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				state("ritorno_done") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
+						if( checkMsgContent( Term.createTerm("home_done(ok)"), Term.createTerm("home_done(ok)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								forward("resume", "resume($LastState)" ,"trolley" ) 
+								forward("cmd", "cmd(off)" ,"led" ) 
+								unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
+								unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						}
-						forward("cmd", "cmd(OFF)" ,"led" ) 
-						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
-						unibo.kotlin.planner22Util.showCurrentRobotState(  )
-						 LastState = "HOME"  
+						 LastState = "home" 
+									Resumed = false 
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
 				}	 
@@ -224,19 +261,20 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | STOPPED")
 						forward("stop", "stop(STOP)" ,"trolley" ) 
-						forward("cmd", "cmd(ON)" ,"led" ) 
+						forward("cmd", "cmd(on)" ,"led" ) 
+						 Resumed = true  
 					}
-					 transition(edgeName="t645",targetState="attesa_load_req",cond=whenDispatchGuarded("resume",{ LastState == "HOME"  
+					 transition(edgeName="t645",targetState="attesa_load_req",cond=whenDispatchGuarded("resume",{ LastState == "home"  
 					}))
-					transition(edgeName="t646",targetState="attiva_pickup",cond=whenDispatchGuarded("resume",{ LastState == "GO_INDOOR"  
+					transition(edgeName="t646",targetState="attiva_indoor",cond=whenDispatchGuarded("resume",{ LastState == "go_indoor"  
 					}))
-					transition(edgeName="t647",targetState="attiva_trasferimento",cond=whenDispatchGuarded("resume",{ LastState == "PICKUP"  
+					transition(edgeName="t647",targetState="attiva_pickup",cond=whenDispatchGuarded("resume",{ LastState == "pickup"  
 					}))
-					transition(edgeName="t648",targetState="attiva_deposito",cond=whenDispatchGuarded("resume",{ LastState == "TRASFERIMENTO"  
+					transition(edgeName="t648",targetState="attiva_trasferimento",cond=whenDispatchGuarded("resume",{ LastState == "trasferimento"  
 					}))
-					transition(edgeName="t649",targetState="controlla_req",cond=whenDispatchGuarded("resume",{ LastState == "DEPOSITO"  
+					transition(edgeName="t649",targetState="attiva_deposito",cond=whenDispatchGuarded("resume",{ LastState == "deposito"  
 					}))
-					transition(edgeName="t650",targetState="ritorno_done",cond=whenDispatchGuarded("resume",{ LastState == "RITORNO_HOME"  
+					transition(edgeName="t650",targetState="go_home",cond=whenDispatchGuarded("resume",{ LastState == "ritorno_home"  
 					}))
 				}	 
 			}

@@ -1,0 +1,494 @@
+System analisiproblema
+
+Request load_req : load_req(TYPE,WEIGHT)
+Reply loadaccept : loadaccept(TYPE,WEIGHT)
+Reply loadrejected : loadrejected(TYPE,WEIGHT)
+
+Request go_indoor : go_indoor(PATH_INDOOR)
+Reply indoor_done : indoor_done(ok)
+
+Request pickup : pickup(arg)
+Reply pickup_done : pickup_done(ok)
+
+Request trasf : trasf(PATH)
+Reply trasf_done : trasf_done(ok)
+
+Request deposit : deposit(arg)
+Reply deposit_done : deposit_done(ok)
+
+Request ritorno_home: ritorno_home(PATH_HOME)
+Reply home_done: home_done(ok)
+
+//Per path executor
+Request  dopath    : dopath( PATH  )
+Reply dopathdone   : dopathdone( ARG )
+Reply dopathfail   : dopathfail( ARG )
+
+//Comando stop/resume
+Dispatch stop : stop(AGR)
+Dispatch resume : resume(STATE)
+
+//Evento alarm
+Event alarm : alarm(STOP)
+
+//Comando led
+Dispatch cmd : cmd (CMD)
+
+ 
+Context ctxraspy ip [host="127.0.0.1" port=8080]
+Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
+
+Context ctxanalisiproblema ip [host="localhost" port=8078]
+ 
+
+ExternalQActor pathexec context ctxbasicrobot
+ExternalQActor led context ctxraspy
+
+QActor trolley context ctxanalisiproblema {
+	
+	[#
+		var Path = ""
+		val DelayIndoor=2000L
+		val DelayBox=3000L
+		val DelayHome=2000L
+		
+		var RemainPath = ""
+		var LastState = ""
+	#]
+	
+	State start initial{
+		printCurrentMessage
+		println("TROLLEY | START")
+	}
+	Goto home
+	
+	State home{
+		printCurrentMessage
+		println("TROLLEY | HOME")
+		println("TROLLEY | Attendo un compito dal Waste Service")
+		updateResource [# "TROLLEY:HOME" #]
+//		onMsg(ritorno_home : ritorno_home(PATH_HOME)){
+//			[#
+//				Path = payloadArg(0)
+//			#]
+//			request pathexec -m dopath : dopath($Path) 
+//		}
+	}
+	Transition t0 whenRequest go_indoor -> go_indoor
+				whenRequest ritorno_home -> ritorno_home
+				whenMsg stop -> stopped
+	
+	State go_indoor{
+		printCurrentMessage
+		println("TROLLEY | GO INDOOR")
+		updateResource [# "TROLLEY:GO_INDOOR" #]
+		onMsg(go_indoor:go_indoor(PATH)){
+			[#
+				Path = payloadArg(0)
+				println(Path)
+			#]
+			request pathexec -m dopath : dopath($Path) 
+		}
+		onMsg (dopathdone   : dopathdone( ARG )) {
+			replyTo go_indoor with indoor_done : indoor_done(ok)
+		}
+	}Transition t1 whenReply dopathdone -> go_indoor
+				   whenReply dopathfail -> pathfail
+				   whenMsg stop -> alarm 
+				   whenRequest pickup -> pickup
+				
+	State pickup{
+		printCurrentMessage
+		println("TROLLEY | PICKUP")
+		updateResource [# "TROLLEY:PICKUP" #]
+		delay 500
+		replyTo pickup with pickup_done : pickup_done(ok)
+	}
+	Transition t2 whenRequest trasf -> trasferimento
+				  whenMsg stop -> stopped
+	
+				  
+	State pathfail {
+		printCurrentMessage
+		println("TROLLEY | PATH FAIL : ERRORE!!!!")
+	}
+				  
+	
+	State trasferimento{
+		printCurrentMessage
+		println("TROLLEY | TRASFERIMENTO ")
+		updateResource [# "TROLLEY:TRASFERIMENTO" #]
+		onMsg(trasf : trasf(PATH)){
+			[#
+				Path = payloadArg(0)
+				println(Path)
+			#]
+			request pathexec -m dopath : dopath($Path) 
+		}
+		
+		onMsg (dopathdone   : dopathdone( ARG )) {
+			delay 500
+			replyTo trasf with trasf_done : trasf_done(ok)
+		}
+		
+		
+	}
+	Transition t3 whenReply dopathdone -> trasferimento
+				  whenReply dopathfail -> pathfail
+				  whenRequest deposit -> deposito
+				  whenMsg stop -> alarm
+	
+	State deposito {
+		printCurrentMessage
+		println("TROLLEY | DEPOSITO")
+		updateResource [# "TROLLEY:DEPOSITO" #]
+		onMsg(deposit : deposit(arg)) {
+			println("TROLLEY | Ricevuto deposit")
+			delay 500
+			replyTo deposit with deposit_done : deposit_done(ok)
+		}
+		
+	}
+	Transition t4
+		whenRequest ritorno_home -> ritorno_home
+		whenRequest go_indoor -> go_indoor
+		whenMsg stop -> stopped
+			
+				
+	State ritorno_home{
+		printCurrentMessage
+		println("TROLLEY | RITORNO HOME")
+		updateResource [# "TROLLEY:RITORNO_HOME" #]
+		onMsg(ritorno_home : ritorno_home(PATH_HOME)){
+			[#
+				Path = payloadArg(0)
+			#]
+			request pathexec -m dopath : dopath($Path) 
+		}
+		onMsg (dopathdone   : dopathdone( ARG )) {
+			println("Trolley home ok")
+			replyTo ritorno_home with home_done : home_done(ok)
+			updateResource [# "TROLLEY:HOME" #]
+		}
+		
+		//delayVar DelayHome
+	}
+	Transition t5 whenReply dopathdone -> ritorno_home
+				  whenReply dopathfail -> pathfail
+				  whenRequest pickup -> pickup
+				  whenMsg stop -> alarm
+				  
+	State alarm {
+		printCurrentMessage
+		println("TROLLEY | ALARM")
+		emit alarm : alarm(STOP)	
+	}
+	Transition t6 whenReply dopathdone -> stopped //Nel caso in cui il trolley abbia già completato un percorso, quindi
+	//non si può ricevere un dopathfail
+					whenReply dopathfail -> savepath
+					
+	
+	State savepath {
+		printCurrentMessage
+		onMsg(dopathfail: dopathfail(PATH)){
+			[#
+				RemainPath = payloadArg(0)
+			#]	
+		}
+		println("TROLLEY | SAVE PATH: $RemainPath")
+	} 
+	Goto stopped
+	
+	State stopped {
+		printCurrentMessage
+		println("TROLLEY | STOPPED")
+		updateResource [# "TROLLEY:STOPPED" #]
+	}
+	Transition t7 whenMsg resume -> resume
+	
+	State resume {
+		printCurrentMessage
+		println("TROLLEY | RESUME")
+		onMsg(resume : resume(STATE)){
+			[#
+				LastState = payloadArg(0)
+			#]	
+		}
+		println("TROLLEY | $LastState")
+		
+		//if [# RemainPath != "" #]{
+		request pathexec -m dopath : dopath($RemainPath) 
+		//}
+		[# RemainPath = "" #]
+		
+	}
+	Transition t8 whenReply dopathdone and [# LastState == "home" #] -> home
+				  whenReply dopathdone and [# LastState == "go_indoor" #] -> pickup
+				  whenReply dopathdone and [# LastState == "pickup" #] -> trasferimento
+				  whenReply dopathdone and [# LastState == "trasferimento" #] -> deposito
+				  whenReply dopathdone and [# LastState == "deposito" #] -> deposito
+				  whenReply dopathdone and [# LastState == "ritorno_home" #] -> home
+				  whenReply dopathfail -> pathfail
+				  
+}
+
+QActor wasteservice context ctxanalisiproblema{
+	[#
+		WasteServiceConfigurator.setTheConfiguration("./resources/WasteServiceConfig.json")
+		var MAXPB = WasteServiceConfigurator.MAXPB
+		var MAXGB = WasteServiceConfigurator.MAXGB
+		var CurrentPlasticWeight=WasteServiceConfigurator.CurPWeight
+		var CurrentGlassWeight=WasteServiceConfigurator.CurGWeight
+		var Trolley_home=true	
+		var Carico_accettato = false
+		var Tipo_carico = ""
+		var Peso_carico = 0
+		var PercorsoCurr = ""
+		val XIndoor = WasteServiceConfigurator.XIndoor
+		val YIndoor = WasteServiceConfigurator.YIndoor
+		val XVetro =  WasteServiceConfigurator.XGBox
+		val YVetro =  WasteServiceConfigurator.YGBox
+		val XPlastica = WasteServiceConfigurator.XPBox		
+		val YPlastica = WasteServiceConfigurator.YPBox
+		val XHome = WasteServiceConfigurator.XHome
+		val YHome = WasteServiceConfigurator.YHome
+		
+		var LastState = "home"
+	#]
+	
+	State start initial{
+		printCurrentMessage
+		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty" )	
+   		run unibo.kotlin.planner22Util.initAI() 
+  		run unibo.kotlin.planner22Util.showCurrentRobotState()
+		println("WASTE SERVICE | START")
+	}
+	Goto attesa_load_req
+	
+	State attesa_load_req{
+		printCurrentMessage
+		println("WASTE SERVICE | ATTESA LOAD REQUEST(CAMION)")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+	}
+	Transition t0 whenRequest load_req -> gestisci_richiesta
+				  whenMsg stop -> stopped
+	
+	State gestisci_richiesta{
+		printCurrentMessage
+		println("WASTE SERVICE | GESTIONE RICHIESTA")
+		onMsg(load_req : load_req(TYPE, WEIGHT)){[#
+				Tipo_carico = payloadArg(0)
+				Peso_carico = payloadArg(1).toInt()
+				if (Tipo_carico  == "plastica") {
+					Carico_accettato = (CurrentPlasticWeight + Peso_carico <= MAXPB)
+				} else if (Tipo_carico  == "vetro") {
+					Carico_accettato = ( CurrentGlassWeight + Peso_carico <= MAXGB)
+				} else {
+					Carico_accettato = false
+					println("WASTE SERVICE | Tipo sbagliato")
+				}
+			#]
+			if [# ! Carico_accettato #] {
+				replyTo load_req with loadrejected : loadrejected($Tipo_carico,$Peso_carico)
+			}
+		}
+	}
+	Goto attiva_indoor if [# Carico_accettato #] else go_home 
+	
+	State attiva_indoor {
+		printCurrentMessage
+		println("WASTE SERVICE | ATTIVA INDOOR")
+		[# 
+			Trolley_home = false
+			LastState = "go_indoor"
+			
+		#]
+		forward led -m cmd : cmd(blink)
+		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor) 
+		[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+		#]  
+		request trolley -m go_indoor : go_indoor($PercorsoCurr)  // chiedo al trolley di prelevare il carico
+	}
+	Transition t1 whenReply indoor_done -> attiva_pickup
+				  whenMsg stop -> stopped
+	
+	State attiva_pickup{
+		printCurrentMessage
+		println("WASTE SERVICE | ATTIVA PICKUP")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+		request trolley -m pickup : pickup(arg)
+		[# LastState = "pickup"#]
+		
+	}
+	Transition t1 whenReply pickup_done -> attiva_trasferimento // trolley ha prelevato il carico da INDOOR
+				  whenMsg stop -> stopped
+	
+	State attiva_trasferimento{ 
+		printCurrentMessage
+		println("WASTE SERVICE | ATTIVA TRASFERIMENTO (IL CAMION LIBERA INDOOR)")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+		onMsg (pickup_done: pickup_done(ok)){
+			replyTo load_req with loadaccept : loadaccept($Tipo_carico, $Peso_carico)	
+		}
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
+		[#
+			if (Tipo_carico  == "plastica") {
+					CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
+					#]
+					run unibo.kotlin.planner22Util.setGoal(XPlastica,YPlastica) 
+			[#		
+			} else if (Tipo_carico  == "vetro") {
+					CurrentGlassWeight = CurrentGlassWeight + Peso_carico
+					#]
+					run unibo.kotlin.planner22Util.setGoal(XVetro,YVetro) 
+					[#
+			}
+		
+		PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+		#]  
+		
+		request trolley -m trasf : trasf($PercorsoCurr)
+		[# LastState = "trasferimento" #]
+	}
+	Transition t2 whenReply trasf_done -> attiva_deposito
+			      whenMsg stop -> stopped
+	
+	State attiva_deposito {
+		printCurrentMessage
+		println("WASTE SERVICE | ATTIVA DEPOSITO")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
+		request trolley -m deposit : deposit(arg)
+		[# LastState = "deposito" #]
+	}
+	Transition t3 whenReply deposit_done -> controlla_req
+				  whenMsg stop -> stopped
+	
+	
+	State controlla_req{
+		printCurrentMessage
+		println("WASTE SERVICE | CONTROLLA NUOVE RICHIESTE")
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+	}
+	Transition t4 whenTime 100 -> go_home
+				whenRequest load_req -> gestisci_richiesta
+				whenMsg stop -> stopped
+
+
+	State go_home {
+		printCurrentMessage
+		println("WASTE SERVICE | GO HOME")
+		run unibo.kotlin.planner22Util.setGoal(XHome,YHome) 
+		[#
+		PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString() 
+			.replace(" ","")
+			.replace(",","")
+			.replace("[","")
+			.replace("]","")
+			#]
+		request trolley -m ritorno_home: ritorno_home($PercorsoCurr)
+		[# 
+			Trolley_home = true
+			LastState = "ritorno_home"
+		#]
+	}
+	Transition t5 whenReply home_done -> ritorno_done
+				   whenMsg stop -> stopped
+	
+	State ritorno_done{
+		printCurrentMessage
+		onMsg (resume : resume(STATE)){
+			forward trolley -m resume : resume ($LastState)
+			delay 200
+		}
+		forward led -m cmd : cmd(off)
+		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
+		run  unibo.kotlin.planner22Util.showCurrentRobotState()
+		[# LastState = "home" #]
+	}
+	Goto attesa_load_req
+	
+	State stopped {
+		printCurrentMessage
+		println("WASTE SERVICE | STOPPED")
+		forward trolley -m stop : stop(STOP)
+		forward led -m cmd : cmd(on)
+	}
+	Transition t6 whenMsg resume and [# LastState == "home" #] -> attesa_load_req
+				  whenMsg resume and [# LastState == "go_indoor" #] -> attiva_pickup
+				  whenMsg resume and [# LastState == "pickup" #] -> attiva_trasferimento
+				  whenMsg resume and [# LastState == "trasferimento" #] -> attiva_deposito
+				  whenMsg resume and [# LastState == "deposito" #] -> controlla_req
+				  whenMsg resume and [# LastState == "ritorno_home" #] -> ritorno_done
+	
+}
+
+
+// WASTE TRUCK MOCK
+QActor waste_truck_mock context ctxanalisiproblema {
+	
+	State start initial {
+		printCurrentMessage
+		println("WASTE_TRUCK | INIT")
+	}
+	Goto indoor_request
+	
+	State indoor_request {
+		printCurrentMessage
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request wasteservice -m load_req : load_req(plastica,9)
+		
+	}
+	
+	Transition t0 whenReply loadaccept -> accepted
+					whenReply loadrejected -> altrarichiesta
+	
+	State accepted {
+		printCurrentMessage
+		println("Request accepted")
+	}Goto altrarichiesta
+	
+	State altrarichiesta{
+		printCurrentMessage
+		//delay 10000
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request wasteservice -m load_req : load_req(vetro,1)
+	}
+	Transition t1 whenReply loadaccept -> fine
+					whenReply loadrejected -> rejected
+	
+	State fine{
+		printCurrentMessage
+	}
+	State rejected {
+		printCurrentMessage
+		println("Request rejected")
+	}
+}
+
+

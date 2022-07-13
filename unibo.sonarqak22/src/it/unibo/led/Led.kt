@@ -22,7 +22,6 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("LED | WAIT CMD")
-						println("LED | OFF")
 					}
 					 transition(edgeName="t06",targetState="esegui_cmd",cond=whenDispatch("cmd"))
 				}	 
@@ -66,6 +65,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				}	 
 				state("blink") { //this:State
 					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
 						updateResourceRep( "LED:BLINK"  
 						)
 						

@@ -1,9 +1,9 @@
 %====================================================================================
 % analisiproblema description   
 %====================================================================================
+context(ctxraspy, "127.0.0.1",  "TCP", "8080").
 context(ctxbasicrobot, "127.0.0.1",  "TCP", "8020").
 context(ctxanalisiproblema, "localhost",  "TCP", "8078").
-context(ctxraspy, "127.0.0.1",  "TCP", "8080").
  qactor( pathexec, ctxbasicrobot, "external").
   qactor( led, ctxraspy, "external").
   qactor( trolley, ctxanalisiproblema, "it.unibo.trolley.Trolley").
