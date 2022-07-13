@@ -28,8 +28,8 @@ class Waste_truck_mock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("WASTE_TRUCK | richiesta di prelievo carico")
 						request("load_req", "load_req(plastica,9)" ,"wasteservice" )  
 					}
-					 transition(edgeName="t050",targetState="accepted",cond=whenReply("loadaccept"))
-					transition(edgeName="t051",targetState="altrarichiesta",cond=whenReply("loadrejected"))
+					 transition(edgeName="t051",targetState="accepted",cond=whenReply("loadaccept"))
+					transition(edgeName="t052",targetState="altrarichiesta",cond=whenReply("loadrejected"))
 				}	 
 				state("accepted") { //this:State
 					action { //it:State
@@ -44,8 +44,8 @@ class Waste_truck_mock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 						println("WASTE_TRUCK | richiesta di prelievo carico")
 						request("load_req", "load_req(vetro,1)" ,"wasteservice" )  
 					}
-					 transition(edgeName="t152",targetState="fine",cond=whenReply("loadaccept"))
-					transition(edgeName="t153",targetState="rejected",cond=whenReply("loadrejected"))
+					 transition(edgeName="t153",targetState="fine",cond=whenReply("loadaccept"))
+					transition(edgeName="t154",targetState="rejected",cond=whenReply("loadrejected"))
 				}	 
 				state("fine") { //this:State
 					action { //it:State

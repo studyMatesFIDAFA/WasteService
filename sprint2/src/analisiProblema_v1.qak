@@ -68,7 +68,7 @@ QActor trolley context ctxanalisiproblema {
 //			request pathexec -m dopath : dopath($Path) 
 //		}
 	}
-	Transition t0 whenRequest pickup -> go_indoor
+	Transition t0 whenRequest go_indoor -> go_indoor
 				whenRequest ritorno_home -> ritorno_home
 				whenMsg stop -> stopped
 	
@@ -76,7 +76,7 @@ QActor trolley context ctxanalisiproblema {
 		printCurrentMessage
 		println("TROLLEY | GO INDOOR")
 		updateResource [# "TROLLEY:GO_INDOOR" #]
-		onMsg(pickup:pickup(PATH)){
+		onMsg(go_indoor:go_indoor(PATH)){
 			[#
 				Path = payloadArg(0)
 				println(Path)
@@ -145,7 +145,7 @@ QActor trolley context ctxanalisiproblema {
 	}
 	Transition t4
 		whenRequest ritorno_home -> ritorno_home
-		whenRequest pickup -> pickup
+		whenRequest go_indoor -> go_indoor
 		whenMsg stop -> stopped
 			
 				
@@ -177,13 +177,16 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | ALARM")
 		emit alarm : alarm(STOP)	
 	}
-	Transition t6 whenReply dopathfail -> savepath
+	Transition t6 whenTime 500 -> stopped //Nel caso in cui il trolley abbia già completato un percorso, quindi
+	//non si può ricevere un dopathfail
+					whenReply dopathfail -> savepath
+					
 	
 	State savepath {
 		printCurrentMessage
 		onMsg(dopathfail: dopathfail(PATH)){
 			[#
-				$RemainPath = payloadArg(0)
+				RemainPath = payloadArg(0)
 			#]	
 		}
 		println("TROLLEY | SAVE PATH: $RemainPath")
@@ -202,10 +205,10 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | RESUME")
 		onMsg(resume : resume(STATE)){
 			[#
-				$LastState = payloadArg(0)
+				LastState = payloadArg(0)
 			#]	
 		}
-		println("TROLLEY | $StateResume")
+		println("TROLLEY | $LastState")
 		
 		//if [# RemainPath != "" #]{
 		request pathexec -m dopath : dopath($RemainPath) 
@@ -249,7 +252,7 @@ QActor wasteservice context ctxanalisiproblema{
 	
 	State start initial{
 		printCurrentMessage
-		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	
+		run unibo.kotlin.planner22Util.loadRoomMap( "./mapRoomEmpty.txt" )	
    		run unibo.kotlin.planner22Util.initAI() 
   		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")

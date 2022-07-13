@@ -39,7 +39,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt"  )
+						unibo.kotlin.planner22Util.loadRoomMap( "./mapRoomEmpty.txt"  )
 						unibo.kotlin.planner22Util.initAI(  )
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						println("WASTE SERVICE | START")
@@ -55,8 +55,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 								forward("resume", "resume($LastState)" ,"trolley" ) 
 						}
 					}
-					 transition(edgeName="t029",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
-					transition(edgeName="t030",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t030",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					transition(edgeName="t031",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("gestisci_richiesta") { //this:State
 					action { //it:State
@@ -101,8 +101,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									.replace("]","")
 						request("go_indoor", "go_indoor($PercorsoCurr)" ,"trolley" )  
 					}
-					 transition(edgeName="t131",targetState="attiva_pickup",cond=whenReply("indoor_done"))
-					transition(edgeName="t132",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t132",targetState="attiva_pickup",cond=whenReply("indoor_done"))
+					transition(edgeName="t133",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("attiva_pickup") { //this:State
 					action { //it:State
@@ -115,8 +115,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						request("pickup", "pickup(arg)" ,"trolley" )  
 						 LastState = "PICKUP" 
 					}
-					 transition(edgeName="t133",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
-					transition(edgeName="t134",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t134",targetState="attiva_trasferimento",cond=whenReply("pickup_done"))
+					transition(edgeName="t135",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("attiva_trasferimento") { //this:State
 					action { //it:State
@@ -151,8 +151,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						request("trasf", "trasf($PercorsoCurr)" ,"trolley" )  
 						 LastState = "TRASFERIMENTO"  
 					}
-					 transition(edgeName="t235",targetState="attiva_deposito",cond=whenReply("trasf_done"))
-					transition(edgeName="t236",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t236",targetState="attiva_deposito",cond=whenReply("trasf_done"))
+					transition(edgeName="t237",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("attiva_deposito") { //this:State
 					action { //it:State
@@ -167,8 +167,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						request("deposit", "deposit(arg)" ,"trolley" )  
 						 LastState = "DEPOSITO"  
 					}
-					 transition(edgeName="t337",targetState="controlla_req",cond=whenReply("deposit_done"))
-					transition(edgeName="t338",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t338",targetState="controlla_req",cond=whenReply("deposit_done"))
+					transition(edgeName="t339",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("controlla_req") { //this:State
 					action { //it:State
@@ -181,9 +181,9 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						stateTimer = TimerActor("timer_controlla_req", 
 							scope, context!!, "local_tout_wasteservice_controlla_req", 100.toLong() )
 					}
-					 transition(edgeName="t439",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
-					transition(edgeName="t440",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
-					transition(edgeName="t441",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t440",targetState="go_home",cond=whenTimeout("local_tout_wasteservice_controlla_req"))   
+					transition(edgeName="t441",targetState="gestisci_richiesta",cond=whenRequest("load_req"))
+					transition(edgeName="t442",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("go_home") { //this:State
 					action { //it:State
@@ -201,8 +201,8 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									Trolley_home = true
 									LastState = "RITORNO_HOME"
 					}
-					 transition(edgeName="t542",targetState="ritorno_done",cond=whenReply("home_done"))
-					transition(edgeName="t543",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t543",targetState="ritorno_done",cond=whenReply("home_done"))
+					transition(edgeName="t544",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("ritorno_done") { //this:State
 					action { //it:State
@@ -223,17 +223,17 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("WASTE SERVICE | STOPPED")
 						forward("stop", "stop(STOP)" ,"trolley" ) 
 					}
-					 transition(edgeName="t644",targetState="attesa_load_req",cond=whenDispatchGuarded("resume",{ LastState == "HOME"  
+					 transition(edgeName="t645",targetState="attesa_load_req",cond=whenDispatchGuarded("resume",{ LastState == "HOME"  
 					}))
-					transition(edgeName="t645",targetState="attiva_pickup",cond=whenDispatchGuarded("resume",{ LastState == "GO_INDOOR"  
+					transition(edgeName="t646",targetState="attiva_pickup",cond=whenDispatchGuarded("resume",{ LastState == "GO_INDOOR"  
 					}))
-					transition(edgeName="t646",targetState="attiva_trasferimento",cond=whenDispatchGuarded("resume",{ LastState == "PICKUP"  
+					transition(edgeName="t647",targetState="attiva_trasferimento",cond=whenDispatchGuarded("resume",{ LastState == "PICKUP"  
 					}))
-					transition(edgeName="t647",targetState="attiva_deposito",cond=whenDispatchGuarded("resume",{ LastState == "TRASFERIMENTO"  
+					transition(edgeName="t648",targetState="attiva_deposito",cond=whenDispatchGuarded("resume",{ LastState == "TRASFERIMENTO"  
 					}))
-					transition(edgeName="t648",targetState="controlla_req",cond=whenDispatchGuarded("resume",{ LastState == "DEPOSITO"  
+					transition(edgeName="t649",targetState="controlla_req",cond=whenDispatchGuarded("resume",{ LastState == "DEPOSITO"  
 					}))
-					transition(edgeName="t649",targetState="ritorno_done",cond=whenDispatchGuarded("resume",{ LastState == "RITORNO_HOME"  
+					transition(edgeName="t650",targetState="ritorno_done",cond=whenDispatchGuarded("resume",{ LastState == "RITORNO_HOME"  
 					}))
 				}	 
 			}

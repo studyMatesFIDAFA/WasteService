@@ -12,12 +12,17 @@ import static org.junit.Assert.assertTrue;
 public class TestAnalisiRequisiti {
     @Before
     public void up() {
+        /*
         new Thread(){
             public void run(){
                 it.unibo.ctxanalisiproblema.MainCtxanalisirequisitiKt.main();
             }
         }.start();
+
+
         waitForApplStarted();
+
+         */
     }
 
     protected void waitForApplStarted(){
@@ -34,7 +39,7 @@ public class TestAnalisiRequisiti {
         System.out.println("TEST STARTS");
         String truckRequestStr = "msg(load_req, request, algise,wasteservice,load_req(vetro,2),1)";
         try{
-            ConnTcp connTcp   = new ConnTcp("localhost", 8050);
+            ConnTcp connTcp   = new ConnTcp("localhost", 8078);
             String answer     = connTcp.request(truckRequestStr);
             System.out.println("Risposta=" + answer );
             connTcp.close();
@@ -46,7 +51,7 @@ public class TestAnalisiRequisiti {
         }
 
     }
-
+    /*
     @Test
     public void loadReject(){
         System.out.println("TEST STARTS");
@@ -63,7 +68,7 @@ public class TestAnalisiRequisiti {
 
         }
     }
-
+*/
     @After
     public void down() {
         System.out.println("FINE TEST ");

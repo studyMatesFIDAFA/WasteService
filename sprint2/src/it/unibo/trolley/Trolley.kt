@@ -38,7 +38,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:HOME"  
 						)
 					}
-					 transition(edgeName="t00",targetState="go_indoor",cond=whenRequest("pickup"))
+					 transition(edgeName="t00",targetState="go_indoor",cond=whenRequest("go_indoor"))
 					transition(edgeName="t01",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
 					transition(edgeName="t02",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
@@ -48,7 +48,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("TROLLEY | GO INDOOR")
 						updateResourceRep( "TROLLEY:GO_INDOOR"  
 						)
-						if( checkMsgContent( Term.createTerm("pickup(arg)"), Term.createTerm("pickup(PATH)"), 
+						if( checkMsgContent( Term.createTerm("go_indoor(PATH_INDOOR)"), Term.createTerm("go_indoor(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
 												Path = payloadArg(0)
@@ -121,7 +121,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 					}
 					 transition(edgeName="t413",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
-					transition(edgeName="t414",targetState="pickup",cond=whenRequest("pickup"))
+					transition(edgeName="t414",targetState="go_indoor",cond=whenRequest("go_indoor"))
 					transition(edgeName="t415",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("ritorno_home") { //this:State
@@ -154,8 +154,11 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | ALARM")
 						emit("alarm", "alarm(STOP)" ) 
+						stateTimer = TimerActor("timer_alarm", 
+							scope, context!!, "local_tout_trolley_alarm", 500.toLong() )
 					}
-					 transition(edgeName="t620",targetState="savepath",cond=whenReply("dopathfail"))
+					 transition(edgeName="t620",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
+					transition(edgeName="t621",targetState="savepath",cond=whenReply("dopathfail"))
 				}	 
 				state("savepath") { //this:State
 					action { //it:State
@@ -163,7 +166,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(PATH)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												$RemainPath = payloadArg(0)
+												RemainPath = payloadArg(0)
 						}
 						println("TROLLEY | SAVE PATH: $RemainPath")
 					}
@@ -176,7 +179,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:STOPPED"  
 						)
 					}
-					 transition(edgeName="t721",targetState="resume",cond=whenDispatch("resume"))
+					 transition(edgeName="t722",targetState="resume",cond=whenDispatch("resume"))
 				}	 
 				state("resume") { //this:State
 					action { //it:State
@@ -185,25 +188,25 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						if( checkMsgContent( Term.createTerm("resume(STATE)"), Term.createTerm("resume(STATE)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								
-												$LastState = payloadArg(0)
+												LastState = payloadArg(0)
 						}
-						println("TROLLEY | $StateResume")
+						println("TROLLEY | $LastState")
 						request("dopath", "dopath($RemainPath)" ,"pathexec" )  
 						 RemainPath = ""  
 					}
-					 transition(edgeName="t822",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "HOME"  
+					 transition(edgeName="t823",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "HOME"  
 					}))
-					transition(edgeName="t823",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "GO_INDOOR"  
+					transition(edgeName="t824",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "GO_INDOOR"  
 					}))
-					transition(edgeName="t824",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "PICKUP"  
+					transition(edgeName="t825",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "PICKUP"  
 					}))
-					transition(edgeName="t825",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "TRASFERIMENTO"  
+					transition(edgeName="t826",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "TRASFERIMENTO"  
 					}))
-					transition(edgeName="t826",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "DEPOSITO"  
+					transition(edgeName="t827",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "DEPOSITO"  
 					}))
-					transition(edgeName="t827",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "RITORNO_HOME"  
+					transition(edgeName="t828",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "RITORNO_HOME"  
 					}))
-					transition(edgeName="t828",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t829",targetState="pathfail",cond=whenReply("dopathfail"))
 				}	 
 			}
 		}
