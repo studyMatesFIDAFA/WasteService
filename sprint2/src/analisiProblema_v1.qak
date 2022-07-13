@@ -31,12 +31,17 @@ Dispatch resume : resume(STATE)
 //Evento alarm
 Event alarm : alarm(STOP)
 
+//Comando led
+Dispatch cmd : cmd (CMD)
+
  
 
 Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
 Context ctxanalisiproblema   ip [host="localhost" port=8078]
+Context ctxraspy ip [host="127.0.0.1" port=8080] 
 
 ExternalQActor pathexec context ctxbasicrobot
+ExternalQActor led context ctxraspy
 
 QActor trolley context ctxanalisiproblema {
 	
@@ -299,6 +304,7 @@ QActor wasteservice context ctxanalisiproblema{
 			LastState = "GO_INDOOR"
 			
 		#]
+		forward led -m cmd : cmd(BLINK)
 		run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor) 
 		[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 			.replace(" ","")
@@ -413,6 +419,7 @@ QActor wasteservice context ctxanalisiproblema{
 		onMsg (resume : resume(STATE)){
 			forward trolley -m resume : resume ($LastState)
 		}
+		forward led -m cmd : cmd(OFF)
 		run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )
 		run  unibo.kotlin.planner22Util.showCurrentRobotState()
 		[# LastState = "HOME" #]
@@ -423,6 +430,7 @@ QActor wasteservice context ctxanalisiproblema{
 		printCurrentMessage
 		println("WASTE SERVICE | STOPPED")
 		forward trolley -m stop : stop(STOP)
+		forward led -m cmd : cmd(ON)
 	}
 	Transition t6 whenMsg resume and [# LastState == "HOME" #] -> attesa_load_req
 				  whenMsg resume and [# LastState == "GO_INDOOR" #] -> attiva_pickup

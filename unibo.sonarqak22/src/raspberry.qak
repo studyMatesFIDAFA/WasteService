@@ -3,21 +3,27 @@
  * Usa MQTT
  */
 
-System /*-trace*/ sonarqak22
+System /*-trace*/ raspberry
 //mqttBroker "broker.hivemq.com" : 1883  eventTopic "unibo/nat/radar"
- 
+
+//SONAR 
 Dispatch sonaractivate   : info(ARG)
 Dispatch sonardeactivate : info(ARG)
 Event    sonar           : distance( V )   //emitted by sonarSimulator or sonardatasource	
 Event    sonardata       : distance( V )   //for the application level
 Event obstacle : obstacle(V)
 Event noobstacle : noobstacle(V)
+
+// LED
+Dispatch cmd : cmd (CMD)
+
+
 Context ctxanalisiproblema ip [host="127.0.0.1" port=8058]
-Context ctxsonarqak22 ip [host="localhost" port=8080] 
+Context ctxrapsy ip [host="localhost" port=8080] 
 
 //DATA SOURCES
-CodedQActor sonarsimulator  context ctxsonarqak22 className "sonarSimulator"  
-CodedQActor sonardatasource context ctxsonarqak22 className "sonarHCSR04Support2021"
+CodedQActor sonarsimulator  context ctxrapsy className "sonarSimulator"  
+CodedQActor sonardatasource context ctxrapsy className "sonarHCSR04Support2021"
 
 /*
  * Actors for the sonar-data handling pipe
@@ -25,11 +31,11 @@ CodedQActor sonardatasource context ctxsonarqak22 className "sonarHCSR04Support2
  * we could do it by introducing an observer that emits the event
  */
 //CodedQActor datalogger     context ctxsonaronrasp className "dataLogger"
-CodedQActor datacleaner    context ctxsonarqak22 className "dataCleaner"
-CodedQActor distancefilter context ctxsonarqak22 className "distanceFilter"
+CodedQActor datacleaner    context ctxrapsy className "dataCleaner"
+CodedQActor distancefilter context ctxrapsy className "distanceFilter"
 
 
-QActor sonarqak22 context ctxsonarqak22{
+QActor sonarqak22 context ctxrapsy{
 	[# val simulate       = true
 	   val sonarActorName = "sonarqak22"
 	   val usingDomain    = false
@@ -76,13 +82,82 @@ QActor sonarqak22 context ctxsonarqak22{
 	}
 }
 
-QActor sonarmastermock context ctxsonarqak22{
+QActor sonarmastermock context ctxrapsy{
 	State s0 initial {
 		forward sonarqak22 -m sonaractivate : info(ok)
 		delay 10000 
 		forward sonarqak22 -m sonardeactivate : info(ok)
 	}
 } 
+
+QActor led context ctxrapsy {
+	[#
+		var Cmd = ""
+		var Blink = false
+	#]
+	
+	State start initial {
+		[#  `it.unibo`.radarSystem22.domain.mock.LedMockWithGui #]
+	}
+	
+	State wait_cmd  {
+		printCurrentMessage
+		println("LED | WAIT CMD")
+		// [# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+	}
+	Transition t0 whenMsg cmd -> esegui_cmd
+	
+	State esegui_cmd {
+		printCurrentMessage
+		onMsg(cmd : cmd (CMD)){
+			
+			[#
+				Cmd = payloadArg(0)
+				println(Cmd)
+				Blink = false
+					
+			
+			if ( Cmd=="on" ){
+				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+				println("LED | ON")
+			}
+							
+			 else if ( Cmd == "off" ) {
+				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh)
+				println("LED | OFF")
+			}
+			else {
+				Blink = true
+			}
+			#] 
+		}
+		if [# Cmd == "on" #] {
+				updateResource [# "LED:ON" #]
+			}
+			if [# Cmd == "off" #] {
+				updateResource [# "LED:OFF" #]
+			}
+	}
+	Goto blink if [# Blink #] else wait_cmd
+	
+	State blink {
+		updateResource [# "LED:BLINK" #]
+		[#
+			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+			//println("LED | ON")	
+		#]
+		delay 500
+		[#
+			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+			//println("LED | OFF")	
+		#]
+		
+		println("LED | BLINK")
+		
+	}
+	Transition t1 whenTime 500 -> blink
+				  whenMsg cmd -> esegui_cmd
+}
 
 //Just to have a local feedback ...
 

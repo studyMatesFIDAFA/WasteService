@@ -93,6 +93,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 									Trolley_home = false
 									LastState = "GO_INDOOR"
 									
+						forward("cmd", "cmd(BLINK)" ,"led" ) 
 						unibo.kotlin.planner22Util.setGoal( XIndoor, YIndoor  )
 						 PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 									.replace(" ","")
@@ -211,6 +212,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						                        currentMsg.msgContent()) ) { //set msgArgList
 								forward("resume", "resume($LastState)" ,"trolley" ) 
 						}
+						forward("cmd", "cmd(OFF)" ,"led" ) 
 						unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr  )
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						 LastState = "HOME"  
@@ -222,6 +224,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE SERVICE | STOPPED")
 						forward("stop", "stop(STOP)" ,"trolley" ) 
+						forward("cmd", "cmd(ON)" ,"led" ) 
 					}
 					 transition(edgeName="t645",targetState="attesa_load_req",cond=whenDispatchGuarded("resume",{ LastState == "HOME"  
 					}))

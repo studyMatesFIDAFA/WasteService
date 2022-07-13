@@ -16,7 +16,7 @@ import unibo.actor22comm.utils.CommUtils;
 
 
 
-public class TestApplExt {
+public class LedTest {
 	@Before
 	public void up() {
 		new Thread(){
@@ -44,7 +44,7 @@ public class TestApplExt {
 	
 	 @Test
 	public void ledOn() throws Exception {
-		 CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		 CoapClient client = new CoapClient("coap://localhost:8080/ctxraspy/led");
 		 String dispatch = "msg(cmd,dispatch,algise,led,cmd(on),18)";
 		 client.observe(new CoapHandler() {
 			 @Override
@@ -59,7 +59,7 @@ public class TestApplExt {
 			 }
 		 });
 		 try{
-			 ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			 ConnTcp connTcp   = new ConnTcp("localhost", 8080);
 			 connTcp.forward(dispatch);
 			 connTcp.close();
 		 }catch(Exception e) {
@@ -70,7 +70,7 @@ public class TestApplExt {
 
 	@Test
 	public void ledOff() throws Exception {
-		CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		CoapClient client = new CoapClient("coap://localhost:8080/ctxraspy/led");
 		String dispatch = "msg(cmd,dispatch,algise,led,cmd(off),18)";
 		client.observe(new CoapHandler() {
 			@Override
@@ -86,7 +86,7 @@ public class TestApplExt {
 			}
 		});
 		try{
-			ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			ConnTcp connTcp   = new ConnTcp("localhost", 8080);
 			connTcp.forward(dispatch);
 			connTcp.close();
 		}catch(Exception e) {
@@ -96,7 +96,7 @@ public class TestApplExt {
 
 	@Test
 	public void ledBlink() throws Exception {
-		CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		CoapClient client = new CoapClient("coap://localhost:8015/ctxraspy/led");
 		String dispatch = "msg(cmd,dispatch,algise,led,cmd(blink),18)";
 		client.observe(new CoapHandler() {
 			@Override
@@ -111,7 +111,7 @@ public class TestApplExt {
 			}
 		});
 		try{
-			ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			ConnTcp connTcp   = new ConnTcp("localhost", 8080);
 			connTcp.forward(dispatch);
 			connTcp.close();
 		}catch(Exception e) {
