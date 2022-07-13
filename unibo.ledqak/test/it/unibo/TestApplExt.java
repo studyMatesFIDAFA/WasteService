@@ -2,7 +2,7 @@ package it.unibo;
 
 import static org.junit.Assert.*;
 
-import it.unibo.ctxanalisiproblema.MainCtxanalisiproblemaKt;
+import it.unibo.ctxled.MainCtxledKt;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -21,18 +21,18 @@ public class TestApplExt {
 	public void up() {
 		new Thread(){
 			public void run(){
-                MainCtxanalisiproblemaKt.main();
+                MainCtxled.main();
 			}
 		}.start();
 		waitForApplStarted();
 	}
 
 	protected void waitForApplStarted(){
-		ActorBasic wasteservice = QakContext.Companion.getActor("wasteservice");
-		while( wasteservice == null ){
+		ActorBasic led = QakContext.Companion.getActor("led");
+		while( led == null ){
 			System.out.println("Attendo applicazione ... ");
 			CommUtils.delay(200);
-			wasteservice = QakContext.Companion.getActor("wasteservice");
+			led = QakContext.Companion.getActor("led");
 		}
 	}
 
@@ -41,59 +41,16 @@ public class TestApplExt {
 		System.out.println("FINE TEST ");
 	}
 
-	@Test
-	public void testLoadaccept() {
-		System.out.println("TEST STARTS");
- 		String truckRequestStr = "msg(load_req, request, algise,wasteservice,load_req(vetro,2),1)";
-		try{
-			ConnTcp connTcp   = new ConnTcp("localhost", 8050);
-			String answer     = connTcp.request(truckRequestStr);
-			System.out.println("Risposta=" + answer );
-			connTcp.close();
-			assertTrue(answer.contains("loadaccept"));
-
-		}catch(Exception e){
-			System.out.println("testLoadok ERROR:" + e.getMessage());
-
-		}
-
- 	}
-
+	
 	 @Test
-	public void loadReject(){
-		 System.out.println("TEST STARTS");
-		 try{
-		 //richiesta da rifiutare
-			 ConnTcp connTcp   = new ConnTcp("localhost", 8050);
-			 String  truckRequestStr = "msg(load_req, request, algise,wasteservice,load_req(vetro,11),2)";
-		 String answer     = connTcp.request(truckRequestStr);
-		 System.out.println("Risposta=" + answer );
-		 connTcp.close();
-		 assertTrue(answer.contains("loadrejected"));
-		 }catch(Exception e){
-			 System.out.println("testLoadok ERROR:" + e.getMessage());
-
-		 }
-	 }
-
-	 @Test
-	public void sequenzaAzioneDeposito() throws Exception {
-		 CoapClient client = new CoapClient("coap://localhost:8050/ctxanalisiproblema/trolley");
-		 String truckRequestStr = "msg(load_req, request, algise,wasteservice,load_req(vetro,2),1)";
+	public void ledOn() throws Exception {
+		 CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		 String dispatch = "msg(cmd,dispatch,algise,led,cmd(on),18)";
 		 client.observe(new CoapHandler() {
-			 int counter = 0;
 			 @Override
-			 public void onLoad(CoapResponse response) {
-				 counter++;
+			 public void onLoad(CoapResponse response){
 				 System.out.println("Response: "+response.getResponseText());
-				 switch (counter) {
-					 case 1 : assertTrue(response.getResponseText().contains("PICKUP")); break;
-					 case 2 : assertTrue(response.getResponseText().contains("TRASFERIMENTO")); break;
-					 case 3 : assertTrue(response.getResponseText().contains("DEPOSITO")); break;
-					 case 4 : assertTrue(response.getResponseText().contains("HOME")); break;
-					 default: break;
-				 }
-
+				 assertTrue(response.getResponseText().contains("ON"));
 			 }
 
 			 @Override
@@ -102,37 +59,24 @@ public class TestApplExt {
 			 }
 		 });
 		 try{
-			 ConnTcp connTcp   = new ConnTcp("localhost", 8050);
-			 String answer     = connTcp.request(truckRequestStr);
-			 System.out.println("Risposta=" + answer );
+			 ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			 connTcp.forward(dispatch);
 			 connTcp.close();
-		 }catch(Exception e){
+		 }catch(Exception e) {
 			 System.out.println("testLoadok ERROR:" + e.getMessage());
 		 }
-		 Thread.sleep(7000);
 
 	}
 
 	@Test
-	public void sequenzaAzioneDepositoDoppiaRichiesta() throws Exception {
-		CoapClient client = new CoapClient("coap://localhost:8050/ctxanalisiproblema/trolley");
-		String truckRequestStr = "msg(load_req, request, algise,wasteservice,load_req(vetro,2),1)";
+	public void ledOff() throws Exception {
+		CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		String dispatch = "msg(cmd,dispatch,algise,led,cmd(off),18)";
 		client.observe(new CoapHandler() {
-			int counter = 0;
 			@Override
-			public void onLoad(CoapResponse response) {
-				counter++;
+			public void onLoad(CoapResponse response){
 				System.out.println("Response: "+response.getResponseText());
-				switch (counter) {
-					case 1 : assertTrue(response.getResponseText().contains("PICKUP")); break;
-					case 2 : assertTrue(response.getResponseText().contains("TRASFERIMENTO")); break;
-					case 3 : assertTrue(response.getResponseText().contains("DEPOSITO")); break;
-					case 4 : assertTrue(response.getResponseText().contains("PICKUP")); break;
-					case 5 : assertTrue(response.getResponseText().contains("TRASFERIMENTO")); break;
-					case 6 : assertTrue(response.getResponseText().contains("DEPOSITO")); break;
-					case 7 : assertTrue(response.getResponseText().contains("HOME")); break;
-					default: break;
-				}
+				assertTrue(response.getResponseText().contains("OFF"));
 
 			}
 
@@ -142,18 +86,39 @@ public class TestApplExt {
 			}
 		});
 		try{
-			ConnTcp connTcp   = new ConnTcp("localhost", 8050);
-			String answer     = connTcp.request(truckRequestStr);
-			System.out.println("Risposta=" + answer );
-			answer     = connTcp.request(truckRequestStr);
-			System.out.println("Risposta=" + answer );
+			ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			connTcp.forward(dispatch);
 			connTcp.close();
-		}catch(Exception e){
+		}catch(Exception e) {
 			System.out.println("testLoadok ERROR:" + e.getMessage());
 		}
-		Thread.sleep(7000);
-
 	}
 
+	@Test
+	public void ledBlink() throws Exception {
+		CoapClient client = new CoapClient("coap://localhost:8015/ctxled/led");
+		String dispatch = "msg(cmd,dispatch,algise,led,cmd(blink),18)";
+		client.observe(new CoapHandler() {
+			@Override
+			public void onLoad(CoapResponse response){
+				System.out.println("Response: "+response.getResponseText());
+				assertTrue(response.getResponseText().contains("BLINK"));
+			}
+
+			@Override
+			public void onError() {
+				System.out.println("ERRORE");
+			}
+		});
+		try{
+			ConnTcp connTcp   = new ConnTcp("localhost", 8015);
+			connTcp.forward(dispatch);
+			connTcp.close();
+		}catch(Exception e) {
+			System.out.println("testLoadok ERROR:" + e.getMessage());
+		}
+		Thread.sleep(1000);
+
+	}
 
 }
