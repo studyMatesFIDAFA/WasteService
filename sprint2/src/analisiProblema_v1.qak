@@ -252,7 +252,7 @@ QActor wasteservice context ctxanalisiproblema{
 	
 	State start initial{
 		printCurrentMessage
-		run unibo.kotlin.planner22Util.loadRoomMap( "./mapRoomEmpty.txt" )	
+		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty" )	
    		run unibo.kotlin.planner22Util.initAI() 
   		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")
