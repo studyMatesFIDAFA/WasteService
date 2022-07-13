@@ -11,22 +11,18 @@ import kotlinx.coroutines.runBlocking
 class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "start"
+		return "wait_cmd"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				var Cmd = ""
 				var Blink = false
 		return { //this:ActionBasciFsm
-				state("start") { //this:State
-					action { //it:State
-						  `it.unibo`.radarSystem22.domain.mock.LedMockWithGui  
-					}
-				}	 
 				state("wait_cmd") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("LED | WAIT CMD")
+						println("LED | OFF")
 					}
 					 transition(edgeName="t06",targetState="esegui_cmd",cond=whenDispatch("cmd"))
 				}	 

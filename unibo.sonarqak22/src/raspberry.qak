@@ -96,13 +96,10 @@ QActor led context ctxrapsy {
 		var Blink = false
 	#]
 	
-	State start initial {
-		[#  `it.unibo`.radarSystem22.domain.mock.LedMockWithGui #]
-	}
-	
-	State wait_cmd  {
+	State wait_cmd initial {
 		printCurrentMessage
 		println("LED | WAIT CMD")
+		println("LED | OFF")
 		// [# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd
