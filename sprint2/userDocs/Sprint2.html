@@ -373,6 +373,8 @@ L'informazione riguardante lo stato in cui si trova il TROLLEY pu&oacute essere 
 <ul>
 	<li>DUPLICAZIONE DEGLI STATI PRESENTI: per ogni stato presente nella FSM viene introdotto il corrispondente stato STOPPED, in 
 		questo modo, all'arrivo di una resume, &eacute semplice stabilire da quale stato ripartire.</li>
+	<li>UTILIZZO DI UNA VARIABILE: viene usata una variabile interna per memorizzare lo stato in cui &eacute avvenuto
+		lo stop, in questo modo si evita la prolificazione di stati, "alleggerendo" la struttura della FSM.</li>
 	<li>INTERRUPT (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/RobotCleaner.html#stop-resume-un-nuovo-abstraction-gap">link</a>): 
 		modellare per il linguaggio QAK un meccanismo di chiamata a procedura, in maniera tale da memorizzarsi lo stato in cui ci trovavamo prima del comando di stop
 		e poterlo ripristinare correttamente dopo l'arrivo di una resume.</li>
@@ -381,6 +383,19 @@ L'informazione riguardante lo stato in cui si trova il TROLLEY pu&oacute essere 
 La soluzione pi&uacute "elegante", in quanto riduce l'abstaction gap, sarebbe quella di utilizzare gli interrupt, ma questa richiederebbe molto tempo per realizzarla.<br>
 Perci&oacute si consiglia di gestire lo stato lato WASTE_SERVICE, in quanto deve comunque mantenerlo per pilotare il LED, mentre per quanto concerne la
 modalit&aacute di implementazione si lascia potere decisionale al progettista.<br>
+
+<h4>DA QUALE STATO RIAVVIARE IL TROLLEY</h4>
+All'arrivo del comando resume vi possono essere due alternative riguardanti lo stato da cui ripartire:
+<ul>
+	<li>Stato ATTUALE: si riparte dallo stato in cui si trovava il TROLLEY al momento dello stop, in questo caso bisogna fare 
+		attenzione alle azioni da compiere al momento della resume.</li>
+	<li>Stato SUCCESSIVO: al momento della resume vengono effettuate le "azioni mancanti" e si riparte dallo stato successivo,
+		&eacute necessario fare attenzione alle risposte che devono essere inviate al WASTE_SERVICE in fase di riavvio
+		visto che la comunucazione tra queste due entit&aacute &eacute stata realizzata con uno schema request-response.</li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Non essendoci richieste specifiche dal committente, si lascia libert&aacute di scelta al progettista, optando per la soluzione
+pi&uacute facile e rapida da realizzare.<br>
 
 <h4> COMANDO ON/OFF/BLINK </h4>
 Il LED deve ricevere un comando per commutare il proprio stato, esso pu&oacute essere inviato da diverse entit&aacute
@@ -399,7 +414,25 @@ che devono essere a conoscenza dello stato del TROLLEY in quanto il comportament
 </ul>
 <h5>CONCLUSIONI</h5>
 Per rispettare i requisiti dati dal committente &eacute necessario che il WASTE_SERVICE sia il responsabile del comportamento del LED e quindi
-sia esso a prendere le decisioni che lo riguardano (invio del comando).<br>
+sia esso a prendere le decisioni che lo riguardano (invio del comando).<br><br><br>
+
+<h3>SOLUZIONE PROPOSTA</h3>
+Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
+L'obiettivo &eacute quello di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
+tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop.<br>
+Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SONAR al TROLLEY, il quale, 
+se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
+Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
+l'invio del comando on/off/blink.<br>
+Infine viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor".<br>
+
+
+<h3> ARCHITETTURA LOGICA</h3>
+La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
+CODICE: <a href="../src/analisiProblema.qak">Modello esegibile</a><br><br>
+TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test plan</a><br><br>
+<img src="./img_Sprint1/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
+
 
 </div>
  
