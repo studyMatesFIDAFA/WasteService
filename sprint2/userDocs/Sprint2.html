@@ -424,14 +424,18 @@ Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SO
 se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
 Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
 l'invio del comando on/off/blink.<br>
-Infine viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor".<br>
+Infine viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor" e il payload del comando resume che arriva TROLLEY 
+conterr&aacute l'indicazione dello stato da cui ripartire.<br>
 
 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
-CODICE: <a href="../src/analisiProblema.qak">Modello esegibile</a><br><br>
-TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test plan</a><br><br>
-<img src="./img_Sprint1/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
+CODICE: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
+&nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
+&nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
+<img src="./img_Sprint2/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
 
 
 </div>

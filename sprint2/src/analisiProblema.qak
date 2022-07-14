@@ -260,6 +260,7 @@ QActor wasteservice context ctxanalisiproblema{
    		run unibo.kotlin.planner22Util.initAI() 
   		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")
+		forward led -m cmd : cmd(off)
 	}
 	Goto attesa_load_req
 	

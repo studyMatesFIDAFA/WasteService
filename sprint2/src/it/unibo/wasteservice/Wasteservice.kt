@@ -44,6 +44,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						unibo.kotlin.planner22Util.initAI(  )
 						unibo.kotlin.planner22Util.showCurrentRobotState(  )
 						println("WASTE SERVICE | START")
+						forward("cmd", "cmd(off)" ,"led" ) 
 					}
 					 transition( edgeName="goto",targetState="attesa_load_req", cond=doswitch() )
 				}	 
