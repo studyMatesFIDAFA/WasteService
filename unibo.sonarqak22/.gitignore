@@ -6,6 +6,7 @@ bin/default
 build
 logs 
 /.gradle
+/.idea
 log4jInfo.log
 
 #node
