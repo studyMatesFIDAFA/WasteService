@@ -1,0 +1,12 @@
+1.AGGIORNAMENTO JAVA SUL RASP (DA FARE SOLO LA PRIMA VOLTA)
+	sudo apt update
+	sudo apt install openjdk-11-jre
+	cambiare versione di default 
+		-> sudo update-alternatives --config java
+	e selezionare /usr/lib/jvm/java-11-openjdk-armhf/bin/java      1111      auto mode 
+
+2.SPOSTARE LO ZIP SUL RASPBERRY CON FILEZILLA
+
+3. 	unzip nomezip.zip
+	COPIARE I FILE .pl nella cartella bin
+4.ESEGUIRE

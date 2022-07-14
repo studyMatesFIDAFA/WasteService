@@ -4,3 +4,13 @@ implementation name: 'it.unibo.comm2022-2.0'
 
 //Per il sonar
 implementation name: 'it.unibo.radarSystem22.domain-1.0'
+
+//Per la distribuzione, mettere in fondo 
+distributions {
+    main {
+        contents {
+            from './raspberry.pl'
+            from './sysRules.pl'
+        }
+    }
+}

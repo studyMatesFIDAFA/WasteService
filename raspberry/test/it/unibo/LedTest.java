@@ -2,7 +2,7 @@ package it.unibo;
 
 import static org.junit.Assert.*;
 
-import it.unibo.ctxled.MainCtxledKt;
+//import it.unibo.ctxled.MainCtxledKt;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -13,8 +13,6 @@ import org.junit.Test;
 import it.unibo.kactor.ActorBasic;
 import it.unibo.kactor.QakContext;
 import unibo.actor22comm.utils.CommUtils;
-
-
 
 public class LedTest {
 	@Before

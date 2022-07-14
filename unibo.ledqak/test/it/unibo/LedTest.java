@@ -19,12 +19,12 @@ import unibo.actor22comm.utils.CommUtils;
 public class LedTest {
 	@Before
 	public void up() {
-		new Thread(){
+		/*new Thread(){
 			public void run(){
                 MainCtxled.main();
 			}
 		}.start();
-		waitForApplStarted();
+		waitForApplStarted();*/
 	}
 
 	protected void waitForApplStarted(){

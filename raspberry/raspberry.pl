@@ -1,7 +1,7 @@
 %====================================================================================
 % raspberry description   
 %====================================================================================
-context(ctxanalisiproblema, "127.0.0.1",  "TCP", "8078").
+context(ctxanalisiproblema, "169.254.239.199",  "TCP", "8078").
 context(ctxraspy, "localhost",  "TCP", "8080").
  qactor( sonarsimulator, ctxraspy, "sonarSimulator").
   qactor( sonardatasource, ctxraspy, "sonarHCSR04Support2021").

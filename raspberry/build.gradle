@@ -81,10 +81,11 @@ dependencies {
     implementation name: 'it.unibo.qakactor-2.7'
     implementation name: 'unibonoawtsupports'  //required by the old infrastructure
 	implementation name: 'unibo.actor22-1.1'
+	//Per il sonar
 	implementation name: 'it.unibo.radarSystem22.domain-1.0'
-    implementation name: 'unibo.comm22-1.1'
-    implementation name: 'it.unibo.comm2022-2.0'
-
+	//Quando si usano attori e tcp conn
+	implementation name: 'unibo.comm22-1.1'
+	implementation name: 'it.unibo.comm2022-2.0'
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  
     implementation name: 'unibo.planner22-1.0'
@@ -117,5 +118,14 @@ application {
     from sourceSets.main.allSource
     manifest {
         attributes 'Main-Class': "$mainClassName"
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from './raspberry.pl'
+            from './sysRules.pl'
+        }
     }
 }
