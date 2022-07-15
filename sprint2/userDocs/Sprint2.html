@@ -443,7 +443,17 @@ TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 
 <h2>Test plans</h2> 
 <div class="remark">
-
+In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
+compongono il sistema, in particolare:
+<ul>
+	<li><a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a>: in questo caso viene sfruttatto il fatto che
+		il LED sia una risorsa COAP. Infatti viene introdotto un osservatore COAP che monitora lo stato del LED, sostanzialmente
+		viene inviato un comando al LED e si verifica che lo stato in cui si trova sia quello corretto.</li>
+	<li><a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a>: in questa test unit si verifica il corretto funzionamento del
+		WASTE_SERVICE, che funge da controller del sistema. Vengono sfruttati due osservatori COAP per monitorare rispettivamente lo stato 
+		del TROLLEY e del LED. Viene simulato un comando del SONAR di stop/resume e si va a verificare che le due entit&aacute si trovino
+		nello stato atteso.</li>
+</ul>
 </div>
 
 <h2>Project</h2> 
