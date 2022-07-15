@@ -5,6 +5,7 @@ bin/default
 .project
 build
 logs 
+/.gradle
 
 log4jInfo.log
 
