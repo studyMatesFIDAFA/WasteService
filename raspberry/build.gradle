@@ -86,6 +86,7 @@ dependencies {
 	//Quando si usano attori e tcp conn
 	implementation name: 'unibo.comm22-1.1'
 	implementation name: 'it.unibo.comm2022-2.0'
+
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  
     implementation name: 'unibo.planner22-1.0'
@@ -120,6 +121,7 @@ application {
         attributes 'Main-Class': "$mainClassName"
     }
 }
+
 
 distributions {
     main {

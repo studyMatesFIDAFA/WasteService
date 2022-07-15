@@ -6,10 +6,10 @@ import unibo.actor22.annotations.Context
 
 
 class distanceFilter (name : String ) : ActorBasic( name ) {
-	val DLIMIT = 75
+	val DLIMIT = 30
 	val LimitDistance = DLIMIT
 	var sospeso = false
-	var conn = ConnTcp("169.254.239.199", 8078)  // mettere ip del proprio pc
+	var conn = ConnTcp("10.5.5.1", 8078)  // mettere ip del proprio pc
 
     override suspend fun actorBody(msg: IApplMessage) {
 		if( msg.msgSender() == name) return //AVOID to handle the event emitted by itself

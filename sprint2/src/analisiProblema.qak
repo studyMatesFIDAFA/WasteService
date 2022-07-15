@@ -35,7 +35,8 @@ Event alarm : alarm(STOP)
 Dispatch cmd : cmd (CMD)
 
  
-Context ctxraspy ip [host="127.0.0.1" port=8080]
+//Context ctxraspy ip [host="127.0.0.1" port=8080]
+Context ctxraspy ip [host="10.5.5.5" port=8080]
 Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
 
 Context ctxanalisiproblema ip [host="localhost" port=8078]

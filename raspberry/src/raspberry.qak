@@ -20,7 +20,8 @@ Dispatch cmd : cmd (CMD)
 
 //Context ctxanalisiproblema ip [host="127.0.0.1" port=8078] 
 // mettere ip del proprio pc
-Context ctxanalisiproblema ip [host="169.254.239.199" port=8078]  
+//Context ctxanalisiproblema ip [host="169.254.239.199" port=8078]
+Context ctxanalisiproblema ip [host="10.5.5.1" port=8078]  
 Context ctxraspy ip [host="localhost" port=8080] 
 
 //DATA SOURCES
