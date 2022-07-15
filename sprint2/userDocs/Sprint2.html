@@ -441,7 +441,7 @@ TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 </div>
  
 
-<h2>Test plans</h2> 
+<h2>Test plans <a name="testPlan"></h2> 
 <div class="remark">
 In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
 compongono il sistema, in particolare:
@@ -457,16 +457,48 @@ compongono il sistema, in particolare:
 </div>
 
 <h2>Project</h2> 
+ <div class="remark">
+ Fino ad adesso abbiamo rappresentato, per facilit&aacute di notazione, il SONAR come un unico attore. In realt&aacute
+ esso &eacute implementato mediante una pipeline di attori. In particolare, come si pu&oacute evincere dall'immagine sottostante,
+ esso &eacute composto dai seguenti attori:
+ <ul>
+	<li>sonarHCSR04Support2021: utilizza il <a href="../../CodiceRasp/SonarAlone.c">SonarAlone</a> fornito dal committente
+		per ottenere le distanze rilevate dal sonar fisico e le immette nella pipeline.</li>
+	<li>dataCleaner: filtra le distanze passate dal sonarHCSR04Support2021, considerando solo quelle comprese in un 
+		determinato range. Questo &eacute necessario in quanto il sonar fisico &eacute realizzato per rilevare distanze non
+		troppo elevate.</li>
+	<li>distanceFilter: processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
+		stop/resume al WASTE_SERVICE (distanza superiore o inferiore a DLIMIT).</li>
+ </ul><br>
+ <img src="./img_Sprint2/sonar.png" alt="RF2" width="90%" height="90%"><br><br>
+ Per quanto riguarda il LED,invece, abbiamo deciso di realizzare una nostra versione ispirandoci al codice fornito dal
+ committente per esigenze implementative. Nel dettaglio il LED &eacute modellato come un attore e sfrutta gli script bash
+ forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
+ il LED.<br><br>
  
+ Inizialmente &eacute stata realizzata una prima versione per verficare la corretta comunicazione tra Raspberry e
+ il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../raspberry/src/raspberry_sim.qakt">Modello eseguibile</a>.<br>
+ Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../raspberry/src/raspberry.qak">Modello eseguibile</a>.
+ 
+ 
+ </div>
 
 
 <h2>Testing</h2> 
+<div class="remark">
+ I test utilizzati per verificare il corretto funzionamento del sistema sono quelli riportati nella sezione
+ <a href="#testPlan">"Test plans"</a>
+ </div>
  
+<h2>Final summary</h2> 
+<div class="remark">
+&Eacute stato introdotto un osservatore COAP per segnalare che il LED, essendo modellato come un attore, &eacute anche una risorsa COAP.<br>
+Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe risultare un'alternativa interessante per quanto
+riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 
-<h2>Deployment</h2> 
+<img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
 
- 
-<h2>Maintenance</h2> 
+</div>
  
 <!-- USEFUL
 <table style="width:100%" border="1">
