@@ -22,4 +22,3 @@ package-lock.json
 docker/
 /.metadata/
 /src-gen/
-/.gradle

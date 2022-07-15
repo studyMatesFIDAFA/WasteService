@@ -21,7 +21,7 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 				state("wait_cmd") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						println("LED | WAIT CMD")
+						 Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")  
 					}
 					 transition(edgeName="t06",targetState="esegui_cmd",cond=whenDispatch("cmd"))
 				}	 
@@ -37,13 +37,13 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 													
 											
 											if ( Cmd=="on" ){
-												//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
-												println("LED | ON")
+												Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+												//println("LED | ON")
 											}
 															
 											 else if ( Cmd == "off" ) {
-												//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh)
-												println("LED | OFF")
+												Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+												//println("LED | OFF")
 											}
 											else {
 												Blink = true
@@ -69,13 +69,12 @@ class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope 
 						updateResourceRep( "LED:BLINK"  
 						)
 						
-									//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+									Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
 									//println("LED | ON")	
 						delay(500) 
 						
-									//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+									Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
 									//println("LED | OFF")	
-						println("LED | BLINK")
 						stateTimer = TimerActor("timer_blink", 
 							scope, context!!, "local_tout_led_blink", 500.toLong() )
 					}

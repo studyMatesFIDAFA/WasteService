@@ -38,7 +38,7 @@ CodedQActor distancefilter context ctxraspy className "distanceFilter"
 
 
 QActor sonarqak22 context ctxraspy{
-	[# val simulate       = true
+	[# val simulate       = false
 	   val sonarActorName = "sonarqak22"
 	   val usingDomain    = false
 	#]
@@ -53,7 +53,7 @@ QActor sonarqak22 context ctxraspy{
 	
 	State activateTheSonar{
 		printCurrentMessage
-		if[#  `it.unibo`.radarSystem22.domain.utils.DomainSystemConfig.simulation #]{
+		if[# simulate #]{
 			forward sonarsimulator -m sonaractivate : info(ok) 
 			//run sonarConfig.activateSonarSimulated() //usingDomain
 		}else {
@@ -100,9 +100,9 @@ QActor led context ctxraspy {
 	
 	State wait_cmd initial {
 		printCurrentMessage
-		println("LED | WAIT CMD")
+		//println("LED | WAIT CMD")
 		//println("LED | OFF")
-		// [# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+		[# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd
 	
@@ -117,13 +117,13 @@ QActor led context ctxraspy {
 					
 			
 			if ( Cmd=="on" ){
-				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
-				println("LED | ON")
+				Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+				//println("LED | ON")
 			}
 							
 			 else if ( Cmd == "off" ) {
-				//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh)
-				println("LED | OFF")
+				Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+				//println("LED | OFF")
 			}
 			else {
 				Blink = true
@@ -143,16 +143,16 @@ QActor led context ctxraspy {
 		printCurrentMessage
 		updateResource [# "LED:BLINK" #]
 		[#
-			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+			Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
 			//println("LED | ON")	
 		#]
 		delay 500
 		[#
-			//Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+			Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
 			//println("LED | OFF")	
 		#]
 		
-		println("LED | BLINK")
+		//println("LED | BLINK")
 		
 	}
 	Transition t1 whenTime 500 -> blink

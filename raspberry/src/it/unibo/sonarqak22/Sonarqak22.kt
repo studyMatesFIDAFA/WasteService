@@ -14,7 +14,7 @@ class Sonarqak22 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 		return "s0"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		 val simulate       = true
+		 val simulate       = false
 			   val sonarActorName = "sonarqak22"
 			   val usingDomain    = false
 		return { //this:ActionBasciFsm
@@ -28,7 +28,7 @@ class Sonarqak22 ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name,
 				state("activateTheSonar") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
-						if(   `it.unibo`.radarSystem22.domain.utils.DomainSystemConfig.simulation  
+						if(  simulate  
 						 ){forward("sonaractivate", "info(ok)" ,"sonarsimulator" ) 
 						}
 						else
