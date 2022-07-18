@@ -7,7 +7,7 @@ build
 logs 
 /.gradle
 log4jInfo.log
-
+*/.gradle*
 #node
 nodeCode/*/node_modules/
 *.lck
