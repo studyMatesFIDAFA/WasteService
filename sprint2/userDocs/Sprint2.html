@@ -203,7 +203,7 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 
 <h2>Sprint 1 results</h2>
 <div class="remark">
-Di seguito &eacute riportato il risultato finale ottenuto al termine dello Sprint 1:<br>
+Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint1/userDocs/Sprint1_v2.html">Sprint 1</a>:<br>
 <img src="./img_Sprint2/sintesiFinale_Sprint1.png" alt="RF2" width="90%" height="90%"><br>
 CODICE: <a href="../../sprint1/src/analisiProblema_v4.qak">modello eseguibile</a><br>
 TEST: <a href="../../sprint1/test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
@@ -246,7 +246,7 @@ Viene fortinto il software per l'utilizzo del <a href="https://github.com/anatal
 In questo Sprint ci concentreremo solamente sul RF2.
 <ul>
 <li><h4>STATO TROLLEY</h4>
-Chi &eacute il responsabile dello stato del TROLLEY (HOME, Movimento, Stopped).</li>
+Chi &eacute il responsabile dello stato del TROLLEY.</li>
 <li><h4>TRATTAMENTO DISTANZA</h4>
 Chi &eacute il responsabile del processamento dei valori di distanza rilevati del SONAR. 
 </li>
@@ -344,22 +344,23 @@ essere a conoscenza dello stato in cui si trovava il TROLLEY prima di ricevere i
 ed eseguire la giusta sequenza di operazioni che compone un'azione di deposito (Pickup, Trasferimento, Deposito).<br>
 Innanzitutto bisogna distinguere due tipologie di stati in cui si pu&oacute trovare il TROLLEY:
 <ul>
-	<li> Stato in cui sta eseguendo un MOVIMENTO: Pickup (considerando solo lo spostamento all'INDOOR [leggere dopo]), Trasferimento 
+	<li> Stato in cui sta eseguendo un MOVIMENTO: Pickup (considerando solo lo spostamento all'INDOOR [<a href="#pickup">vedi dopo</a>]), Trasferimento 
 		e Ritorno_home.</li>
-	<li>Stato STATICI: Home, Pickup (considerando la parte di prelievo) e Deposito.</li>
+	<li>Stato STATICO: Home, Pickup (considerando la parte di prelievo) e Deposito.</li>
 </ul>
-Dopo questa osservazione, notiamo che lo stato denominato "pickup" nei modelli eseguibili realizzati nello Sprint 1, in realt&aacute
+<a name="pickup"></a>Dopo questa osservazione, notiamo che lo stato denominato "pickup" nei modelli eseguibili realizzati nello Sprint 1, in realt&aacute
 incorpora in s&eacute due stati differenti che possiamo chiamare "go_indoor" e "pickup". Per questo riteniamo opportuno scinderlo, in
 modo tale da facilitare l'introduzione delle nuove funzionalit&aacute. <br>
 In uno stato "di MOVIMENTO" vi &eacute la necessit&aacute di comunicare con il pathexecutor di interrompere le azioni che stata svolegendo e di memorizzare quelle rimanenti per effettuarle 
 nella fase di resume. Questa complicazione invece non &eacute presente negli stati STATICI dove &eacute sufficiente "ricordarsi", in fase di resume, solo lo stato in cui ci trovavamo.<br>
-In base a quanto appena detto &eacute fondamentale, in fase di resume, sapere lo stato in cui siamo stati bloccati. Ci&oacute pu&oacute essere fatto 
+In base a quanto appena detto &eacute fondamentale, in fase di resume, sapere lo stato in cui il TROLLEY &eacute stato bloccato. Ci&oacute pu&oacute essere fatto 
 da due entit&aacute differenti:
 <ul>
 	<li>TROLLEY: 
 	<ul>
 		<li>PRO: vengono ridotti i compiti del WASTE_SERVICE in quanto non deve memorizzare lo stato in cui si trova il TROLLEY e si occupa solo di effettuare il resume. </li>
-		<li>CONTRO: con alte probabilit&aacute il WASTE_SERVICE deve sapere in tutti i modi lo stato in cui si trova il TROLLEY e quindi memorizzarsi comunque questa informazione </li>
+		<li>CONTRO: con alte probabilit&aacute il WASTE_SERVICE deve sapere in tutti i modi lo stato in cui si trova il TROLLEY e quindi memorizzarsi comunque questa informazione
+			oppure richiederla quando &eacute necessario al TROLLEY.</li>
 	</ul></li>
 	<li>WASTE_SERVICE: 
 	<ul>
@@ -376,7 +377,7 @@ L'informazione riguardante lo stato in cui si trova il TROLLEY pu&oacute essere 
 	<li>UTILIZZO DI UNA VARIABILE: viene usata una variabile interna per memorizzare lo stato in cui &eacute avvenuto
 		lo stop, in questo modo si evita la prolificazione di stati, "alleggerendo" la struttura della FSM.</li>
 	<li>INTERRUPT (<a href="https://htmlpreview.github.io/?https://github.com/anatali/issLab2022/blob/main/it.unibo.issLabStart/userDocs/Dispense/lezioni/html/RobotCleaner.html#stop-resume-un-nuovo-abstraction-gap">link</a>): 
-		modellare per il linguaggio QAK un meccanismo di chiamata a procedura, in maniera tale da memorizzarsi lo stato in cui ci trovavamo prima del comando di stop
+		modellare per il linguaggio QAK un meccanismo di chiamata a procedura, in maniera tale da memorizzarsi lo stato in cui si trova il TROLLEY prima del comando di stop
 		e poterlo ripristinare correttamente dopo l'arrivo di una resume.</li>
 </ul>
 <h5>CONCLUSIONI</h5>
@@ -384,7 +385,7 @@ La soluzione pi&uacute "elegante", in quanto riduce l'abstaction gap, sarebbe qu
 Perci&oacute si consiglia di gestire lo stato lato WASTE_SERVICE, in quanto deve comunque mantenerlo per pilotare il LED, mentre per quanto concerne la
 modalit&aacute di implementazione si lascia potere decisionale al progettista.<br>
 
-<h4>DA QUALE STATO RIAVVIARE IL TROLLEY</h4>
+<h4>IN QUALE STATO RIAVVIARE IL TROLLEY</h4>
 All'arrivo del comando resume vi possono essere due alternative riguardanti lo stato da cui ripartire:
 <ul>
 	<li>Stato ATTUALE: si riparte dallo stato in cui si trovava il TROLLEY al momento dello stop, in questo caso bisogna fare 
@@ -403,7 +404,7 @@ che devono essere a conoscenza dello stato del TROLLEY in quanto il comportament
 <ul>
 	<li> LED pilotato dal TROLLEY: 
 	<ul>
-		<li>PRO: il TROLLEY conosce sempre il suo stato, non &eacute necessario condividerlo con nessun altra entit&aacute. </li>
+		<li>PRO: il TROLLEY conosce sempre il suo stato e non &eacute necessario condividerlo con nessun altra entit&aacute. </li>
 		<li>CONTRO: il TROLLEY non &eacute pi&uacute un attuatore e si rischia di non soddisfare il requisito dato dal commitente ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
 	</ul></li>
 	<li> LED pilotato dal WASTE_SERVICE: 
@@ -418,13 +419,13 @@ sia esso a prendere le decisioni che lo riguardano (invio del comando).<br><br><
 
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
-L'obiettivo &eacute quello di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
+Gli obiettivi sono quelli di mantenere il TROLLEY come attuatore e di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
 tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop.<br>
 Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SONAR al TROLLEY, il quale, 
 se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
 Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
 l'invio del comando on/off/blink.<br>
-Infine viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor" e il payload del comando resume che arriva TROLLEY 
+Inoltre viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor". Infine il payload del comando resume che arriva al TROLLEY 
 conterr&aacute l'indicazione dello stato da cui ripartire.<br>
 
 
@@ -437,11 +438,18 @@ TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
 <img src="./img_Sprint2/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
 
-
+<h4>FILE DI CONFIGURAZIONE</h4>
+Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del Raspberry (DLIMIT, ip_WasteService e porta_WasteService) possono essere cablati
+all'interno di esso.<br>
+Successivamnete, potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON e letto da un POJO apposito,
+per consentire la definizione dei paramentri del Raspberry in fase di avvio. In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
+<a href="../../raspberry/raspberryConfigurator.json">File di configurazione json</a><br>
+<a href="../../raspberry/resources/RaspberryConfigurator.kt">Pojo dedicato alla configurazione</a><br>
+<br>
 </div>
  
 
-<h2>Test plans <a name="testPlan"></h2> 
+<h2>Test plans <a name="testPlan"></a></h2> 
 <div class="remark">
 In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
 compongono il sistema, in particolare:
