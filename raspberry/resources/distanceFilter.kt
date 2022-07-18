@@ -4,12 +4,13 @@ import alice.tuprolog.Struct
 import it.unibo.kactor.*
 import unibo.actor22.annotations.Context
 
-
 class distanceFilter (name : String ) : ActorBasic( name ) {
-	val DLIMIT = 30
-	val LimitDistance = DLIMIT
+	init {
+	    RaspberryConfigurator.setTheConfiguration("./raspberryConfigurator.json")
+	}
+	val limitDistance = RaspberryConfigurator.dlimit
 	var sospeso = false
-	var conn = ConnTcp("10.5.5.1", 8078)  // mettere ip del proprio pc
+	var conn = ConnTcp(RaspberryConfigurator.ip_wasteService, RaspberryConfigurator.porta_wasteService)  // mettere ip del proprio pc
 
     override suspend fun actorBody(msg: IApplMessage) {
 		if( msg.msgSender() == name) return //AVOID to handle the event emitted by itself
@@ -31,7 +32,7 @@ class distanceFilter (name : String ) : ActorBasic( name ) {
 */	
 //	 	val m0 = MsgUtil.buildEvent(name, "sonarRobot", "sonar($data)")
 //	 	emit( m0 )
- 		if( Distance < LimitDistance && !sospeso){
+ 		if( Distance < limitDistance && !sospeso){
 	 		val m1 = MsgUtil.buildEvent(name, "obstacle", "obstacle($data)")
 			println("$tt $name |  emit m1= $m1")
 			//emit(m1)
@@ -41,7 +42,7 @@ class distanceFilter (name : String ) : ActorBasic( name ) {
 
 			//emitLocalStreamEvent( m1 ) //propagate event obstacle
 			//forward("stop", "stop($data)", "trolley")
-     	}else if(Distance>= LimitDistance && sospeso){
+     	}else if(Distance>= limitDistance && sospeso){
 			val m1 = MsgUtil.buildEvent(name, "noobstacle", "noobstacle($data)")
 			println("$tt $name |  emit m1= $m1")
 			//emit(m1)
