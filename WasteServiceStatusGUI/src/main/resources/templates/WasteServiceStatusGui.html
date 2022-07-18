@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- bootstrap: ensure proper rendering -->
+ <title>WasteServiceStatusGUI</title>
+ <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+ <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <link rel="stylesheet" href="css/issSpec.css"> <!-- -->
+  <link rel="shortcut icon" href="images/mbotIot.png" type="image/x-icon">
+</head>
+
+<body>
+
+<div class="container-fluid bg-primary text-white text-center">
+ <h1>WasteServiceStatusGUI</h1>
+</div>
+
+<!-- CONTAINER del contenuto di pagina -->
+<div class="container-fluid">
+ <div class="row"> <!-- Page main row -->
+
+  
+
+   <!-- TROLLEY -->
+   <div class="card iss-bg-inputarea">  <!-- I/O area card -->
+    <div class="card iss-bg-infoarea text-primary">
+             <div class="card-header px-1">STATO TROLLEY:</div>
+             <div class="card-content px-1">
+                <span id="trolley">GO INDOOR</span>
+            </div>
+         </div>
+
+
+    </div><br>
+
+     <!-- LED -->
+        <div class="card iss-bg-inputarea">  <!-- I/O area card -->
+    <div class="card iss-bg-infoarea text-primary">
+             <div class="card-header px-1">STATO LED:</div>
+             <div class="card-content px-1">
+                <span id="led">BLINK</span>
+            </div>
+         </div>
+
+
+    </div><br>
+
+     <!-- CAPACITA' PLASTIC BOX -->
+     <div class="card iss-bg-inputarea">  <!-- I/O area card -->
+    <div class="card iss-bg-infoarea text-primary">
+             <div class="card-header px-1">CAPACIT&Aacute DEL PLASTIC BOX:</div>
+             <div class="card-content px-1">
+                <span id="pBox">0</span>
+            </div>
+         </div>
+
+
+    </div><br>
+   <!-- CAPACITA' GLASS BOX -->
+     <div class="card iss-bg-inputarea">  <!-- I/O area card -->
+    <div class="card iss-bg-infoarea text-primary">
+             <div class="card-header px-1">CAPACIT&Aacute DEL GLASS BOX:</div>
+             <div class="card-content px-1">
+                <span id="gBox">0</span>
+            </div>
+         </div>
+
+
+    </div>
+
+     </div> <!-- I/O area card body -->
+    </div>  <!-- I/O area card -->
+
+
+</div> <!-- Page main row  -->
+
+
+ <footer>
+  <hr/>
+  <div class="footer clearfix mb-0 text-muted">
+   <div class="float-start">
+    <p>WasteServiceStatusGUI console</p>
+   </div>
+   <div class="float-end"> 
+    <p>By FIDAFA</a> </p> 
+   </div>
+  </div>
+ </footer>
+
+
+</div> <!-- container -->
+
+
+<script src="vendors/jquery/jquery.min.js"></script>
+<script src="sockjs.min.js"></script>
+<!-- <script src="app.js"></script> -->
+<script src="ioutils.js"></script>
+<script src="wsminimal.js"></script>
+<script>connect()</script>  <!-- connect definita in wsminimal-->
+</body>
+</html>
