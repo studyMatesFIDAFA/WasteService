@@ -1,0 +1,370 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- saved from url=(0114)file:///C:/Users/Davide/Desktop/issLab2022/it.unibo.issLabStart/userDocs/Dispense/html/_static/templateToFill.html -->
+<html><!--
+<link rel="stylesheet" type="text/css" href="../css/issStyle1.css">
+<script type="text/javascript" src="../css/issStyle.js"></script>
+--><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><style type="text/css">
+body
+{
+    margin-left:  30px;
+    margin-right: 30px;
+};
+
+P
+{
+    font-family: Tahoma;
+    font-size: 10pt;
+};
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+	font-size: 93%;
+}
+
+a:hover {
+    background-color: #cccccc;
+}
+
+
+hr {
+    clear: both;
+    height: 1px;
+    color: #242424;
+    background-color: transparent;
+}
+
+h1, h2, h3 {
+    color: #242424;
+    clear: left;
+    font: 100% Tahoma, Helvetica, Arial, sans-serif;
+    margin-bottom: 0.5em;
+    padding-top: 0.5em;
+	border-radius: 10px;
+	padding: 5px;
+}
+
+top {
+	width: 100%;
+}
+
+
+#i {
+    color: #ff1010;
+}
+tt{
+	font-family: "Arial";
+    font-size: 90%;
+	color: #006600;
+}
+em{
+	font-family: "Arial";
+    font-size: 80%;
+	font-weight: bold;
+	border-style:solid;
+	border-color: #abe876;
+    color: #1632cc;
+}
+bc{
+	font-family: "Arial";
+	font-size: 90%;
+	font-weight: bold;
+    color: #990000;
+	background-color: #fcf8c7;
+}
+ks{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #0000CD	;
+	font-size: 90%;
+}
+kc{
+	font-family: "Arial";
+	font-weight: bold;
+    color: #008000	;
+	font-size: 90%;
+}
+pre{
+	font-family: "Consolas";
+	font-size: 85%;
+	background-color: #f5f5f5;
+	border: 1.5px solid silver;
+	padding: 5px;
+}
+m{
+	font-family: "Helvetica";
+	line-height: 100%;
+ 	font-size: 75%;
+}
+div.body{
+	 
+    font-size: 18px;
+}
+k{
+    color: #990000;
+	font-weight: bold;
+	font-size: 90%;
+}
+h1 {
+    font-size: 150%;
+    background-color: #b2c0ff;
+	padding: 10px;
+}
+
+h2 {
+    background-color: #9ed8ff;
+    font-size: 130%;
+}
+
+h3 {
+	background-color: #e6ccff;
+    font-size: 100%;
+}
+h4 {
+    background-color: #ccffcc;
+    font-size: 100%;
+	width: 95%;
+	border-radius: 5px;
+	padding: 2px;
+}
+h5 {
+    background-color: #d5ffb0;
+    font-size: 100%;
+
+}
+div.req{
+	background-color: #d9ffb3;
+    font-size: 18px;
+	width: 700px;
+    border: 3px solid green;
+    padding: 15px;
+    margin: 10px;
+}
+div.remark{
+	background-color: #E3F2FD;
+    border: 1.5px solid #d5f2ed;
+    padding: 15px;
+    margin: 10px;
+	border-radius: 25px;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+ol, ul, li {
+  margin: 0;
+  margin-left: 10px;
+  padding: 0;
+  padding-bottom: 5px;
+}
+
+table, th, td {
+	border: 1px solid black;
+}
+
+img {
+	border: 1.5px solid #d5f2ed
+
+}
+
+a, a:visited, a:active, a:link, a:hover {
+    text-decoration: underline;
+    color: #545454;
+    background-color: transparent;
+}
+
+div.wrapdesc{
+	width: 90%;
+	margin: auto;
+}
+
+div.imagedesc{
+	width: 85%;
+	margin: auto;
+}
+</style>
+    
+
+   
+<title>Waste Service SPRINT 3</title></head>
+    
+<body>
+<div id="top">
+<h1>LABORATORIO DI INGEGNERIA DEI SISTEMI SOFTWARE <font size="5"></font> </h1>
+</div>  
+
+<div class="body"> 
+<h2>Introduction</h2>
+<div class="remark">
+Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Magistrale Università di Bologna. (SPRINT 3)
+</div>
+
+<h2>Sprint 2 results</h2>
+<div class="remark">
+Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint2/userDocs/Sprint2.html">Sprint 2</a>:<br>
+<img src="./img_Sprint3/sintesiFinale_Sprint2.png" alt="RF2" width="90%" height="90%"><br>
+CODICE: <a href="../../sprint2/src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+TEST: <a href="../../sprint2/test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
+&nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
+</div>
+ 
+ 
+<h2>Requirements</h2>
+<div class="remark">
+Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v2.html#requisiti">sezione Requirement dello Sprint 1</a>
+
+</div>
+
+ 
+
+<h2>Requirement analysis</h2>
+<div class="remark">
+<h3>PUNTI APERTI:</h3>
+<ul>
+ <li>La GUI deve avere un particolare design?<br></li>
+ <li>In che forma deve essere rappresentato lo stato del TROLLEY?<br></li>
+ <br><br>
+Per le considerazioni fatte su Requisiti funzionali e Requisiti non funzionali si vedano
+i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#analisi_requisiti">Sprint 1</a><br><br>
+
+<h3>COMPONENTI A DISPOSIZIONE</h3>
+Viene fortinto il software esemplificativo per la realizzazione della <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">GUI</a>.<br>
+<h3>PROBLEMATICHE RF3</h3>
+In questo Sprint ci concentreremo solamente sul RF3.
+<ul>
+<li><h4>STATO TROLLEY, LED E BOX</h4>
+La GUI deve monitorare lo stato di TROLLEY, LED e Box perci&oacute &eacute necessario analizzare come ottenere tali informazioni.</li>
+
+</div>
+
+<h2>Problem analysis</h2>
+<div class="remark">
+<h3> PROBLEMATICHE RF3 EVIDENZIATE DURANTE L'ANALISI DEI REQUISITI</h3>
+<h4> STATO TROLLEY, LED E BOX </h4>
+Attualmente, nel modello realizzato nello Sprint 1, lo stato del
+TROLLEY &eacute noto a due entit&aacute, ossia il TROLLEY stesso e il WASTE_SERVICE. Con l'introduzione del RF2,
+per&oacute bisogna considerare un nuovo stato in cui il TROLLEY si pu&oacute trovare, lo stato STOPPED.
+La problematica che sorge &eacute chi &eacute a conoscenza dello stato reale del TROLLEY e quindi chi andare ad interrogare
+per conoscerlo. In particolare:
+<ul>
+	<li>TROLLEY: &eacute sempre a conoscenza dello stato in cui si trova. D'altro canto per&oacute in questo caso il TROLLEY deve comunicare il suo stato agli interessati (LED). 
+		In base a come viene effettuata la comunicazione il TROLLEY pu&oacute perdere la caratteristica di essere un attuatore e pu&oacute non essere rispettato
+		il requisito che il WASTE_SERVICE deve pilotare il LED ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
+	<li>WASTE_SERVICE: nel modello attuale esso pu&oacute inferire lo stato in cui si trova il TROLLEY in base allo stato in cui esso stesso si trova. Aggiungendo lo 
+		stato STOPPED per&oacute, &eacute necessario che il WASTE_SERVICE riceva le informazioni di quando fermare e riavviare il TROLLEY sulla base delle distanze rilevate dal SONAR.</li>
+</ul>
+
+<h5>CONCLUSIONI</h5>
+Visto che il WASTE_SERVICE &eacute il responsabile del comportamento che il LED deve assumenre in ogni istante, &eacute consigliato che anche le informazioni
+che riguardono lo stato del TROLLEY siano mantenute e aggiornate dal WASTE_SERVICE stesso. In questo modo il TROLLEY non deve neanche 
+occuparsi della gestione del LED, mantenendo la caratteristica di attuatore.<br>
+
+
+<h3>SOLUZIONE PROPOSTA</h3>
+Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
+Gli obiettivi sono quelli di mantenere il TROLLEY come attuatore e di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
+tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop.<br>
+Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SONAR al TROLLEY, il quale, 
+se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
+Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
+l'invio del comando on/off/blink.<br>
+Inoltre viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor". Infine il payload del comando resume che arriva al TROLLEY 
+conterr&aacute l'indicazione dello stato da cui ripartire.<br>
+
+
+<h3> ARCHITETTURA LOGICA</h3>
+La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
+CODICE: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
+&nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
+&nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
+<img src="./img_Sprint2/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
+
+</div>
+ 
+
+<h2>Test plans <a name="testPlan"></a></h2> 
+<div class="remark">
+In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
+compongono il sistema, in particolare:
+<ul>
+	<li><a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a>: in questo caso viene sfruttatto il fatto che
+		il LED sia una risorsa COAP. Infatti viene introdotto un osservatore COAP che monitora lo stato del LED, sostanzialmente
+		viene inviato un comando al LED e si verifica che lo stato in cui si trova sia quello corretto.</li>
+	<li><a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a>: in questa test unit si verifica il corretto funzionamento del
+		WASTE_SERVICE, che funge da controller del sistema. Vengono sfruttati due osservatori COAP per monitorare rispettivamente lo stato 
+		del TROLLEY e del LED. Viene simulato un comando del SONAR di stop/resume e si va a verificare che le due entit&aacute si trovino
+		nello stato atteso.</li>
+</ul>
+</div>
+
+<h2>Project</h2> 
+ <div class="remark">
+ Fino ad adesso abbiamo rappresentato, per facilit&aacute di notazione, il SONAR come un unico attore. In realt&aacute
+ esso &eacute implementato mediante una pipeline di attori. In particolare, come si pu&oacute evincere dall'immagine sottostante,
+ esso &eacute composto dai seguenti attori:
+ <ul>
+	<li>sonarHCSR04Support2021: utilizza il <a href="../../CodiceRasp/SonarAlone.c">SonarAlone</a> fornito dal committente
+		per ottenere le distanze rilevate dal sonar fisico e le immette nella pipeline.</li>
+	<li>dataCleaner: filtra le distanze passate dal sonarHCSR04Support2021, considerando solo quelle comprese in un 
+		determinato range. Questo &eacute necessario in quanto il sonar fisico &eacute realizzato per rilevare distanze non
+		troppo elevate.</li>
+	<li>distanceFilter: processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
+		stop/resume al WASTE_SERVICE (distanza superiore o inferiore a DLIMIT).</li>
+ </ul><br>
+ <img src="./img_Sprint2/sonar.png" alt="RF2" width="90%" height="90%"><br><br>
+ Per quanto riguarda il LED,invece, abbiamo deciso di realizzare una nostra versione ispirandoci al codice fornito dal
+ committente per esigenze implementative. Nel dettaglio il LED &eacute modellato come un attore e sfrutta gli script bash
+ forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
+ il LED.<br><br>
+ 
+ Inizialmente &eacute stata realizzata una prima versione per verficare la corretta comunicazione tra Raspberry e
+ il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../raspberry/src/raspberry_sim.qakt">Modello eseguibile</a>.<br>
+ Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../raspberry/src/raspberry.qak">Modello eseguibile</a>.
+ 
+ 
+ </div>
+
+
+<h2>Testing</h2> 
+<div class="remark">
+ I test utilizzati per verificare il corretto funzionamento del sistema sono quelli riportati nella sezione
+ <a href="#testPlan">"Test plans"</a>
+ </div>
+ 
+<h2>Final summary</h2> 
+<div class="remark">
+&Eacute stato introdotto un osservatore COAP per segnalare che il LED, essendo modellato come un attore, &eacute anche una risorsa COAP.<br>
+Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe risultare un'alternativa interessante per quanto
+riguarda i requisiti affrontati negli Sprint successivi.<br><br>
+
+<img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
+
+</div>
+ 
+<!-- USEFUL
+<table style="width:100%" border="1">
+<tr>
+<td style="width:50%">
+</td>
+<td></td>
+</tr>
+</table>
+-->
+	      	
+<br><br> 	
+  
+
+<div style="background-color:rgba(86, 56, 253, 0.9); width:60%;text-align:left;color:white">
+Davide Filoni email: davide.filoni2@studio.unibo.it <br>
+Fabio Scagliarini : fabio.scagliarini@studio.unibo.it <br>
+Filippo Comastri : filippo.comastri2@studio.unibo.it <br>
+<a href=https://github.com/studyMatesFIDAFA/WasteService>Link git </a>
+<!-- <img src="./TemplateToFill_files/DavideFiloni.jpeg" alt="mbot" width="15%" height="15%"> -->
+</div> 
+
+</body></html>
