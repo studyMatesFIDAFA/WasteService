@@ -491,43 +491,43 @@ QActor wasteservice context ctxanalisiproblema{
 }
 
 // WASTE TRUCK MOCK
-QActor waste_truck_mock context ctxanalisiproblema {
-	
-	State start initial {
-		printCurrentMessage
-		println("WASTE_TRUCK | INIT")
-	}
-	Goto indoor_request
-	
-	State indoor_request {
-		printCurrentMessage
-		println("WASTE_TRUCK | richiesta di prelievo carico")
-		request wasteservice -m load_req : load_req(plastica,9)
-		
-	}
-	
-	Transition t0 whenReply loadaccept -> accepted
-					whenReply loadrejected -> altrarichiesta
-	
-	State accepted {
-		printCurrentMessage
-		println("Request accepted")
-	}Goto altrarichiesta
-	
-	State altrarichiesta{
-		printCurrentMessage
-		//delay 10000
-		println("WASTE_TRUCK | richiesta di prelievo carico")
-		request wasteservice -m load_req : load_req(vetro,1)
-	}
-	Transition t1 whenReply loadaccept -> fine
-					whenReply loadrejected -> rejected
-	
-	State fine{
-		printCurrentMessage
-	}
-	State rejected {
-		printCurrentMessage
-		println("Request rejected")
-	}
-}
+//QActor waste_truck_mock context ctxanalisiproblema {
+//	
+//	State start initial {
+//		printCurrentMessage
+//		println("WASTE_TRUCK | INIT")
+//	}
+//	Goto indoor_request
+//	
+//	State indoor_request {
+//		printCurrentMessage
+//		println("WASTE_TRUCK | richiesta di prelievo carico")
+//		request wasteservice -m load_req : load_req(plastica,9)
+//		
+//	}
+//	
+//	Transition t0 whenReply loadaccept -> accepted
+//					whenReply loadrejected -> altrarichiesta
+//	
+//	State accepted {
+//		printCurrentMessage
+//		println("Request accepted")
+//	}Goto altrarichiesta
+//	
+//	State altrarichiesta{
+//		printCurrentMessage
+//		//delay 10000
+//		println("WASTE_TRUCK | richiesta di prelievo carico")
+//		request wasteservice -m load_req : load_req(vetro,1)
+//	}
+//	Transition t1 whenReply loadaccept -> fine
+//					whenReply loadrejected -> rejected
+//	
+//	State fine{
+//		printCurrentMessage
+//	}
+//	State rejected {
+//		printCurrentMessage
+//		println("Request rejected")
+//	}
+//}
