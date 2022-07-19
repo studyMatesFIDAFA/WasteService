@@ -46,7 +46,7 @@ public class TestApplSprint2 {
 	@Test
 	public void stopAndLedOn() throws Exception {
 		 CoapClient client = new CoapClient("coap://localhost:8078/ctxanalisiproblema/trolley");
-		 CoapClient clientLed = new CoapClient("coap://localhost:8080/ctxraspy/led");
+		 CoapClient clientLed = new CoapClient("coap://10.5.5.5:8080/ctxraspy/led");
 		 String stop = "msg(stop,dispatch,algise,wasteservice,stop(70),18)";
 		 try{
 			 ConnTcp connTcp   = new ConnTcp("localhost", 8078);

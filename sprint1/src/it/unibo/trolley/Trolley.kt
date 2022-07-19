@@ -56,9 +56,21 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								delay(500) 
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
+						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												var RemainPath = payloadArg(0)
+								if(  RemainPath.length == 1 || RemainPath.length == 0 
+								 ){delay(500) 
+								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
+								}
+								else
+								 {request("dopath", "dopath($RemainPath)" ,"pathexec" )  
+								 }
+						}
 					}
 					 transition(edgeName="t12",targetState="pickup",cond=whenReply("dopathdone"))
-					transition(edgeName="t13",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t13",targetState="pickup",cond=whenReply("dopathfail"))
 					transition(edgeName="t14",targetState="trasferimento",cond=whenRequest("trasf"))
 				}	 
 				state("pathfail") { //this:State
@@ -85,9 +97,21 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								delay(500) 
 								answer("trasf", "trasf_done", "trasf_done(ok)"   )  
 						}
+						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												var RemainPath = payloadArg(0)
+								if(  RemainPath.length == 1 || RemainPath.length == 0 
+								 ){delay(500) 
+								answer("trasf", "trasf_done", "trasf_done(ok)"   )  
+								}
+								else
+								 {request("dopath", "dopath($RemainPath)" ,"pathexec" )  
+								 }
+						}
 					}
 					 transition(edgeName="t35",targetState="trasferimento",cond=whenReply("dopathdone"))
-					transition(edgeName="t36",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t36",targetState="trasferimento",cond=whenReply("dopathfail"))
 					transition(edgeName="t37",targetState="deposito",cond=whenRequest("deposit"))
 				}	 
 				state("deposito") { //this:State
@@ -123,9 +147,21 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								updateResourceRep( "TROLLEY:HOME"  
 								)
 						}
+						if( checkMsgContent( Term.createTerm("dopathfail(ARG)"), Term.createTerm("dopathfail(ARG)"), 
+						                        currentMsg.msgContent()) ) { //set msgArgList
+								
+												var RemainPath = payloadArg(0)
+								if(  RemainPath.length == 1 || RemainPath.length == 0 
+								 ){delay(500) 
+								answer("ritorno_home", "home_done", "home_done(ok)"   )  
+								}
+								else
+								 {request("dopath", "dopath($RemainPath)" ,"pathexec" )  
+								 }
+						}
 					}
 					 transition(edgeName="t510",targetState="ritorno_home",cond=whenReply("dopathdone"))
-					transition(edgeName="t511",targetState="pathfail",cond=whenReply("dopathfail"))
+					transition(edgeName="t511",targetState="ritorno_home",cond=whenReply("dopathfail"))
 					transition(edgeName="t512",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 			}

@@ -87,8 +87,22 @@ QActor trolley context ctxanalisiproblema {
 		onMsg (dopathdone   : dopathdone( ARG )) {
 			replyTo go_indoor with indoor_done : indoor_done(ok)
 		}
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				replyTo go_indoor with indoor_done : indoor_done(ok)
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+		}
 	}Transition t1 whenReply dopathdone -> go_indoor
-				   whenReply dopathfail -> pathfail
+				   //whenReply dopathfail -> pathfail
+				   whenReply dopathfail -> go_indoor
 				   whenMsg stop -> alarm 
 				   whenRequest pickup -> pickup
 				   
@@ -126,11 +140,23 @@ QActor trolley context ctxanalisiproblema {
 		onMsg (dopathdone   : dopathdone( ARG )) {
 			replyTo trasf with trasf_done : trasf_done(ok)
 		}
-		
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				replyTo trasf with trasf_done : trasf_done(ok)
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+		}
 		
 	}
 	Transition t3 whenReply dopathdone -> trasferimento
-				  whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> trasferimento
 				  whenRequest deposit -> deposito
 				  whenMsg stop -> alarm
 	
@@ -166,11 +192,24 @@ QActor trolley context ctxanalisiproblema {
 			replyTo ritorno_home with home_done : home_done(ok)
 			updateResource [# "TROLLEY:HOME" #]
 		}
-		
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				replyTo ritorno_home with home_done : home_done(ok)
+				updateResource [# "TROLLEY:HOME" #]
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+		}
 		//delayVar DelayHome
 	}
 	Transition t5 whenReply dopathdone -> ritorno_home
-				  whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> ritorno_home
 				  whenRequest pickup -> pickup
 				  whenMsg stop -> alarm
 				  
@@ -209,13 +248,26 @@ QActor trolley context ctxanalisiproblema {
 			[#
 				LastState = payloadArg(0)
 			#]	
+			
+			request pathexec -m dopath : dopath($RemainPath) 
+			
+			[# RemainPath = "" #]
 		}
 		println("TROLLEY | $LastState")
 		
-		//if [# RemainPath != "" #]{
-		request pathexec -m dopath : dopath($RemainPath) 
-		//}
-		[# RemainPath = "" #]
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				[# RemainPath = "" #]
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+		}
 		
 	}
 	Transition t8 whenReply dopathdone and [# LastState == "home" #] -> home
@@ -224,7 +276,7 @@ QActor trolley context ctxanalisiproblema {
 				  whenReply dopathdone and [# LastState == "trasferimento" #] -> trasferimento
 				  whenReply dopathdone and [# LastState == "deposito" #] -> deposito
 				  whenReply dopathdone and [# LastState == "ritorno_home" #] -> ritorno_home
-				  whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> resume
 	
 	
 
@@ -491,43 +543,43 @@ QActor wasteservice context ctxanalisiproblema{
 }
 
 // WASTE TRUCK MOCK
-//QActor waste_truck_mock context ctxanalisiproblema {
-//	
-//	State start initial {
-//		printCurrentMessage
-//		println("WASTE_TRUCK | INIT")
-//	}
-//	Goto indoor_request
-//	
-//	State indoor_request {
-//		printCurrentMessage
-//		println("WASTE_TRUCK | richiesta di prelievo carico")
-//		request wasteservice -m load_req : load_req(plastica,9)
-//		
-//	}
-//	
-//	Transition t0 whenReply loadaccept -> accepted
-//					whenReply loadrejected -> altrarichiesta
-//	
-//	State accepted {
-//		printCurrentMessage
-//		println("Request accepted")
-//	}Goto altrarichiesta
-//	
-//	State altrarichiesta{
-//		printCurrentMessage
-//		//delay 10000
-//		println("WASTE_TRUCK | richiesta di prelievo carico")
-//		request wasteservice -m load_req : load_req(vetro,1)
-//	}
-//	Transition t1 whenReply loadaccept -> fine
-//					whenReply loadrejected -> rejected
-//	
-//	State fine{
-//		printCurrentMessage
-//	}
-//	State rejected {
-//		printCurrentMessage
-//		println("Request rejected")
-//	}
-//}
+QActor waste_truck_mock context ctxanalisiproblema {
+	
+	State start initial {
+		printCurrentMessage
+		println("WASTE_TRUCK | INIT")
+	}
+	Goto indoor_request
+	
+	State indoor_request {
+		printCurrentMessage
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request wasteservice -m load_req : load_req(plastica,9)
+		
+	}
+	
+	Transition t0 whenReply loadaccept -> accepted
+					whenReply loadrejected -> altrarichiesta
+	
+	State accepted {
+		printCurrentMessage
+		println("Request accepted")
+	}Goto altrarichiesta
+	
+	State altrarichiesta{
+		printCurrentMessage
+		//delay 10000
+		println("WASTE_TRUCK | richiesta di prelievo carico")
+		request wasteservice -m load_req : load_req(vetro,1)
+	}
+	Transition t1 whenReply loadaccept -> fine
+					whenReply loadrejected -> rejected
+	
+	State fine{
+		printCurrentMessage
+	}
+	State rejected {
+		printCurrentMessage
+		println("Request rejected")
+	}
+}

@@ -54,7 +54,7 @@ class sonarHCSR04Support2021 ( name : String ) : ActorBasic( name ) {
 						println("sonarHCSR04Support doRead ERROR: $e "   )
 					}
 				}
-				//delay( 2000 ) 	//Avoid too fast generation
+				//delay( 700 ) 	//Avoid too fast generation
  		}
 		}
 	}

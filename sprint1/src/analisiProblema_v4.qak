@@ -73,11 +73,26 @@ QActor trolley context ctxanalisiproblema {
 			delay 500
 			replyTo pickup with pickup_done : pickup_done(ok)
 		}
-		
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				delay 500
+				replyTo pickup with pickup_done : pickup_done(ok)
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+			
+		}
 		
 	}
 	Transition t1 whenReply dopathdone -> pickup
-				  whenReply dopathfail -> pathfail
+				  //whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> pickup
 				  whenRequest trasf -> trasferimento
 	
 				  
@@ -104,10 +119,24 @@ QActor trolley context ctxanalisiproblema {
 			replyTo trasf with trasf_done : trasf_done(ok)
 		}
 		
-		
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				delay 500
+				replyTo trasf with trasf_done : trasf_done(ok)
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+			
+		}
 	}
 	Transition t3 whenReply dopathdone -> trasferimento
-				  whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> trasferimento
 				  whenRequest deposit -> deposito
 	
 	State deposito {
@@ -140,10 +169,25 @@ QActor trolley context ctxanalisiproblema {
 			updateResource [# "TROLLEY:HOME" #]
 		}
 		
-		//delayVar DelayHome
+		onMsg (dopathfail   : dopathfail( ARG )) {
+			[#
+				var RemainPath = payloadArg(0)
+			#]
+			if [# RemainPath.length == 1 || RemainPath.length == 0#]{
+				//Sono arrivato a destinazione e ho sbattuto
+				delay 500
+				replyTo ritorno_home with home_done : home_done(ok)
+			}
+			else{
+				//mancano più step, quindi procedo
+				request pathexec -m dopath : dopath($RemainPath) 
+			}
+			
+		}
+		
 	}
 	Transition t5 whenReply dopathdone -> ritorno_home
-				  whenReply dopathfail -> pathfail
+				  whenReply dopathfail -> ritorno_home
 				  whenRequest pickup -> pickup
 }
 
@@ -171,7 +215,7 @@ QActor wasteservice context ctxanalisiproblema{
 	
 	State start initial{
 		printCurrentMessage
-		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty.txt" )	
+		run unibo.kotlin.planner22Util.loadRoomMap( "mapRoomEmpty" )	
    		run unibo.kotlin.planner22Util.initAI() 
   		run unibo.kotlin.planner22Util.showCurrentRobotState()
 		println("WASTE SERVICE | START")

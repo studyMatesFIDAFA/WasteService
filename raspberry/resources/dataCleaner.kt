@@ -6,7 +6,7 @@ import it.unibo.kactor.IApplMessage
 
 class dataCleaner (name : String ) : ActorBasic( name ) {
 val LimitLow  = 2	
-val LimitHigh = 100
+val LimitHigh = 500
 
 
     override suspend fun actorBody(msg: IApplMessage) {
