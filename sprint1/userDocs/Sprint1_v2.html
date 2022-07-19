@@ -298,7 +298,7 @@ Durante questa attività il WasteService fa lampeggiare il Led.<br></li>
    <li>Risposta positiva: il TROLLEY si muove verso l'area INDOOR</li>
    <li>Risposta negativa: il TROLLEY torna alla HOME</li>
   </ul></li>
-  <li>Sonar e Led (RF2):<br> in base alla distanza rilevata dal SONAR, il TROLLEY muta il suo comportamento:<br>
+  <li>Sonar e Led (RF2)<a name="RF2"></a>:<br> in base alla distanza rilevata dal SONAR, il TROLLEY muta il suo comportamento:<br>
   <ul>
   <li> Distanza minore di DLIMIT: il TROLLEY si ferma.</li>
   <li> Distanza superiore a DLIMIT: il TROLLEY si muove.</li>
@@ -348,7 +348,7 @@ Infine il WASTE_SERVICE deve comunicare anche con LED e WasteServiceStatusGUI, a
 nella fase successiva. Stesso discorso per quanto riguarda la modalit&aacute di comunicazione del SONAR <br><br>
 
 Di seguito viene riportata l'archittettura logica dell'analisi dei requisiti.<br>
-CODICE: <a href="../src/analisiRequisiti_v2.qakt">Modello esegibile</a><br><br>
+MODELLO: <a href="../src/analisiRequisiti_v2.qakt">Modello esegibile</a><br><br>
 TEST: <a href="../test/it/unibo/TestAnalisiRequisiti.java">Test analisi requisiti</a><br><br>
 <img src="./img_Sprint1/architetturaLogica_Requisiti.png" alt="RF2" width="90%" height="90%"><br>
 <h3>PROBLEMATICHE RF1</h3>
@@ -497,7 +497,7 @@ Al termine dell'azione di deposito verr&aacute comunicato al TROLLEY se recarsi 
 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
-CODICE: <a href="../src/analisiProblema_v2.qakt">Modello esegibile</a><br><br>
+MODELLO: <a href="../src/analisiProblema_v2.qakt">Modello esegibile</a><br><br>
 TEST: <a href="../test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
 <img src="./img_Sprint1/modelloEseguibile_v2.png" alt="RF2" width="90%" height="90%"><br><br>
 
@@ -610,7 +610,7 @@ Sono state effettuate due tipologie di test:
 Con l'introduzione del planner &eacute stato necessario sostituire il dispatch ritrono_home con una comunicazione con schema
 request-response, ci&oacute viene fatto per indicare al WASTE_SERVICE la posizione corrente del TROLLEY dopo che &eacute stato
 effettuato il rientro alla HOME.<br>
-CODICE: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
+MODELLO: <a href="../src/analisiProblema_v3.qak">Modello esguibile</a><br><br>
 <img src="./img_Sprint1/modelloEseguibile_v3.png" alt="RF2" width="90%" height="90%"><br><br>
 
 </div>

@@ -205,8 +205,8 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 <div class="remark">
 Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint2/userDocs/Sprint2.html">Sprint 2</a>:<br>
 <img src="./img_Sprint3/sintesiFinale_Sprint2.png" alt="RF2" width="90%" height="90%"><br>
-CODICE: <a href="../../sprint2/src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
- &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+MODELLO: <a href="../../sprint2/src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &nbsp;&nbsp;&nbsp;&emsp; &emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
 TEST: <a href="../../sprint2/test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 </div>
@@ -224,8 +224,9 @@ Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v2.
 <div class="remark">
 <h3>PUNTI APERTI:</h3>
 <ul>
- <li>La GUI deve avere un particolare design?<br></li>
- <li>In che forma deve essere rappresentato lo stato del TROLLEY?<br></li>
+ <li>La GUI deve avere un particolare design?<br>No</li>
+ <li>In che forma deve essere rappresentato lo stato e la posizione del TROLLEY?<br>Stato: HOME, STOPPED e MOVIMENTO<br>
+ POSIZIONE: pu&oacute essere precisa (coordinate) oppure approssimativa (area in cui si trova).</li>
  <br><br>
 Per le considerazioni fatte su Requisiti funzionali e Requisiti non funzionali si vedano
 i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#analisi_requisiti">Sprint 1</a><br><br>
@@ -237,6 +238,13 @@ In questo Sprint ci concentreremo solamente sul RF3.
 <ul>
 <li><h4>STATO TROLLEY, LED E BOX</h4>
 La GUI deve monitorare lo stato di TROLLEY, LED e Box perci&oacute &eacute necessario analizzare come ottenere tali informazioni.</li>
+
+<li><h4>RAPPRESENTAZIONE DELLA POSIZIONE DEL TROLLEY</h4>
+La posizione del TROLLEY pu&oacute essere precisa, espressa mediante coordinate, oppure approssimativa, indicando l'area in cui si trova o in cui si sta dirigendo.</li>
+
+
+<li><h4>RAPPRESENTAZIONE CENTRALIZZATA O DISTRIBUITA DELLO STATO</h4>
+La GUI deve mostrare lo stato di TROLLEY, LED e Box, queste informazioni possono essere contenute da un'unica entit&aacute oppure essere distribuite tra le varie entit&aacute del sistema. </li>
 
 </div>
 
@@ -363,7 +371,7 @@ riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 Davide Filoni email: davide.filoni2@studio.unibo.it <br>
 Fabio Scagliarini : fabio.scagliarini@studio.unibo.it <br>
 Filippo Comastri : filippo.comastri2@studio.unibo.it <br>
-<a href=https://github.com/studyMatesFIDAFA/WasteService>Link git </a>
+<a href="https://github.com/studyMatesFIDAFA/WasteService">Link git </a>
 <!-- <img src="./TemplateToFill_files/DavideFiloni.jpeg" alt="mbot" width="15%" height="15%"> -->
 </div> 
 

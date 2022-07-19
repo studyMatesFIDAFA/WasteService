@@ -205,7 +205,7 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 <div class="remark">
 Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint1/userDocs/Sprint1_v2.html">Sprint 1</a>:<br>
 <img src="./img_Sprint2/sintesiFinale_Sprint1.png" alt="RF2" width="90%" height="90%"><br>
-CODICE: <a href="../../sprint1/src/analisiProblema_v4.qak">modello eseguibile</a><br>
+MODELLO: <a href="../../sprint1/src/analisiProblema_v4.qak">modello eseguibile</a><br>
 TEST: <a href="../../sprint1/test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
 
 </div>
@@ -243,7 +243,7 @@ i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#anal
 <h3>COMPONENTI A DISPOSIZIONE</h3>
 Viene fortinto il software per l'utilizzo del <a href="https://github.com/anatali/issLab2022/tree/main/unibo.sonarqak22">SONAR</a> e del <a href="https://github.com/anatali/issLab2022/tree/main/unibo.ledqak22">LED</a>.<br>
 <h3>PROBLEMATICHE RF2</h3>
-In questo Sprint ci concentreremo solamente sul RF2.
+In questo Sprint ci concentreremo solamente sul <a href="../../sprint1/userDocs/Sprint1_v2.html#RF2">RF2</a>.
 <ul>
 <li><h4>STATO TROLLEY</h4>
 Chi &eacute il responsabile dello stato del TROLLEY.</li>
@@ -431,8 +431,8 @@ conterr&aacute l'indicazione dello stato da cui ripartire.<br>
 
 <h3> ARCHITETTURA LOGICA</h3>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
-CODICE: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
- &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &nbsp;&nbsp;&nbsp;&emsp; &emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
 TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 &nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
@@ -454,13 +454,12 @@ per consentire la definizione dei paramentri del Raspberry in fase di avvio. In 
 In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
 compongono il sistema, in particolare:
 <ul>
-	<li><a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a>: in questo caso viene sfruttatto il fatto che
-		il LED sia una risorsa COAP. Infatti viene introdotto un osservatore COAP che monitora lo stato del LED, sostanzialmente
-		viene inviato un comando al LED e si verifica che lo stato in cui si trova sia quello corretto.</li>
-	<li><a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a>: in questa test unit si verifica il corretto funzionamento del
-		WASTE_SERVICE, che funge da controller del sistema. Vengono sfruttati due osservatori COAP per monitorare rispettivamente lo stato 
-		del TROLLEY e del LED. Viene simulato un comando del SONAR di stop/resume e si va a verificare che le due entit&aacute si trovino
-		nello stato atteso.</li>
+	<li><a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a>: viene inviato un comando al LED e si verifica che lo stato in cui si trova sia quello corretto.
+		Si sfrutta il fatto che il LED sia una risorsa COAP, infatti viene introdotto un osservatore COAP che monitora lo stato del LED.
+		.</li>
+	<li><a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a>: in questa test unit viene simulato un comando del SONAR di stop/resume e si va a verificare
+		che le TROLLEY e LED si trovino nello stato atteso, controllando il corretto funzionamento del WASTE_SERVICE, che funge da controller del sistema.
+		Vengono sfruttati due osservatori COAP per monitorare le due entit&aacute. </li>
 </ul>
 </div>
 
@@ -475,7 +474,7 @@ compongono il sistema, in particolare:
 	<li>dataCleaner: filtra le distanze passate dal sonarHCSR04Support2021, considerando solo quelle comprese in un 
 		determinato range. Questo &eacute necessario in quanto il sonar fisico &eacute realizzato per rilevare distanze non
 		troppo elevate.</li>
-	<li>distanceFilter: processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
+	<li>distanceFilter: &eacute stato modificato per esigenze implementative, arricchendolo con logica di business. Esso processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
 		stop/resume al WASTE_SERVICE (distanza superiore o inferiore a DLIMIT).</li>
  </ul><br>
  <img src="./img_Sprint2/sonar.png" alt="RF2" width="90%" height="90%"><br><br>
@@ -505,7 +504,18 @@ Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe r
 riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 
 <img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
+MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
+ &nbsp;&nbsp;&nbsp;&emsp; &emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
+&nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 
+</div>
+
+<h2>Deployment</h2>
+<div class="remark">
+Viene distribuita sul Raspberry <a href="../../distribuzione/unibo.raspberry-1.0">un'unica applicazione</a> contenente LED e SONAR, in pi&uacute essa viene accompagnato con i vari
+codici relativi a LED e SONAR fisici.<br>
+Infine la parte restante del sistema (TROLLEY e WASTE_SERVICE) risiede su un altro nodo che in questo caso corrisponde al PC.
 </div>
  
 <!-- USEFUL
@@ -525,7 +535,7 @@ riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 Davide Filoni email: davide.filoni2@studio.unibo.it <br>
 Fabio Scagliarini : fabio.scagliarini@studio.unibo.it <br>
 Filippo Comastri : filippo.comastri2@studio.unibo.it <br>
-<a href=https://github.com/studyMatesFIDAFA/WasteService>Link git </a>
+<a href="https://github.com/studyMatesFIDAFA/WasteService">Link git </a>
 <!-- <img src="./TemplateToFill_files/DavideFiloni.jpeg" alt="mbot" width="15%" height="15%"> -->
 </div> 
 
