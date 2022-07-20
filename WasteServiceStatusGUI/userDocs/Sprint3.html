@@ -226,7 +226,7 @@ Per la parte di requisiti si veda la <a href="../../sprint1/userDocs/Sprint1_v2.
 <ul>
  <li>La GUI deve avere un particolare design?<br>No</li>
  <li>In che forma deve essere rappresentato lo stato e la posizione del TROLLEY?<br>Stato: HOME, STOPPED e MOVIMENTO<br>
- POSIZIONE: pu&oacute essere precisa (coordinate) oppure approssimativa (area in cui si trova).</li>
+ POSIZIONE: pu&oacute essere precisa (coordinate o mappa) oppure approssimativa (area in cui si trova).</li>
  <br><br>
 Per le considerazioni fatte su Requisiti funzionali e Requisiti non funzionali si vedano
 i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#analisi_requisiti">Sprint 1</a><br><br>
@@ -234,13 +234,13 @@ i paragrafi dedicati nello  <a href="../../sprint1/userDocs/Sprint1_v2.html#anal
 <h3>COMPONENTI A DISPOSIZIONE</h3>
 Viene fortinto il software esemplificativo per la realizzazione della <a href="https://github.com/anatali/issLab2022/tree/main/webRobot22">GUI</a>.<br>
 <h3>PROBLEMATICHE RF3</h3>
-In questo Sprint ci concentreremo solamente sul RF3.
+In questo Sprint ci concentreremo solamente sul <a href="../../sprint1/userDocs/Sprint1_v2.html#RF3">RF3</a>.
 <ul>
 <li><h4>STATO TROLLEY, LED E BOX</h4>
 La GUI deve monitorare lo stato di TROLLEY, LED e Box perci&oacute &eacute necessario analizzare come ottenere tali informazioni.</li>
 
 <li><h4>RAPPRESENTAZIONE DELLA POSIZIONE DEL TROLLEY</h4>
-La posizione del TROLLEY pu&oacute essere precisa, espressa mediante coordinate, oppure approssimativa, indicando l'area in cui si trova o in cui si sta dirigendo.</li>
+La posizione del TROLLEY pu&oacute essere precisa, espressa mediante coordinate o mappa, oppure approssimativa, indicando l'area in cui si trova o in cui si sta dirigendo.</li>
 
 
 <li><h4>RAPPRESENTAZIONE CENTRALIZZATA O DISTRIBUITA DELLO STATO</h4>
@@ -252,35 +252,65 @@ La GUI deve mostrare lo stato di TROLLEY, LED e Box, queste informazioni possono
 <div class="remark">
 <h3> PROBLEMATICHE RF3 EVIDENZIATE DURANTE L'ANALISI DEI REQUISITI</h3>
 <h4> STATO TROLLEY, LED E BOX </h4>
-Attualmente, nel modello realizzato nello Sprint 1, lo stato del
-TROLLEY &eacute noto a due entit&aacute, ossia il TROLLEY stesso e il WASTE_SERVICE. Con l'introduzione del RF2,
-per&oacute bisogna considerare un nuovo stato in cui il TROLLEY si pu&oacute trovare, lo stato STOPPED.
-La problematica che sorge &eacute chi &eacute a conoscenza dello stato reale del TROLLEY e quindi chi andare ad interrogare
-per conoscerlo. In particolare:
+La GUI deve mostrare a video lo stato di TROLLEY, LED e Box oltre che la posizione del TROLLEY. Queste informazioni
+possono essere ottenute con diverse forme di interazione. In particolare, escludendo le forme di comunicazioni point-to-point
+(request-response e dispatch) in quanto non risultano particolarmente utili ed efficienti in questo caso specifico, vi sono due alternative: 
 <ul>
-	<li>TROLLEY: &eacute sempre a conoscenza dello stato in cui si trova. D'altro canto per&oacute in questo caso il TROLLEY deve comunicare il suo stato agli interessati (LED). 
-		In base a come viene effettuata la comunicazione il TROLLEY pu&oacute perdere la caratteristica di essere un attuatore e pu&oacute non essere rispettato
-		il requisito che il WASTE_SERVICE deve pilotare il LED ("Durante questa attività il WasteService fa lampeggiare il Led.").</li>
-	<li>WASTE_SERVICE: nel modello attuale esso pu&oacute inferire lo stato in cui si trova il TROLLEY in base allo stato in cui esso stesso si trova. Aggiungendo lo 
-		stato STOPPED per&oacute, &eacute necessario che il WASTE_SERVICE riceva le informazioni di quando fermare e riavviare il TROLLEY sulla base delle distanze rilevate dal SONAR.</li>
+	<li>EVENTI: in base alle considerazioni che verranno fatte nella problematica "RAPPRESENTAZIONE CENTRALIZZATA O DISTRIBUITA DELLO STATO"
+		pu&oacute esserci un'entit&aacute o pi&uacute entit&aacute che possono emettere un evento ogni volta che si verifica
+		una transizione di stato.</li>
+	<li>OSSERVETORI COAP: visto che le entit&aacute a cui siamo interssati sono modellate come attori, sono anche risorse COAP. Quindi
+		&eacute possibile associare ad ognuna di esse uno specifico osservatore COAP che verr&aacute notificato ogni volta che
+		si verificher&aacute una transizione di stato.</li>
 </ul>
 
 <h5>CONCLUSIONI</h5>
-Visto che il WASTE_SERVICE &eacute il responsabile del comportamento che il LED deve assumenre in ogni istante, &eacute consigliato che anche le informazioni
-che riguardono lo stato del TROLLEY siano mantenute e aggiornate dal WASTE_SERVICE stesso. In questo modo il TROLLEY non deve neanche 
-occuparsi della gestione del LED, mantenendo la caratteristica di attuatore.<br>
+L'osservabilit&aacute COAP &eacute una feature gi&aacute presente nel modello realizzato nello Sprint 2 e viene usata
+in fase di testing, perci&oacute potrebbe essere utilizzata anche per questa funzionalit&aacute. <br>
+In ogni caso, queste due soluzioni, non sono implementabili lato browser, quindi sar&aacute necessario realizzarle
+lato server. Cos&iacute facendo, si dovr&aacute prevedere una comunicazione tra browser e server per condividere queste informazioni
+che potrebbe essere realizzata, ad esempio, mediante l'ausilio delle web socket. <br>
 
+<h4>RAPPRESENTAZIONE DELLA POSIZIONE DEL TROLLEY</h4>
+Tra le informazioni che la GUI deve mostrare vi &eacute anche la posizione attuale del TROLLEY, sulla base del colloquio effettuato
+con il committente si evince che ci possono essere due modi altrnativi di rappresentare questa informazione: 
+<ul>
+	<li>Posizione PRECISA: in questo caso vengnono utilizzate le coordinate oppure una mappa animata per indicare la posizione corrente del TROLLEY. 
+		Sicuramente rappresenta una soluzione molto pi&uacute precisa ma richieder&aacute un tempo di implementazione maggiore.</li>
+	<li>Posizone APPROSSIMATA: questa soluzione consiste nell'indicare l'area in cui si trova o in cui si sta dirigendo il TROLLEY.
+		Dal punto di vista implementativo richiede meno tempo e l'informazione pu&oacute essere inferita dallo stato attuale del TROLLEY, ovvimanete
+		risulta meno precisa rispetto alla soluzione precedente.</li>
+</ul>
+
+<h5>CONCLUSIONI</h5>
+Non essendoci richieste specifiche dal committente, si lascia libert&aacute di scelta al progettista.<br>
+
+<h4>RAPPRESENTAZIONE CENTRALIZZATA O DISTRIBUITA DELLO STATO </h4>
+Le informazioni riguardanti lo stato di TROLLEY, LED e Box e la posizione del TROLLEY possono essere contenute in un'unica entit&aacute
+oppure distribuite per l'intero sistema: 
+<ul>
+	<li>Soluzione CENTRALIZZATA: in questo caso sar&aacute presente un'unica entit&aacute responsabile di aggiornare e condividere
+		le informazioni a cui la GUI &eacute interessata. In particolare in base alle scelte che verranno fatte per la problematica
+		"STATO TROLLEY, LED E BOX" questa entit&aacute si dovr&aacute incaricare di notificare la GUI ogni volta che si verifica un
+		cambiamento di stato per un'entit&aacute a cui siamo interessati.</li>
+	<li>Soluzione DISTRIBUITA: questa soluzione consiste nel contenere le informazioni nelle varie entit&aacute che compongono il
+		sistema. Nel caso si utilizzino gli eventi le due soluzioni non presentano grosse differenze, mentre in caso di impiego dell'osservabilit&aacute
+		COAP sar&aacute necessario introdurre un'osservatore per ogni attore. Quest'ultima soluzione richiede l'utilizzo di pi&uacute
+		risorse per&oacute riduce i compiti che il WASTE_SERVICE, che rappresenterebbe l'entit&aacute responsabile della gestione delle
+		informazioni, deve effettuare.</li>
+</ul>
+
+<h5>CONCLUSIONI</h5>
+Non essendoci richieste specifiche dal committente, si lascia libert&aacute di scelta al progettista, tenendo conto che la seconda soluzione
+distribuisce i compiti tra le varie entit&aacute del sistema invece che concentrarli in una sola. <br>
 
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
-Gli obiettivi sono quelli di mantenere il TROLLEY come attuatore e di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
-tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop.<br>
-Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SONAR al TROLLEY, il quale, 
-se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
-Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
-l'invio del comando on/off/blink.<br>
-Inoltre viene introdotta un'ulteriore request-response per gestire l'introduzione del nuovo stato "go_indoor". Infine il payload del comando resume che arriva al TROLLEY 
-conterr&aacute l'indicazione dello stato da cui ripartire.<br>
+Avendo gi&aacute a disposizione la feature dell'osservabilit&aacute COAP si consiglia di sfruttarla anche per implementare questo requisito.
+Inoltre si suggerisce di mantenere le informzioni distribuite nel sistema per ridurre i compiti del WASTE_SERVICE.
+Ci&oacute pu&oacute essere fatto introducendo un Controller lato server nel quale saranno presenti tre osservatori COAP incaricati di monitorare
+rispettivamente TROLLEY, WASTE_SERVICE e LED e di comunicare i cambiamenti, tramite web socket, al browser che si incaricher&aacute
+di aggiornare la GUI.
 
 
 <h3> ARCHITETTURA LOGICA</h3>
