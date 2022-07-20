@@ -11,17 +11,23 @@ import kotlinx.coroutines.runBlocking
 class Led ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, scope ){
 
 	override fun getInitialState() : String{
-		return "wait_cmd"
+		return "start"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
 		
 				var Cmd = ""
 				var Blink = false
 		return { //this:ActionBasciFsm
-				state("wait_cmd") { //this:State
+				state("start") { //this:State
 					action { //it:State
 						println("$name in ${currentState.stateName} | $currentMsg")
 						 Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")  
+					}
+					 transition( edgeName="goto",targetState="wait_cmd", cond=doswitch() )
+				}	 
+				state("wait_cmd") { //this:State
+					action { //it:State
+						println("$name in ${currentState.stateName} | $currentMsg")
 					}
 					 transition(edgeName="t06",targetState="esegui_cmd",cond=whenDispatch("cmd"))
 				}	 

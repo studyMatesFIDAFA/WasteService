@@ -37,6 +37,7 @@ Dispatch cmd : cmd (CMD)
  
 //Context ctxraspy ip [host="127.0.0.1" port=8080]
 Context ctxraspy ip [host="10.5.5.5" port=8080]
+//Context ctxsonar ip [host="10.5.5.5" port=8080]
 Context ctxbasicrobot  ip [host="127.0.0.1" port=8020]  
 
 Context ctxanalisiproblema ip [host="localhost" port=8078]
@@ -218,9 +219,11 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | ALARM")
 		emit alarm : alarm(STOP)	
 	}
-	Transition t6 whenReply dopathdone -> stopped //Nel caso in cui il trolley abbia già completato un percorso, quindi
+	Transition t6 whenTime 1000 -> stopped //se trolley è fermo non riceverà nulla
+					whenReply dopathdone -> stopped //Nel caso in cui il trolley abbia già completato un percorso, quindi
 	//non si può ricevere un dopathfail
 					whenReply dopathfail -> savepath
+					
 					
 	
 	State savepath {
@@ -419,11 +422,13 @@ QActor wasteservice context ctxanalisiproblema{
 						CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
 						#]
 						run unibo.kotlin.planner22Util.setGoal(XPlastica,YPlastica) 
+						updateResource [# "PBOX:$CurrentPlasticWeight" #]
 				[#		
 				} else if (Tipo_carico  == "vetro") {
 						CurrentGlassWeight = CurrentGlassWeight + Peso_carico
 						#]
 						run unibo.kotlin.planner22Util.setGoal(XVetro,YVetro) 
+						updateResource [# "GBOX:$CurrentGlassWeight" #]
 						[#
 				}
 			
@@ -546,6 +551,7 @@ QActor wasteservice context ctxanalisiproblema{
 QActor waste_truck_mock context ctxanalisiproblema {
 	
 	State start initial {
+		delay 4000
 		printCurrentMessage
 		println("WASTE_TRUCK | INIT")
 	}

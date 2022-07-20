@@ -99,11 +99,15 @@ QActor led context ctxraspy {
 		var Blink = false
 	#]
 	
-	State wait_cmd initial {
+	State start initial{
+		printCurrentMessage
+		[# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+	}
+	Goto wait_cmd
+	State wait_cmd {
 		printCurrentMessage
 		//println("LED | WAIT CMD")
-		//println("LED | OFF")
-		[# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+		
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd
 	

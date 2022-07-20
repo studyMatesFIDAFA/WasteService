@@ -191,9 +191,12 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("TROLLEY | ALARM")
 						emit("alarm", "alarm(STOP)" ) 
+						stateTimer = TimerActor("timer_alarm", 
+							scope, context!!, "local_tout_trolley_alarm", 1000.toLong() )
 					}
-					 transition(edgeName="t620",targetState="stopped",cond=whenReply("dopathdone"))
-					transition(edgeName="t621",targetState="savepath",cond=whenReply("dopathfail"))
+					 transition(edgeName="t620",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
+					transition(edgeName="t621",targetState="stopped",cond=whenReply("dopathdone"))
+					transition(edgeName="t622",targetState="savepath",cond=whenReply("dopathfail"))
 				}	 
 				state("savepath") { //this:State
 					action { //it:State
@@ -214,7 +217,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:STOPPED"  
 						)
 					}
-					 transition(edgeName="t722",targetState="resume",cond=whenDispatch("resume"))
+					 transition(edgeName="t723",targetState="resume",cond=whenDispatch("resume"))
 				}	 
 				state("resume") { //this:State
 					action { //it:State
@@ -241,19 +244,19 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t823",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
+					 transition(edgeName="t824",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
 					}))
-					transition(edgeName="t824",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
+					transition(edgeName="t825",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
 					}))
-					transition(edgeName="t825",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
+					transition(edgeName="t826",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
 					}))
-					transition(edgeName="t826",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
+					transition(edgeName="t827",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
 					}))
-					transition(edgeName="t827",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
+					transition(edgeName="t828",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
 					}))
-					transition(edgeName="t828",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
+					transition(edgeName="t829",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
 					}))
-					transition(edgeName="t829",targetState="resume",cond=whenReply("dopathfail"))
+					transition(edgeName="t830",targetState="resume",cond=whenReply("dopathfail"))
 				}	 
 			}
 		}
