@@ -17,7 +17,7 @@ class Waste_truck_mock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
-						delay(4000) 
+						delay(500) 
 						println("$name in ${currentState.stateName} | $currentMsg")
 						println("WASTE_TRUCK | INIT")
 					}

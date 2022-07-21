@@ -1,0 +1,76 @@
+System led
+
+Dispatch cmd : cmd (CMD)
+
+Context ctxraspy ip [host="localhost" port=8080] 
+
+QActor led context ctxraspy {
+	[#
+		var Cmd = ""
+		var Blink = false
+	#]
+	
+	State start initial{
+		[# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+	}Goto wait_cmd
+	
+	State wait_cmd {
+		printCurrentMessage
+		//println("LED | WAIT CMD")
+		//println("LED | OFF")
+	}
+	Transition t0 whenMsg cmd -> esegui_cmd
+	
+	State esegui_cmd {
+		printCurrentMessage
+		onMsg(cmd : cmd (CMD)){
+			
+			[#
+				Cmd = payloadArg(0)
+				println(Cmd)
+				Blink = false
+					
+			
+			if ( Cmd=="on" ){
+				Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+				//println("LED | ON")
+				Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+			}
+							
+			 else if ( Cmd == "off" ) {
+				Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+				//println("LED | OFF")
+			}
+			else {
+				Blink = true
+			}
+			#] 
+		}
+		if [# Cmd == "on" #] {
+				updateResource [# "LED:ON" #]
+			}
+			if [# Cmd == "off" #] {
+				updateResource [# "LED:OFF" #]
+			}
+	}
+	Goto blink if [# Blink #] else wait_cmd
+	
+	State blink {
+		printCurrentMessage
+		updateResource [# "LED:BLINK" #]
+		[#
+			Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
+			//println("LED | ON")	
+		#]
+		delay 500
+		[#
+			Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
+			//println("LED | OFF")	
+		#]
+		
+		//println("LED | BLINK")
+		
+	}
+	Transition t1 whenTime 500 -> blink
+				  whenMsg cmd -> esegui_cmd
+}

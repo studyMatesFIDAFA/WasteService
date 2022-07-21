@@ -551,7 +551,7 @@ QActor wasteservice context ctxanalisiproblema{
 QActor waste_truck_mock context ctxanalisiproblema {
 	
 	State start initial {
-		delay 4000
+		delay 500
 		printCurrentMessage
 		println("WASTE_TRUCK | INIT")
 	}
