@@ -10,19 +10,21 @@ import unibo.actor22comm.utils.CommUtils;
 import it.unibo.kactor.IApplMessage;
 import unibo.comm22.coap.CoapConnection;
 import unibo.comm22.interfaces.Interaction2021;
+import unibo.comm22.tcp.TcpClientSupport;
 import unibo.comm22.utils.ColorsOut;
+import unibo.comm22.utils.CommUtils;
 
 public class RobotUtils {
-    public static final int ctxanlisiproblema_port           = 8078;
-    public static final int ctxraspy_port           = 8080;
-    private static Interaction2021 conn;
 
-    public static CoapConnection connectWithTrolleyUsingCoap(String addr){
+    private static Interaction2021 conn;
+    private static Interaction2021 connTcp;
+
+    public static CoapConnection connectWithTrolleyUsingCoap(String addr, int port){
         try {
             String ctxqakdest       = "ctxanalisiproblema";
             String qakdestination 	= "trolley";
             String path   = ctxqakdest+"/"+qakdestination;
-            conn           = new CoapConnection(addr+":"+ctxanlisiproblema_port, path);
+            conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
             System.out.println("HIController | connect Coap conn:" + conn );
         }catch(Exception e){
@@ -31,12 +33,36 @@ public class RobotUtils {
         return (CoapConnection) conn;
     }
 
-    public static CoapConnection connectWithLedUsingCoap(String addr){
+    public static void connectWithWasteServiceUsingTcp(String addr, int port){
+        try {
+            connTcp = TcpClientSupport.connect(addr, port, 10);
+            System.out.println("HIController | connect Tcp conn:" + conn );
+        }catch(Exception e){
+            ColorsOut.outerr("RobotUtils | connectWithRobotUsingTcp ERROR:"+e.getMessage());
+        }
+    }
+
+    public static void sendWasteTruckReq(String payload) {
+        try {
+            IApplMessage msg =  CommUtils.buildRequest("webGui", "load_req", payload, "wasteservice");
+            ColorsOut.outappl("RobotUtils | sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
+            if( msg.isRequest() ){
+                String answer = conn.request( msg.toString() );
+                System.out.println("RobotUtils | answer:" + answer );
+            } else {
+                // altro tipo di msg
+            }
+        } catch (Exception e) {
+            ColorsOut.outerr("RobotUtils | sendMsg ERROR:"+e.getMessage());
+        }
+    }
+
+    public static CoapConnection connectWithLedUsingCoap(String addr, int port){
         try {
             String ctxqakdest       = "ctxraspy";
             String qakdestination 	= "led";
             String path   = ctxqakdest+"/"+qakdestination;
-            conn           = new CoapConnection(addr+":"+ctxraspy_port, path);
+            conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
             System.out.println("HIController | connect Coap conn:" + conn );
         }catch(Exception e){
@@ -45,12 +71,12 @@ public class RobotUtils {
         return (CoapConnection) conn;
     }
 
-    public static CoapConnection connectWithWasteServiceUsingCoap(String addr){
+    public static CoapConnection connectWithWasteServiceUsingCoap(String addr, int port){
         try {
             String ctxqakdest       = "ctxanalisiproblema";
             String qakdestination 	= "wasteservice";
             String path   = ctxqakdest+"/"+qakdestination;
-            conn           = new CoapConnection(addr+":"+ctxanlisiproblema_port, path);
+            conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
             System.out.println("HIController | connect Coap conn:" + conn );
         }catch(Exception e){

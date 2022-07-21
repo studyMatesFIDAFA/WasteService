@@ -8,58 +8,100 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import unibo.WasteServiceStatusGUI.model.AddressForm;
+import unibo.WasteServiceStatusGUI.model.WasteTruckForm;
 import unibo.comm22.coap.CoapConnection;
 import unibo.comm22.utils.ColorsOut;
 
 //---------------------------------------------------
 //import unibo.Robots.common.RobotUtils;
 
-
 @Controller 
 public class RobotController {
     public final static String robotName  = "basicrobot";
     protected String mainPage             = "WasteServiceStatusGui";
 
+    @Value("not connected")
+    String ledip;
+    @Value("not connected")
+    String trolleyip;
+    @Value("not connected")
+    String wasteserviceip;
+    @Value("8080")
+    int portled;
+    @Value("8078")
+    int porttrolley;
+    @Value("8078")
+    int portwasteservice;
+
+
+
+
     protected String buildThePage(Model viewmodel) {
-        //setConfigParams(viewmodel);
+        setConfigParams(viewmodel);
         return mainPage;
     }
 
-    /*protected void setConfigParams(Model viewmodel){
-        //
-    }*/
+    protected void setConfigParams(Model viewmodel){
+        viewmodel.addAttribute("ledip",  ledip);
+        viewmodel.addAttribute("trolleyip", trolleyip);
+        viewmodel.addAttribute("wasteserviceip",wasteserviceip);
+        viewmodel.addAttribute("portled",  portled);
+        viewmodel.addAttribute("porttrolley", porttrolley);
+        viewmodel.addAttribute("portwasteservice",portwasteservice);
+    }
 
   @GetMapping("/") 		 
   public String entry(Model viewmodel) {
-      CoapConnection connWaste = RobotUtils.connectWithWasteServiceUsingCoap("localhost");
-      CoapConnection connTrolley = RobotUtils.connectWithTrolleyUsingCoap("localhost");
-      CoapConnection connLed = RobotUtils.connectWithLedUsingCoap("10.5.5.5");
-      //TODO aggiungere campo per specificare l'ip del rasp
-      connWaste.observeResource( new HandlerCoapObserver() );
-      connTrolley.observeResource( new HandlerCoapObserver() );
-      connLed.observeResource( new HandlerCoapObserver() );
       return buildThePage(viewmodel);
   }
 
+  @PostMapping("/setip")
+    public String setrobotip(Model viewmodel, @ModelAttribute AddressForm addressForm){
+        ledip = addressForm.getIp_led();
+        portled = addressForm.getPort_led();
+        trolleyip = addressForm.getIp_trolley();
+        porttrolley = addressForm.getPort_trolley();
+        wasteserviceip = addressForm.getIp_wasteservice();
+        portwasteservice = addressForm.getPort_wasteservice();
 
-    /*@PostMapping("/setrobotip")
-    public String setrobotip(Model viewmodel, @RequestParam String ipaddr  ){
-        robotip = ipaddr;
-        System.out.println("RobotHIController | setrobotip:" + ipaddr );
-        viewmodel.addAttribute("robotip", robotip);
-//        setConfigParams(viewmodel);
-        //Uso basicrobto22 sulla porta 8020
-        //robotName  = "basicrobot";
-        if( usingTcp ) RobotUtils.connectWithRobotUsingTcp(ipaddr);
-        //Attivo comunque una connessione CoAP per osservare basicrobot
-        CoapConnection conn = RobotUtils.connectWithRobotUsingCoap(ipaddr);
-        conn.observeResource( new RobotCoapObserver() );
+        viewmodel.addAttribute("ledip", ledip);
+        viewmodel.addAttribute("trolleyip", trolleyip);
+        viewmodel.addAttribute("wasteserviceip",wasteserviceip);
+        viewmodel.addAttribute("portled", portled);
+        viewmodel.addAttribute("porttrolley", porttrolley);
+        viewmodel.addAttribute("portwasteservice",portwasteservice);
+
+        //Attivo connessione TCP per inviare richiesta del waste truck
+        RobotUtils.connectWithWasteServiceUsingTcp(wasteserviceip,portwasteservice);
+
+
+        //Attivo una connessione CoAP per osservare
+        CoapConnection connWaste = RobotUtils.connectWithWasteServiceUsingCoap(wasteserviceip,portwasteservice);
+        CoapConnection connTrolley = RobotUtils.connectWithTrolleyUsingCoap(trolleyip,porttrolley);
+        CoapConnection connLed = RobotUtils.connectWithLedUsingCoap(ledip,portled);
+
+        connWaste.observeResource( new HandlerCoapObserver() );
+        connTrolley.observeResource( new HandlerCoapObserver() );
+        connLed.observeResource( new HandlerCoapObserver() );
+
         return buildThePage(viewmodel);
-    }*/
+    }
+
+    @PostMapping("/load_req")
+    public String sendWasteTruckRequest(Model viewmodel, @ModelAttribute WasteTruckForm wasteTruckForm){
+        String materiale = wasteTruckForm.getMateriale();
+        int qta = wasteTruckForm.getQuantita();
+        String msg =  "load_req("+materiale+","+qta+")";
+        try {
+            RobotUtils.sendWasteTruckReq(msg);
+        } catch (Exception e){
+            System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
+        }
+
+        return buildThePage(viewmodel);
+    }
 
     @ExceptionHandler
     public ResponseEntity handle(Exception ex) {
