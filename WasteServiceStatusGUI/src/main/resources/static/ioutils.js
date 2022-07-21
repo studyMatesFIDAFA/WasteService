@@ -2,14 +2,16 @@
 ioutils.js
 */
 
-    const trolley     = document.getElementById("trolley");
+    const stato_trolley     = document.getElementById("stato_trolley");
+    const posizione_trolley = document.getElementById("pos_trolley")
     //const webcamip        = document.getElementById("webcamip");
     const led    = document.getElementById("led");
     const pbox = document.getElementById("pBox");
     const gbox = document.getElementById("gBox");
 
     function setMessageToWindow(outfield, message) {
-         var output = message.replace("\n","<br/>")
+         //var output = message.replace("\n","<br/>")
+         var output = message
          outfield.innerHTML = `<tt>${output}</tt>`
     }
 

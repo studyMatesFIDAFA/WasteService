@@ -183,8 +183,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 					}
 					 transition(edgeName="t516",targetState="ritorno_home",cond=whenReply("dopathdone"))
 					transition(edgeName="t517",targetState="ritorno_home",cond=whenReply("dopathfail"))
-					transition(edgeName="t518",targetState="pickup",cond=whenRequest("pickup"))
-					transition(edgeName="t519",targetState="alarm",cond=whenDispatch("stop"))
+					transition(edgeName="t518",targetState="go_indoor",cond=whenRequest("go_indoor"))
+					transition(edgeName="t519",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
+					transition(edgeName="t520",targetState="alarm",cond=whenDispatch("stop"))
 				}	 
 				state("alarm") { //this:State
 					action { //it:State
@@ -194,9 +195,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						stateTimer = TimerActor("timer_alarm", 
 							scope, context!!, "local_tout_trolley_alarm", 1000.toLong() )
 					}
-					 transition(edgeName="t620",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
-					transition(edgeName="t621",targetState="stopped",cond=whenReply("dopathdone"))
-					transition(edgeName="t622",targetState="savepath",cond=whenReply("dopathfail"))
+					 transition(edgeName="t621",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
+					transition(edgeName="t622",targetState="stopped",cond=whenReply("dopathdone"))
+					transition(edgeName="t623",targetState="savepath",cond=whenReply("dopathfail"))
 				}	 
 				state("savepath") { //this:State
 					action { //it:State
@@ -217,7 +218,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:STOPPED"  
 						)
 					}
-					 transition(edgeName="t723",targetState="resume",cond=whenDispatch("resume"))
+					 transition(edgeName="t724",targetState="resume",cond=whenDispatch("resume"))
 				}	 
 				state("resume") { //this:State
 					action { //it:State
@@ -244,19 +245,19 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t824",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
+					 transition(edgeName="t825",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
 					}))
-					transition(edgeName="t825",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
+					transition(edgeName="t826",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
 					}))
-					transition(edgeName="t826",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
+					transition(edgeName="t827",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
 					}))
-					transition(edgeName="t827",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
+					transition(edgeName="t828",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
 					}))
-					transition(edgeName="t828",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
+					transition(edgeName="t829",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
 					}))
-					transition(edgeName="t829",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
+					transition(edgeName="t830",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
 					}))
-					transition(edgeName="t830",targetState="resume",cond=whenReply("dopathfail"))
+					transition(edgeName="t831",targetState="resume",cond=whenReply("dopathfail"))
 				}	 
 			}
 		}

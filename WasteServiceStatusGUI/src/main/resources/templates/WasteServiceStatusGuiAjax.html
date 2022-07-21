@@ -118,7 +118,7 @@
   
   <!-- INVIA RICHIESTA -->
   <div class="container-fluid text-black text-center"  style='margin-top:20px;'>
-    <form method="post" action="load_req">
+
 	<font color="blue">
 	<div>
      <label for="tipo" >Tipo</label>
@@ -129,12 +129,15 @@
 	 <label for="qta">Quantit&aacute </label>
      <input type="text" id="qta" name="qta" value="">
 	</div>
-	</font>
+
 	<div style='margin-top:10px;'>
-     <input type="submit" value="Invia richiesta">
+     <input type="button" value="Invia richiesta" onclick="sendloadreq()">
 	</div>
      <!-- the form-data is sent to the page specified in the action attribute -->
-    </form>
+      <div style='margin-top:10px;'>
+          Risposta <input type="text" id="response" readonly="readonly"/>
+      </div>
+    </font>
   </div>
 
 
@@ -159,6 +162,7 @@
 
 <!-- <script src="../static/jquery.min.js"></script> -->
 <script src="sockjs.min.js"></script>
+<script src="ajax_loadreq.js"></script>
 <!-- <script src="app.js"></script> -->
 <script src="ioutils.js"></script>
 <script src="wsminimal.js"></script>

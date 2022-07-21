@@ -20,7 +20,8 @@ import unibo.comm22.utils.ColorsOut;
 @Controller 
 public class RobotController {
     public final static String robotName  = "basicrobot";
-    protected String mainPage             = "WasteServiceStatusGui";
+    //protected String mainPage             = "WasteServiceStatusGui";
+    protected String mainPage             = "WasteServiceStatusGuiAjax";
 
     @Value("not connected")
     String ledip;
@@ -34,6 +35,10 @@ public class RobotController {
     int porttrolley;
     @Value("8078")
     int portwasteservice;
+    @Value("unknown")
+    String materiale;
+    @Value("0")
+    int qta;
 
 
 
@@ -50,6 +55,8 @@ public class RobotController {
         viewmodel.addAttribute("portled",  portled);
         viewmodel.addAttribute("porttrolley", porttrolley);
         viewmodel.addAttribute("portwasteservice",portwasteservice);
+        viewmodel.addAttribute("qta", qta);
+        viewmodel.addAttribute("materiale", materiale);
     }
 
   @GetMapping("/") 		 
@@ -63,8 +70,8 @@ public class RobotController {
         portled = addressForm.getPort_led();
         trolleyip = addressForm.getIp_trolley();
         porttrolley = addressForm.getPort_trolley();
-        wasteserviceip = addressForm.getIp_wasteservice();
-        portwasteservice = addressForm.getPort_wasteservice();
+        wasteserviceip = addressForm.getIp_ws();
+        portwasteservice = addressForm.getPort_ws();
 
         viewmodel.addAttribute("ledip", ledip);
         viewmodel.addAttribute("trolleyip", trolleyip);
@@ -87,20 +94,42 @@ public class RobotController {
         connLed.observeResource( new HandlerCoapObserver() );
 
         return buildThePage(viewmodel);
+        //return mainPage;
     }
-
+/*
     @PostMapping("/load_req")
     public String sendWasteTruckRequest(Model viewmodel, @ModelAttribute WasteTruckForm wasteTruckForm){
-        String materiale = wasteTruckForm.getMateriale();
-        int qta = wasteTruckForm.getQuantita();
+        materiale = wasteTruckForm.getTipo();
+        qta = wasteTruckForm.getQta();
         String msg =  "load_req("+materiale+","+qta+")";
+        System.out.println(msg);
         try {
             RobotUtils.sendWasteTruckReq(msg);
         } catch (Exception e){
             System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
         }
 
+        //return mainPage;
         return buildThePage(viewmodel);
+    }
+*/
+
+    @ResponseBody
+    @PostMapping("/load_req")
+    public String sendWasteTruckRequest(Model viewmodel, @ModelAttribute WasteTruckForm wasteTruckForm){
+        materiale = wasteTruckForm.getTipo();
+        qta = wasteTruckForm.getQta();
+        String msg =  "load_req("+materiale+","+qta+")";
+        System.out.println(msg);
+        String res="";
+        try {
+            res = RobotUtils.sendWasteTruckReq(msg);
+        } catch (Exception e){
+            System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
+        }
+
+        //return mainPage;
+        return res;
     }
 
     @ExceptionHandler

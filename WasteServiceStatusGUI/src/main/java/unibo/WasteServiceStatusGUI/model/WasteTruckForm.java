@@ -1,22 +1,22 @@
 package unibo.WasteServiceStatusGUI.model;
 
 public class WasteTruckForm {
-    private int quantita;
-    private String materiale;
+    private int qta;
+    private String tipo;
 
-    public int getQuantita() {
-        return quantita;
+    public int getQta() {
+        return qta;
     }
 
-    public String getMateriale() {
-        return materiale;
+    public void setQta(int qta) {
+        this.qta = qta;
     }
 
-    public void setQuantita(int quantita) {
-        this.quantita = quantita;
+    public String getTipo() {
+        return tipo;
     }
 
-    public void setMateriale(String materiale) {
-        this.materiale = materiale;
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

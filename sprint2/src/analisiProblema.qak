@@ -211,7 +211,8 @@ QActor trolley context ctxanalisiproblema {
 	}
 	Transition t5 whenReply dopathdone -> ritorno_home
 				  whenReply dopathfail -> ritorno_home
-				  whenRequest pickup -> pickup
+				  whenRequest go_indoor -> go_indoor
+				  whenRequest ritorno_home -> ritorno_home
 				  whenMsg stop -> alarm
 				  
 	State alarm {
@@ -419,16 +420,16 @@ QActor wasteservice context ctxanalisiproblema{
 			run  unibo.kotlin.planner22Util.showCurrentRobotState()
 			[#
 				if (Tipo_carico  == "plastica") {
-						CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
+						
 						#]
 						run unibo.kotlin.planner22Util.setGoal(XPlastica,YPlastica) 
-						updateResource [# "PBOX:$CurrentPlasticWeight" #]
+						
 				[#		
 				} else if (Tipo_carico  == "vetro") {
-						CurrentGlassWeight = CurrentGlassWeight + Peso_carico
+						
 						#]
 						run unibo.kotlin.planner22Util.setGoal(XVetro,YVetro) 
-						updateResource [# "GBOX:$CurrentGlassWeight" #]
+						
 						[#
 				}
 			
@@ -473,6 +474,19 @@ QActor wasteservice context ctxanalisiproblema{
 	State controlla_req{
 		printCurrentMessage
 		println("WASTE SERVICE | CONTROLLA NUOVE RICHIESTE")
+		[#
+				if (Tipo_carico  == "plastica") {
+						CurrentPlasticWeight = CurrentPlasticWeight + Peso_carico
+						#]
+						updateResource [# "PBOX:$CurrentPlasticWeight" #]
+				[#		
+				} else if (Tipo_carico  == "vetro") {
+						CurrentGlassWeight = CurrentGlassWeight + Peso_carico
+						#]
+						updateResource [# "GBOX:$CurrentGlassWeight" #]
+						[#
+				}
+			#]
 //		onMsg (resume : resume(STATE)){
 //			forward trolley -m resume : resume ($LastState)
 //			delay 200
@@ -548,44 +562,44 @@ QActor wasteservice context ctxanalisiproblema{
 }
 
 // WASTE TRUCK MOCK
-QActor waste_truck_mock context ctxanalisiproblema {
-	
-	State start initial {
-		delay 500
-		printCurrentMessage
-		println("WASTE_TRUCK | INIT")
-	}
-	Goto indoor_request
-	
-	State indoor_request {
-		printCurrentMessage
-		println("WASTE_TRUCK | richiesta di prelievo carico")
-		request wasteservice -m load_req : load_req(plastica,9)
-		
-	}
-	
-	Transition t0 whenReply loadaccept -> accepted
-					whenReply loadrejected -> altrarichiesta
-	
-	State accepted {
-		printCurrentMessage
-		println("Request accepted")
-	}Goto altrarichiesta
-	
-	State altrarichiesta{
-		printCurrentMessage
-		//delay 10000
-		println("WASTE_TRUCK | richiesta di prelievo carico")
-		request wasteservice -m load_req : load_req(vetro,1)
-	}
-	Transition t1 whenReply loadaccept -> fine
-					whenReply loadrejected -> rejected
-	
-	State fine{
-		printCurrentMessage
-	}
-	State rejected {
-		printCurrentMessage
-		println("Request rejected")
-	}
-}
+//QActor waste_truck_mock context ctxanalisiproblema {
+//	
+//	State start initial {
+//		delay 500
+//		printCurrentMessage
+//		println("WASTE_TRUCK | INIT")
+//	}
+//	Goto indoor_request
+//	
+//	State indoor_request {
+//		printCurrentMessage
+//		println("WASTE_TRUCK | richiesta di prelievo carico")
+//		request wasteservice -m load_req : load_req(plastica,9)
+//		
+//	}
+//	
+//	Transition t0 whenReply loadaccept -> accepted
+//					whenReply loadrejected -> altrarichiesta
+//	
+//	State accepted {
+//		printCurrentMessage
+//		println("Request accepted")
+//	}Goto altrarichiesta
+//	
+//	State altrarichiesta{
+//		printCurrentMessage
+//		//delay 10000
+//		println("WASTE_TRUCK | richiesta di prelievo carico")
+//		request wasteservice -m load_req : load_req(vetro,1)
+//	}
+//	Transition t1 whenReply loadaccept -> fine
+//					whenReply loadrejected -> rejected
+//	
+//	State fine{
+//		printCurrentMessage
+//	}
+//	State rejected {
+//		printCurrentMessage
+//		println("Request rejected")
+//	}
+//}

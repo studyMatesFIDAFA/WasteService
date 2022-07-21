@@ -36,24 +36,32 @@ public class RobotUtils {
     public static void connectWithWasteServiceUsingTcp(String addr, int port){
         try {
             connTcp = TcpClientSupport.connect(addr, port, 10);
-            System.out.println("HIController | connect Tcp conn:" + conn );
+            System.out.println("HIController | connect Tcp conn:" + connTcp );
         }catch(Exception e){
             ColorsOut.outerr("RobotUtils | connectWithRobotUsingTcp ERROR:"+e.getMessage());
         }
     }
 
-    public static void sendWasteTruckReq(String payload) {
+    public static String sendWasteTruckReq(String payload) {
+        String answer="";
         try {
             IApplMessage msg =  CommUtils.buildRequest("webGui", "load_req", payload, "wasteservice");
-            ColorsOut.outappl("RobotUtils | sendMsg msg:" + msg + " conn=" + conn, ColorsOut.BLUE);
+            ColorsOut.outappl("RobotUtils | sendMsg msg:" + msg + " conn=" + connTcp, ColorsOut.BLUE);
             if( msg.isRequest() ){
-                String answer = conn.request( msg.toString() );
+                answer = connTcp.request( msg.toString() );
                 System.out.println("RobotUtils | answer:" + answer );
             } else {
                 // altro tipo di msg
             }
         } catch (Exception e) {
             ColorsOut.outerr("RobotUtils | sendMsg ERROR:"+e.getMessage());
+        }
+        if(answer.contains("loadaccept"))
+        {
+            return "loadaccept";
+        }
+        else{
+            return "loadrejected";
         }
     }
 
