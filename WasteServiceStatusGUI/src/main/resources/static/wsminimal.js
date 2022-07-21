@@ -30,17 +30,39 @@ wsminimal.js
         socket.onmessage = function (event) {
             //alert(`Got Message: ${event.data}`);
             msg = event.data;
+			
             //alert(`Got Message: ${msg}`);
             console.log("ws-status:" + msg);
-            if( msg.includes("TROLLEY") )
-                setMessageToWindow(trolley,msg);
-            else if(msg.includes("LED"))
+            if( msg.includes("TROLLEY") ) {
+				m = elab_msg(msg);
+                setMessageToWindow(pos_trolley,m);
+				var stato = stato_trolley(m);
+				setMessageToWindow(stato_trolley,stato);
+			}
+            else if(msg.includes("LED")) {
+				m = elab_msg(msg);
                 setMessageToWindow(led,msg); //""+`${event.data}`*/
-            else if(msg.includes("GBOX"))
+			}
+            else if(msg.includes("GBOX")){
+				m = elab_msg(msg);
                 setMessageToWindow(gbox,msg)
-            else if(msg.includes("PBOX"))
+			}
+            else if(msg.includes("PBOX")){
+				m = elab_msg(msg);
                 setMessageToWindow(pbox,msg)
+			}
             else console.log("ERROR formato messaggio coap")
          };
     }//connect
+	
+	function elab_msg (m) {
+		msg = m.split(":");
+		return msg[1];
+	}
+	
+	function stato_trolley (m) {
+		if (m == "HOME" || m == "STOPPED") return m;
+		else return "MOVIMENTO";
+	}
+		
 

@@ -11,13 +11,13 @@ QActor led context ctxraspy {
 	#]
 	
 	State start initial{
-		[# Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh") #] //led inizialmente spento 
+		println("LED | OFF") //led inizialmente spento 
 	}Goto wait_cmd
 	
 	State wait_cmd {
 		printCurrentMessage
-		//println("LED | WAIT CMD")
-		//println("LED | OFF")
+		println("LED | WAIT CMD")
+		
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd
 	
@@ -32,13 +32,11 @@ QActor led context ctxraspy {
 					
 			
 			if ( Cmd=="on" ){
-				Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
-				//println("LED | ON")
+				println("LED | ON")
 			}
 							
 			 else if ( Cmd == "off" ) {
-				Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
-				//println("LED | OFF")
+				println("LED | OFF")
 			}
 			else {
 				Blink = true
@@ -57,16 +55,9 @@ QActor led context ctxraspy {
 	State blink {
 		printCurrentMessage
 		updateResource [# "LED:BLINK" #]
-		[#
-			Runtime.getRuntime().exec("sudo bash led25GpioTurnOn.sh")
-			//println("LED | ON")	
-		#]
+		println("LED | ON")
 		delay 500
-		[#
-			Runtime.getRuntime().exec("sudo bash led25GpioTurnOff.sh")
-			//println("LED | OFF")	
-		#]
-		
+		println("LED | OFF")	
 		//println("LED | BLINK")
 		
 	}

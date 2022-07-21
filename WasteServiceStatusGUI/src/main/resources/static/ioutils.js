@@ -19,7 +19,7 @@ ioutils.js
     }
  
 //short-hand for $(document).ready(function() { ... });
-$(function () {
+/*$(function () {
     $( "#h" ).click(function() { callServerUsingAjax("h") });  //callServerUsingAjax is in wsminimal
     $( "#w" ).click(function() { callServerUsingAjax("w") });
     $( "#s" ).click(function() { callServerUsingAjax("s") });
@@ -27,7 +27,7 @@ $(function () {
     $( "#l" ).click(function() { callServerUsingAjax("l") });
     $( "#p" ).click(function() { callServerUsingAjax("p") });
     $( "#z" ).click(function() { callServerUsingAjax("z") });
- });
+ });*/
 
 function callServerUsingAjax(message) {
     //alert("callServerUsingAjax "+message)

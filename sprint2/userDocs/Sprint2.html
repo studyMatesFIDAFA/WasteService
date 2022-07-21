@@ -415,7 +415,19 @@ che devono essere a conoscenza dello stato del TROLLEY in quanto il comportament
 </ul>
 <h5>CONCLUSIONI</h5>
 Per rispettare i requisiti dati dal committente &eacute necessario che il WASTE_SERVICE sia il responsabile del comportamento del LED e quindi
-sia esso a prendere le decisioni che lo riguardano (invio del comando).<br><br><br>
+sia esso a prendere le decisioni che lo riguardano (invio del comando).<br>
+
+<h4>DISTRIBUZIONE SUL RASPBERRY</h4>
+Sul Raspberry sono presenti due componenti del sistema: il LED e il SONAR. &Eacute necessario prendere una decisione su
+quante applicazioni realizzare per modellare questi due attori. Le soluzioni sono le seguenti:
+<ul>
+	<li>UNICA APPLICAZIONE: realizzare un'unica applicazione contentente sia LED che SONAR. In questo caso sar&aacute
+		pi&uacute semplice realizzare la distribuzione ma il sistema risulter&aacute meno flessibile ed estendibile. </li>
+	<li>DUE APPLICAZIONI: in questo caso si realizzano due applicazioni separate, una per il LED e una per il SONAR. Cos&iacute
+		facendo si complica leggermente la distribuzione ma il sistema diventa pi&uacute flessibile ed estendibile. </li>
+</ul>
+<h5>CONCLUSIONI</h5>
+Non essendoci richieste specifiche dal committente, si lascia libert&aacute di scelta al progettista.<br><br><br>
 
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
@@ -446,6 +458,8 @@ per consentire la definizione dei paramentri del Raspberry in fase di avvio. In 
 <a href="../../raspberry/raspberryConfigurator.json">File di configurazione json</a><br>
 <a href="../../raspberry/resources/RaspberryConfigurator.kt">Pojo dedicato alla configurazione</a><br>
 <br>
+
+
 </div>
  
 
@@ -483,9 +497,14 @@ compongono il sistema, in particolare:
  forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
  il LED.<br><br>
  
+ Inoltre, in questa fase, abbiamo deciso di suddividere il LED e il SONAR in due applicazioni differenti in modo tale da facilitare
+ il testing del sistema e aumentare la sua flessibilit&aacute ed estendibilit&aacute senza complicare eccessivamente la distribuzione.<br>
+ 
  Inizialmente &eacute stata realizzata una prima versione per verficare la corretta comunicazione tra Raspberry e
- il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../raspberry/src/raspberry_sim.qakt">Modello eseguibile</a>.<br>
- Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../raspberry/src/raspberry.qak">Modello eseguibile</a>.
+ il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../sonarqak/src/sonarsim.qakt">Modello eseguibile SONAR</a>.<br>
+										&nbsp;&nbsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/ledsim.qakt">Modello eseguibile LED</a>.<br>
+ Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../sonarqak/src/sonar.qak">Modello eseguibile SONAR</a>.<br>
+&emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br>
  
  
  </div>
@@ -505,7 +524,10 @@ riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 
 <img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
 MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
- &nbsp;&nbsp;&nbsp;&emsp; &emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;<a href="../../sonarqak/src/sonar.qak">Modello eseguibile SONAR</a>.<br>
+&emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br>
+ 
+ <br><br><br>
 TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 
@@ -513,7 +535,7 @@ TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 
 <h2>Deployment</h2>
 <div class="remark">
-Viene distribuita sul Raspberry <a href="../../distribuzione/unibo.raspberry-1.0">un'unica applicazione</a> contenente LED e SONAR, in pi&uacute essa viene accompagnato con i vari
+Vengono distribuite sul Raspberry due applicazioni, una contenente il <a href="../../ledqak/src/led.qak">LED</a> e una il <a href="../../sonarqak/src/sonar.qak">SONAR</a>, accompagnate con i vari
 codici relativi a LED e SONAR fisici.<br>
 Infine la parte restante del sistema (TROLLEY e WASTE_SERVICE) risiede su un altro nodo che in questo caso corrisponde al PC.
 </div>
