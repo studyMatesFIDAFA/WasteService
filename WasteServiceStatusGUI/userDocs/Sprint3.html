@@ -206,7 +206,8 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint2/userDocs/Sprint2.html">Sprint 2</a>:<br>
 <img src="./img_Sprint3/sintesiFinale_Sprint2.png" alt="RF2" width="90%" height="90%"><br>
 MODELLO: <a href="../../sprint2/src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
- &nbsp;&nbsp;&nbsp;&emsp; &emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
+&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;<a href="../../sonarqak/src/sonar.qakt">Modello eseguibile SONAR</a>.<br>
+&emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br><br><br><br>
 TEST: <a href="../../sprint2/test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 </div>
@@ -301,7 +302,7 @@ oppure distribuite per l'intero sistema:
 </ul>
 
 <h5>CONCLUSIONI</h5>
-Non essendoci richieste specifiche dal committente, si lascia libert&aacute di scelta al progettista, tenendo conto che la seconda soluzione
+Non essendoci richieste specifiche dal committente, si consiglia la seconda soluzione in quanto
 distribuisce i compiti tra le varie entit&aacute del sistema invece che concentrarli in una sola. <br>
 
 <h3>SOLUZIONE PROPOSTA</h3>
@@ -314,17 +315,16 @@ di aggiornare la GUI.
 
 
 <h3> ARCHITETTURA LOGICA</h3>
+Gli osservatori COAP gi&aacute presenti vengono utilizzati lato server per monitorare le informazioni di interesse per la GUI,
+in pi&uacute viene introdotto un ulteriore osservatore COAP per ottenere le capacit&aacute attuali del glass e del plastic box,
+interfacciandosi con il WASTE_SERVICE.<br>
 La soluzione che quindi proponiamo presenta la seguente architettura logica:<br>
-CODICE: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
- &ensp;&nbsp;&emsp;&emsp; &emsp;	<a href="../../raspberry/src/raspberry.qak">Contesto Raspberry</a><br><br><br>
-TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
-&nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
-&nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
-<img src="./img_Sprint2/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
+
+<img src="./img_Sprint3/modelloEseguibile.png" alt="RF2" width="70%" height="70%"><br><br>
 
 </div>
  
-
+<!--
 <h2>Test plans <a name="testPlan"></a></h2> 
 <div class="remark">
 In questo Sprint sono state realizzate due test unit per verificare il corretto funzionamento delle entit&aacute che 
@@ -338,49 +338,58 @@ compongono il sistema, in particolare:
 		del TROLLEY e del LED. Viene simulato un comando del SONAR di stop/resume e si va a verificare che le due entit&aacute si trovino
 		nello stato atteso.</li>
 </ul>
-</div>
+</div> -->
 
 <h2>Project</h2> 
  <div class="remark">
- Fino ad adesso abbiamo rappresentato, per facilit&aacute di notazione, il SONAR come un unico attore. In realt&aacute
- esso &eacute implementato mediante una pipeline di attori. In particolare, come si pu&oacute evincere dall'immagine sottostante,
- esso &eacute composto dai seguenti attori:
+ Abbiamo deciso di utilizzare Spring Boot come framework web mediante il cui realizzare la web GUI richiesta nei requisiti
+ forniti dal committente.<br>
+ Nel dettaglio &eacute necessario distinguere ci&oacute che &eacute situato lato server con ci&oacute che &eacute situato lato
+ browser.<br><br>In particolare lato server troviamo:
  <ul>
-	<li>sonarHCSR04Support2021: utilizza il <a href="../../CodiceRasp/SonarAlone.c">SonarAlone</a> fornito dal committente
-		per ottenere le distanze rilevate dal sonar fisico e le immette nella pipeline.</li>
-	<li>dataCleaner: filtra le distanze passate dal sonarHCSR04Support2021, considerando solo quelle comprese in un 
-		determinato range. Questo &eacute necessario in quanto il sonar fisico &eacute realizzato per rilevare distanze non
-		troppo elevate.</li>
-	<li>distanceFilter: processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
-		stop/resume al WASTE_SERVICE (distanza superiore o inferiore a DLIMIT).</li>
+	<li><a href="../src/main/java/unibo/WasteServiceStatusGUI/controllers/WasteController.java">WasteController</a>:
+		rappresenta la componente principale lato server. Essa si incarica di gestire tutte le richieste provenienti 
+		dal browser e di generare tutti gli osservatori COAP per monitorare le informazioni da mostrare all'utente
+		e notificare la GUI in caso di cambiamenti in modo tale da effettuare le modifiche necessarie.</li>
+	<li><a href="../src/main/java/unibo/WasteServiceStatusGUI/controllers">Altre classi ausiliarie</a>:
+		il restante codice presente lato server viene utilizzato dal WasteController per instaurare le connessioni con il sistema.
+		In particolare, per realizzare la comunicazione con LED, WASTE_SERVICE e TROLLEY viene utilizzato il protocollo COAP, inoltre
+		viene utilizzato anche il protocollo TCP per poter inviare delle lod_req al WASTE_SERVICE.</li>
+	<li><a href="../src/main/java/unibo/WasteServiceStatusGUI/WasteServiceStatusGuiApplication.java">WasteServiceStatusGuiApplication</a>:
+		&eacute la componente che si occupa di avviare l'intera applicazione.</li>
  </ul><br>
- <img src="./img_Sprint2/sonar.png" alt="RF2" width="90%" height="90%"><br><br>
- Per quanto riguarda il LED,invece, abbiamo deciso di realizzare una nostra versione ispirandoci al codice fornito dal
- committente per esigenze implementative. Nel dettaglio il LED &eacute modellato come un attore e sfrutta gli script bash
- forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
- il LED.<br><br>
- 
- Inizialmente &eacute stata realizzata una prima versione per verficare la corretta comunicazione tra Raspberry e
- il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../raspberry/src/raspberry_sim.qakt">Modello eseguibile</a>.<br>
- Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../raspberry/src/raspberry.qak">Modello eseguibile</a>.
- 
- 
+ Lato browser, invece, vi sono:
+ <ul>
+	<li><a href="../src/main/resources/templates/WasteServiceStatusGuiAjax.html">WasteServiceStatusGui</a>:
+		rappresenta l'interfaccia grafica dell'applicazione web.</li>
+	<li><a href="../src/main/resources/static">Vari script JavaScript</a>: utilizzati per l'aggiornamento dinamico
+		dell'interfaccia.</li>
+ </ul>
+ Nel dettaglio viene utilizzato il protocollo HTTP per comunicare con il server in due "forme" differenti:
+ <ul>
+	<li>Richiesta sincrona: tramite un form vengono inviate al server le informazioni (ip e porta) per instaurare le
+		connessioni COAP con le entit&aacute a cui si &eacute interessati (LED, WASTE_SERVICE e TROLLEY).</li>
+	<li>Ajax (richiesta asincrona): utilizzata per inviare una load_req al server e per evitare il ricaricamento della pagina in modo tale 
+		da non perdere le informazioni da mostrare all'utente.</li>
+ </ul><br>
+ Per quanto riguarda la rappresentazione della posizione del TROLLEY abbiamo deciso di fornire un'informazione approssimata,
+ indicando l'area in cui si trova o verso cui si sta dirigendo il TROLLEY.<br>
+ Infine per quanto concerne la rappresentazione dello stato, si &eacute deciso di seguire il consiglio dell'analista e optare
+ per una rappresentazione distribuita dello stato del sistema.
  </div>
 
-
+<!--
 <h2>Testing</h2> 
 <div class="remark">
  I test utilizzati per verificare il corretto funzionamento del sistema sono quelli riportati nella sezione
  <a href="#testPlan">"Test plans"</a>
- </div>
+ </div> -->
  
 <h2>Final summary</h2> 
 <div class="remark">
-&Eacute stato introdotto un osservatore COAP per segnalare che il LED, essendo modellato come un attore, &eacute anche una risorsa COAP.<br>
-Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe risultare un'alternativa interessante per quanto
-riguarda i requisiti affrontati negli Sprint successivi.<br><br>
+Di seguito viene riportata l'architettura finale del sistema.<br>
 
-<img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
+<img src="./img_Sprint3/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
 
 </div>
  

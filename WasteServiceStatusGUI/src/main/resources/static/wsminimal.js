@@ -35,7 +35,8 @@ wsminimal.js
             console.log("ws-status:" + msg);
             if( msg.includes("TROLLEY") ) {
 				m = elab_msg(msg);
-                setMessageToWindow(pos_trolley,m);
+				if ( m != "STOPPED")
+					setMessageToWindow(pos_trolley,m);
 				var stato = ricava_stato_trolley(m);
 				setMessageToWindow(stato_trolley,stato);
 			}
