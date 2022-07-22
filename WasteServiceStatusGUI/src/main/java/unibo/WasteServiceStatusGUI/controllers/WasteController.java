@@ -12,13 +12,12 @@ import org.springframework.web.bind.annotation.*;
 import unibo.WasteServiceStatusGUI.model.AddressForm;
 import unibo.WasteServiceStatusGUI.model.WasteTruckForm;
 import unibo.comm22.coap.CoapConnection;
-import unibo.comm22.utils.ColorsOut;
 
 //---------------------------------------------------
 //import unibo.Robots.common.RobotUtils;
 
 @Controller 
-public class RobotController {
+public class WasteController {
     public final static String robotName  = "basicrobot";
     //protected String mainPage             = "WasteServiceStatusGui";
     protected String mainPage             = "WasteServiceStatusGuiAjax";
@@ -81,13 +80,13 @@ public class RobotController {
         viewmodel.addAttribute("portwasteservice",portwasteservice);
 
         //Attivo connessione TCP per inviare richiesta del waste truck
-        RobotUtils.connectWithWasteServiceUsingTcp(wasteserviceip,portwasteservice);
+        WasteUtils.connectWithWasteServiceUsingTcp(wasteserviceip,portwasteservice);
 
 
         //Attivo una connessione CoAP per osservare
-        CoapConnection connWaste = RobotUtils.connectWithWasteServiceUsingCoap(wasteserviceip,portwasteservice);
-        CoapConnection connTrolley = RobotUtils.connectWithTrolleyUsingCoap(trolleyip,porttrolley);
-        CoapConnection connLed = RobotUtils.connectWithLedUsingCoap(ledip,portled);
+        CoapConnection connWaste = WasteUtils.connectWithWasteServiceUsingCoap(wasteserviceip,portwasteservice);
+        CoapConnection connTrolley = WasteUtils.connectWithTrolleyUsingCoap(trolleyip,porttrolley);
+        CoapConnection connLed = WasteUtils.connectWithLedUsingCoap(ledip,portled);
 
         connWaste.observeResource( new HandlerCoapObserver() );
         connTrolley.observeResource( new HandlerCoapObserver() );
@@ -123,7 +122,7 @@ public class RobotController {
         System.out.println(msg);
         String res="";
         try {
-            res = RobotUtils.sendWasteTruckReq(msg);
+            res = WasteUtils.sendWasteTruckReq(msg);
         } catch (Exception e){
             System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
         }

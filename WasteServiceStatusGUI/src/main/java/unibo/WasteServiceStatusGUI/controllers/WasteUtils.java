@@ -14,7 +14,7 @@ import unibo.comm22.tcp.TcpClientSupport;
 import unibo.comm22.utils.ColorsOut;
 import unibo.comm22.utils.CommUtils;
 
-public class RobotUtils {
+public class WasteUtils {
 
     private static Interaction2021 conn;
     private static Interaction2021 connTcp;
