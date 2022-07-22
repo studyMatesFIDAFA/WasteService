@@ -2,7 +2,7 @@ package it.unibo;
 
 import static org.junit.Assert.*;
 
-//import it.unibo.ctxled.MainCtxledKt;
+//import it.unibo.ctxraspy.MainCtxraspyKt;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.CoapHandler;
 import org.eclipse.californium.core.CoapResponse;
@@ -19,7 +19,7 @@ public class LedTest {
 	public void up() {
 		new Thread(){
 			public void run(){
-                MainCtxled.main();
+                MainCtxraspy.main();
 			}
 		}.start();
 		waitForApplStarted();

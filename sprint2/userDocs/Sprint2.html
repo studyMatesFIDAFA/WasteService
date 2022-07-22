@@ -495,15 +495,19 @@ compongono il sistema, in particolare:
  Per quanto riguarda il LED,invece, abbiamo deciso di realizzare una nostra versione ispirandoci al codice fornito dal
  committente per esigenze implementative. Nel dettaglio il LED &eacute modellato come un attore e sfrutta gli script bash
  forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
- il LED.<br><br>
+ il LED fisico.<br><br>
+ 
+ Oltre a ci&oacute, si &eacute deciso di riavviare in fase di resume il TROLLEY nello stato in cui &eacute stato stoppato,
+ cos&iacute facendo si facilita l'implementazione dell'attore, sfruttando le transizioni gi&aacute presenti nello stato
+ senza modificare eccessivamente la sua struttura.<br><br>
  
  Inoltre, in questa fase, abbiamo deciso di suddividere il LED e il SONAR in due applicazioni differenti in modo tale da facilitare
- il testing del sistema e aumentare la sua flessibilit&aacute ed estendibilit&aacute senza complicare eccessivamente la distribuzione.<br>
+ il testing del sistema e aumentare la sua flessibilit&aacute ed estendibilit&aacute senza complicare eccessivamente la distribuzione.<br><br>
  
  Inizialmente &eacute stata realizzata una prima versione per verficare la corretta comunicazione tra Raspberry e
- il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../sonarqak/src/sonarsim.qakt">Modello eseguibile SONAR</a>.<br>
-										&nbsp;&nbsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/ledsim.qakt">Modello eseguibile LED</a>.<br>
- Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../sonarqak/src/sonar.qak">Modello eseguibile SONAR</a>.<br>
+ il resto del sistema. In essa le componenti SONAR e LED erano simulate: <a href="../../sonarqak/src/sonarsim.qak">Modello eseguibile SONAR simulato</a>.<br>
+										&nbsp;&nbsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/ledsim.qakt">Modello eseguibile LED simulato</a>.<br>
+ Nella versione successiva invece sono stati introdotti LED e SONAR fisici : <a href="../../sonarqak/src/sonar.qakt">Modello eseguibile SONAR</a>.<br>
 &emsp;&nbsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br>
  
  
@@ -524,7 +528,7 @@ riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 
 <img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
 MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
-&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;<a href="../../sonarqak/src/sonar.qak">Modello eseguibile SONAR</a>.<br>
+&emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;<a href="../../sonarqak/src/sonar.qakt">Modello eseguibile SONAR</a>.<br>
 &emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br>
  
  <br><br><br>
@@ -535,7 +539,7 @@ TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 
 <h2>Deployment</h2>
 <div class="remark">
-Vengono distribuite sul Raspberry due applicazioni, una contenente il <a href="../../ledqak/src/led.qak">LED</a> e una il <a href="../../sonarqak/src/sonar.qak">SONAR</a>, accompagnate con i vari
+Vengono distribuite sul Raspberry due applicazioni, una contenente il <a href="../../ledqak/src/led.qak">LED</a> e una il <a href="../../sonarqak/src/sonar.qakt">SONAR</a>, accompagnate con i vari
 codici relativi a LED e SONAR fisici.<br>
 Infine la parte restante del sistema (TROLLEY e WASTE_SERVICE) risiede su un altro nodo che in questo caso corrisponde al PC.
 </div>
