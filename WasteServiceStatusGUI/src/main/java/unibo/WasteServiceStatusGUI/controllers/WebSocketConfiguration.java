@@ -21,9 +21,7 @@ via @EnableWebSocket annotation.
 @EnableWebSocket
 public class WebSocketConfiguration implements WebSocketConfigurer {
 public static final WebSocketHandler wshandler = new WebSocketHandler();
-    /*
-    Necessario per l'invio di immagini
-     */
+
     @Bean
     public ServletServerContainerFactoryBean createWebSocketContainer() {
         ServletServerContainerFactoryBean container = new ServletServerContainerFactoryBean();
@@ -36,24 +34,3 @@ public static final WebSocketHandler wshandler = new WebSocketHandler();
         registry.addHandler(wshandler, "/socket").setAllowedOrigins("*");
     }
 }
-
-/*
-registry.addHandler(this.brokerStomp, "/sockjs")
-            .addInterceptors(handShakeWebSocketInterceptor)
-            .setAllowedOrigins("*")
-            .withSockJS()
-            .setHeartbeatTime(this.weEventConfig.getStompHeartbeats() * 1000);
-
-    registry.addHandler(this.brokerStomp, "/stomp")
-            .addInterceptors(handShakeWebSocketInterceptor)
-            .setAllowedOrigins("*");
-
-    registry.addHandler(this.webSocketMqtt, "/mqtt")
-            .addInterceptors(handShakeWebSocketInterceptor)
-            .setAllowedOrigins("*");
-
-registry.addHandler(serverHandler(), "/ws")
-      .setHandshakeHandler(this.handshakeHandler);
-registry.addHandler(serverHandler(), "/sockjs").withSockJS()
-      .setTransportHandlerOverrides(new WebSocketTransportHandler(this.handshakeHandler));
- */

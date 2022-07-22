@@ -26,9 +26,9 @@ public class WasteUtils {
             String path   = ctxqakdest+"/"+qakdestination;
             conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
-            System.out.println("HIController | connect Coap conn:" + conn );
+            System.out.println("WasteUtils | connect TROLLEY whit Coap conn:" + conn );
         }catch(Exception e){
-            System.out.println("RobotUtils | connectUsingCoap ERROR:"+e.getMessage());
+            System.out.println("WasteUtils | connectUsingCoap ERROR:"+e.getMessage());
         }
         return (CoapConnection) conn;
     }
@@ -36,7 +36,7 @@ public class WasteUtils {
     public static void connectWithWasteServiceUsingTcp(String addr, int port){
         try {
             connTcp = TcpClientSupport.connect(addr, port, 10);
-            System.out.println("HIController | connect Tcp conn:" + connTcp );
+            System.out.println("WasteUtils | connect WASTE_SERVICE with Tcp conn:" + connTcp );
         }catch(Exception e){
             ColorsOut.outerr("RobotUtils | connectWithRobotUsingTcp ERROR:"+e.getMessage());
         }
@@ -46,10 +46,10 @@ public class WasteUtils {
         String answer="";
         try {
             IApplMessage msg =  CommUtils.buildRequest("webGui", "load_req", payload, "wasteservice");
-            ColorsOut.outappl("RobotUtils | sendMsg msg:" + msg + " conn=" + connTcp, ColorsOut.BLUE);
+            //ColorsOut.outappl("RobotUtils | sendMsg msg:" + msg + " conn=" + connTcp, ColorsOut.BLUE);
             if( msg.isRequest() ){
                 answer = connTcp.request( msg.toString() );
-                System.out.println("RobotUtils | answer:" + answer );
+                //System.out.println("RobotUtils | answer:" + answer );
             } else {
                 // altro tipo di msg
             }
@@ -72,7 +72,7 @@ public class WasteUtils {
             String path   = ctxqakdest+"/"+qakdestination;
             conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
-            System.out.println("HIController | connect Coap conn:" + conn );
+            System.out.println("WasteUtils | connect LED with Coap conn:" + conn );
         }catch(Exception e){
             System.out.println("RobotUtils | connectUsingCoap ERROR:"+e.getMessage());
         }
@@ -86,7 +86,7 @@ public class WasteUtils {
             String path   = ctxqakdest+"/"+qakdestination;
             conn           = new CoapConnection(addr+":"+port, path);
             ((CoapConnection)conn).observeResource( new HandlerCoapObserver() );
-            System.out.println("HIController | connect Coap conn:" + conn );
+            System.out.println("WasteUtils | connect WASTE_SEVICE with Coap conn:" + conn );
         }catch(Exception e){
             System.out.println("RobotUtils | connectUsingCoap ERROR:"+e.getMessage());
         }

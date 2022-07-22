@@ -3,7 +3,7 @@ function callback(theXhr)
 	if(theXhr.readyState===4 && theXhr.status===200)
 	{
 		var risposta = theXhr.responseText;
-		console.log(risposta);
+		//console.log(risposta);
 		document.getElementById("response").value=risposta;
 	}
 }
@@ -29,7 +29,7 @@ function sendloadreq(){
     var tipo = document.getElementById("tipo").value;
     var qta = document.getElementById("qta").value;
     var parametri = "tipo="+tipo+"&qta="+qta;
-    console.log(parametri)
+    //console.log(parametri)
     if(xhr)
     {
     		sendloadreqAjax(xhr, url, parametri);

@@ -1,6 +1,5 @@
 package unibo.WasteServiceStatusGUI.controllers;
 
-import org.json.JSONObject;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
@@ -48,10 +47,7 @@ public class WebSocketHandler extends AbstractWebSocketHandler implements IWsHan
 
     public void sendToAll(String message)  {
         try{
-            ColorsOut.outappl("WebSocketHandler | sendToAll String: " + message, ColorsOut.CYAN);
-            //JSONObject jsm = new JSONObject(message);
-            //IApplMessage mm = new ApplMessage(message);
-            //String mstr    = mm.msgContent();//.replace("'","");
+            //ColorsOut.outappl("WebSocketHandler | sendToAll String: " + message, ColorsOut.CYAN);
             sendToAll( new TextMessage(message)) ;
         }catch( Exception e ){
             ColorsOut.outerr("WebSocketHandler | sendToAll String ERROR:"+e.getMessage());
@@ -63,8 +59,8 @@ public class WebSocketHandler extends AbstractWebSocketHandler implements IWsHan
         while( iter.hasNext() ){
             try{
                 WebSocketSession session = iter.next();
-                ColorsOut.outappl("WebSocketHandler | sendToAll " +
-                        message.getPayload() + " for session " + session.getRemoteAddress() , ColorsOut.MAGENTA);
+                //ColorsOut.outappl("WebSocketHandler | sendToAll " +
+                        //message.getPayload() + " for session " + session.getRemoteAddress() , ColorsOut.MAGENTA);
                 //synchronized(session){
                     session.sendMessage(message);
                 //}

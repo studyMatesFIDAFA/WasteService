@@ -95,23 +95,6 @@ public class WasteController {
         return buildThePage(viewmodel);
         //return mainPage;
     }
-/*
-    @PostMapping("/load_req")
-    public String sendWasteTruckRequest(Model viewmodel, @ModelAttribute WasteTruckForm wasteTruckForm){
-        materiale = wasteTruckForm.getTipo();
-        qta = wasteTruckForm.getQta();
-        String msg =  "load_req("+materiale+","+qta+")";
-        System.out.println(msg);
-        try {
-            RobotUtils.sendWasteTruckReq(msg);
-        } catch (Exception e){
-            System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
-        }
-
-        //return mainPage;
-        return buildThePage(viewmodel);
-    }
-*/
 
     @ResponseBody
     @PostMapping("/load_req")
@@ -119,12 +102,12 @@ public class WasteController {
         materiale = wasteTruckForm.getTipo();
         qta = wasteTruckForm.getQta();
         String msg =  "load_req("+materiale+","+qta+")";
-        System.out.println(msg);
+        //System.out.println(msg);
         String res="";
         try {
             res = WasteUtils.sendWasteTruckReq(msg);
         } catch (Exception e){
-            System.out.println("RobotController | sendWasteTruckRequest ERROR:"+e.getMessage());
+            System.out.println("WasteController | sendWasteTruckRequest ERROR:"+e.getMessage());
         }
 
         //return mainPage;

@@ -7,7 +7,7 @@ wsminimal.js
     function sendMessage(message) {
         var jsonMsg = JSON.stringify( {'name': message});
         socket.send(jsonMsg);
-        console.log("Sent Message: " + jsonMsg);
+        //console.log("Sent Message: " + jsonMsg);
     }
 
     function connect(){
@@ -32,7 +32,7 @@ wsminimal.js
             msg = event.data;
 			
             //alert(`Got Message: ${msg}`);
-            console.log("ws-status:" + msg);
+            //console.log("ws-status:" + msg);
             if( msg.includes("TROLLEY") ) {
 				m = elab_msg(msg);
 				if ( m != "STOPPED")

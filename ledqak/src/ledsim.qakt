@@ -11,12 +11,13 @@ QActor led context ctxraspy {
 	#]
 	
 	State start initial{
+		updateResource [# "LED:OFF" #]
 		println("LED | OFF") //led inizialmente spento 
 	}Goto wait_cmd
 	
 	State wait_cmd {
 		printCurrentMessage
-		println("LED | WAIT CMD")
+		//println("LED | WAIT CMD")
 		
 	}
 	Transition t0 whenMsg cmd -> esegui_cmd

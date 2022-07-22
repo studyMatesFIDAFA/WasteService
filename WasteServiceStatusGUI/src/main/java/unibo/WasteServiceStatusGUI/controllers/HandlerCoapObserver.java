@@ -8,7 +8,7 @@ public class HandlerCoapObserver implements CoapHandler{
 
     @Override
     public void onLoad(CoapResponse response) {
-        System.out.println("RobotCoapObserver changed!" + response.getResponseText());
+        //System.out.println("RobotCoapObserver changed!" + response.getResponseText());
         //send info over the websocket
         WebSocketConfiguration.wshandler.sendToAll("" + response.getResponseText());
         //simpMessagingTemplate.convertAndSend(WebSocketConfig.topicForTearoomstatemanager, new ResourceRep("" + HtmlUtils.htmlEscape(response.getResponseText())));
@@ -16,6 +16,6 @@ public class HandlerCoapObserver implements CoapHandler{
 
     @Override
     public void onError() {
-        ColorsOut.outerr("RobotCoapObserver observe error!");
+        ColorsOut.outerr("HandlerCoapObserver observe error!");
     }
 }
