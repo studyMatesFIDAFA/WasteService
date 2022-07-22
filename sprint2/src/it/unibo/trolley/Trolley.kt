@@ -139,7 +139,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						)
 						if( checkMsgContent( Term.createTerm("deposit(arg)"), Term.createTerm("deposit(arg)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("TROLLEY | Ricevuto deposit")
 								delay(500) 
 								answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 						}

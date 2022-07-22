@@ -102,7 +102,6 @@ QActor trolley context ctxanalisiproblema {
 			}
 		}
 	}Transition t1 whenReply dopathdone -> go_indoor
-				   //whenReply dopathfail -> pathfail
 				   whenReply dopathfail -> go_indoor
 				   whenMsg stop -> alarm 
 				   whenRequest pickup -> pickup
@@ -166,7 +165,6 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | DEPOSITO")
 		updateResource [# "TROLLEY:DEPOSITO" #]
 		onMsg(deposit : deposit(arg)) {
-			println("TROLLEY | Ricevuto deposit")
 			delay 500
 			replyTo deposit with deposit_done : deposit_done(ok)
 		}
@@ -369,7 +367,6 @@ QActor wasteservice context ctxanalisiproblema{
 		}
 		forward led -m cmd : cmd(blink)
 		if [# Resumed==false #]{
-			println("ATTIVA INDOOR RESUMED FALSE")
 			run unibo.kotlin.planner22Util.setGoal(XIndoor,YIndoor) 
 			[# PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 				.replace(" ","")
@@ -487,10 +484,6 @@ QActor wasteservice context ctxanalisiproblema{
 						[#
 				}
 			#]
-//		onMsg (resume : resume(STATE)){
-//			forward trolley -m resume : resume ($LastState)
-//			delay 200
-//		}
 		[#Resumed = false#]
 	}
 	Transition t4 whenTime 100 -> go_home
@@ -531,10 +524,6 @@ QActor wasteservice context ctxanalisiproblema{
 	
 	State ritorno_done{
 		printCurrentMessage
-//		onMsg (resume : resume(STATE)){
-//			forward trolley -m resume : resume ($LastState)
-//			delay 200
-//		}
 		onMsg(home_done:home_done(ok)){
 			forward led -m cmd : cmd(off)
 			run  unibo.kotlin.planner22Util.updateMapWithPath( PercorsoCurr )

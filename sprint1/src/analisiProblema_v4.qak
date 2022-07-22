@@ -46,12 +46,6 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | HOME")
 		println("TROLLEY | Attendo un compito dal Waste Service")
 		updateResource [# "TROLLEY:HOME" #]
-//		onMsg(ritorno_home : ritorno_home(PATH_HOME)){
-//			[#
-//				Path = payloadArg(0)
-//			#]
-//			request pathexec -m dopath : dopath($Path) 
-//		}
 	}
 	Transition t0 whenRequest pickup -> pickup
 				whenRequest ritorno_home -> ritorno_home
@@ -91,7 +85,6 @@ QActor trolley context ctxanalisiproblema {
 		
 	}
 	Transition t1 whenReply dopathdone -> pickup
-				  //whenReply dopathfail -> pathfail
 				  whenReply dopathfail -> pickup
 				  whenRequest trasf -> trasferimento
 	
@@ -164,7 +157,6 @@ QActor trolley context ctxanalisiproblema {
 			request pathexec -m dopath : dopath($Path) 
 		}
 		onMsg (dopathdone   : dopathdone( ARG )) {
-			println("Trolley home ok")
 			replyTo ritorno_home with home_done : home_done(ok)
 			updateResource [# "TROLLEY:HOME" #]
 		}

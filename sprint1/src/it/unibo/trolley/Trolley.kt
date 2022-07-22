@@ -142,7 +142,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						}
 						if( checkMsgContent( Term.createTerm("dopathdone(ARG)"), Term.createTerm("dopathdone(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								println("Trolley home ok")
 								answer("ritorno_home", "home_done", "home_done(ok)"   )  
 								updateResourceRep( "TROLLEY:HOME"  
 								)

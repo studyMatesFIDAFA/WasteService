@@ -103,8 +103,7 @@ class Wasteservice ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( nam
 						}
 						forward("cmd", "cmd(blink)" ,"led" ) 
 						if(  Resumed==false  
-						 ){println("ATTIVA INDOOR RESUMED FALSE")
-						unibo.kotlin.planner22Util.setGoal( XIndoor, YIndoor  )
+						 ){unibo.kotlin.planner22Util.setGoal( XIndoor, YIndoor  )
 						 PercorsoCurr = unibo.kotlin.planner22Util.doPlan().toString()  //List<aima.core.agent.Action>  [w, w, l, w] 
 										.replace(" ","")
 										.replace(",","")
