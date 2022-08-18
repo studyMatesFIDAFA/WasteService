@@ -50,7 +50,8 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
 	suspend fun startDataReadSimulation(    ){
   			var i = 0
 			var dist = 0
-			while( i < 50 && goon ){
+			//i < 50 && goon
+			while( true ){
 				//Versione FABIO
 				if(i<15) {
 					dist = 80
@@ -76,6 +77,7 @@ class sonarSimulator ( name : String ) : ActorBasic( name ) {
 				else{
 					dist = 80
 				}
+				println("SonarSim: $dist");
 				val m1 = "distance($dist)"
 				val event = MsgUtil.buildEvent( name,"sonar",m1)
 				emitLocalStreamEvent( event )
