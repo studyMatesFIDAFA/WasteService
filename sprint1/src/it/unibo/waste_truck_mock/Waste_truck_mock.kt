@@ -14,6 +14,7 @@ class Waste_truck_mock ( name: String, scope: CoroutineScope  ) : ActorBasicFsm(
 		return "start"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		return { //this:ActionBasciFsm
 				state("start") { //this:State
 					action { //it:State
