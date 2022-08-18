@@ -26,8 +26,8 @@ CodedQActor sonardatasource context ctxsonar className "sonarHCSR04Support2021"
  * we could do it by introducing an observer that emits the event
  */
 //CodedQActor datalogger     context ctxsonaronrasp className "dataLogger"
-CodedQActor datacleaner    context ctxsonar className "dataCleaner"
-CodedQActor distancefilter context ctxsonar className "distanceFilter"
+//CodedQActor datacleaner    context ctxsonar className "dataCleaner"
+//CodedQActor distancefilter context ctxsonar className "distanceFilter"
 
 
 QActor sonarqak22 context ctxsonar{
