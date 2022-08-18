@@ -83,7 +83,6 @@ dependencies {
 	implementation name: 'unibo.actor22-1.1'
 	implementation name: 'unibo.comm22-1.1'
     implementation name: 'it.unibo.comm2022-2.0'
-	
 
     /* AIMA **************************************************************************************************************** */
  	//PLANNER  

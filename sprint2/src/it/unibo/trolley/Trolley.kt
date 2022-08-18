@@ -14,7 +14,6 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 		return "start"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
-		val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				var Path = ""
 				val DelayIndoor=2000L
@@ -39,9 +38,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:HOME"  
 						)
 					}
-					 transition(edgeName="t00",targetState="go_indoor",cond=whenRequest("go_indoor"))
-					transition(edgeName="t01",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
-					transition(edgeName="t02",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t02",targetState="go_indoor",cond=whenRequest("go_indoor"))
+					transition(edgeName="t03",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
+					transition(edgeName="t04",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("go_indoor") { //this:State
 					action { //it:State
@@ -72,10 +71,10 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t13",targetState="go_indoor",cond=whenReply("dopathdone"))
-					transition(edgeName="t14",targetState="go_indoor",cond=whenReply("dopathfail"))
-					transition(edgeName="t15",targetState="alarm",cond=whenDispatch("stop"))
-					transition(edgeName="t16",targetState="pickup",cond=whenRequest("pickup"))
+					 transition(edgeName="t15",targetState="go_indoor",cond=whenReply("dopathdone"))
+					transition(edgeName="t16",targetState="go_indoor",cond=whenReply("dopathfail"))
+					transition(edgeName="t17",targetState="alarm",cond=whenDispatch("stop"))
+					transition(edgeName="t18",targetState="pickup",cond=whenRequest("pickup"))
 				}	 
 				state("pickup") { //this:State
 					action { //it:State
@@ -89,8 +88,8 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t27",targetState="trasferimento",cond=whenRequest("trasf"))
-					transition(edgeName="t28",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t29",targetState="trasferimento",cond=whenRequest("trasf"))
+					transition(edgeName="t210",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("pathfail") { //this:State
 					action { //it:State
@@ -127,10 +126,10 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t39",targetState="trasferimento",cond=whenReply("dopathdone"))
-					transition(edgeName="t310",targetState="trasferimento",cond=whenReply("dopathfail"))
-					transition(edgeName="t311",targetState="deposito",cond=whenRequest("deposit"))
-					transition(edgeName="t312",targetState="alarm",cond=whenDispatch("stop"))
+					 transition(edgeName="t311",targetState="trasferimento",cond=whenReply("dopathdone"))
+					transition(edgeName="t312",targetState="trasferimento",cond=whenReply("dopathfail"))
+					transition(edgeName="t313",targetState="deposito",cond=whenRequest("deposit"))
+					transition(edgeName="t314",targetState="alarm",cond=whenDispatch("stop"))
 				}	 
 				state("deposito") { //this:State
 					action { //it:State
@@ -144,9 +143,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 						}
 					}
-					 transition(edgeName="t413",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
-					transition(edgeName="t414",targetState="go_indoor",cond=whenRequest("go_indoor"))
-					transition(edgeName="t415",targetState="stopped",cond=whenDispatch("stop"))
+					 transition(edgeName="t415",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
+					transition(edgeName="t416",targetState="go_indoor",cond=whenRequest("go_indoor"))
+					transition(edgeName="t417",targetState="stopped",cond=whenDispatch("stop"))
 				}	 
 				state("ritorno_home") { //this:State
 					action { //it:State
@@ -181,11 +180,11 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t516",targetState="ritorno_home",cond=whenReply("dopathdone"))
-					transition(edgeName="t517",targetState="ritorno_home",cond=whenReply("dopathfail"))
-					transition(edgeName="t518",targetState="go_indoor",cond=whenRequest("go_indoor"))
-					transition(edgeName="t519",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
-					transition(edgeName="t520",targetState="alarm",cond=whenDispatch("stop"))
+					 transition(edgeName="t518",targetState="ritorno_home",cond=whenReply("dopathdone"))
+					transition(edgeName="t519",targetState="ritorno_home",cond=whenReply("dopathfail"))
+					transition(edgeName="t520",targetState="go_indoor",cond=whenRequest("go_indoor"))
+					transition(edgeName="t521",targetState="ritorno_home",cond=whenRequest("ritorno_home"))
+					transition(edgeName="t522",targetState="alarm",cond=whenDispatch("stop"))
 				}	 
 				state("alarm") { //this:State
 					action { //it:State
@@ -195,9 +194,9 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						stateTimer = TimerActor("timer_alarm", 
 							scope, context!!, "local_tout_trolley_alarm", 1000.toLong() )
 					}
-					 transition(edgeName="t621",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
-					transition(edgeName="t622",targetState="stopped",cond=whenReply("dopathdone"))
-					transition(edgeName="t623",targetState="savepath",cond=whenReply("dopathfail"))
+					 transition(edgeName="t623",targetState="stopped",cond=whenTimeout("local_tout_trolley_alarm"))   
+					transition(edgeName="t624",targetState="stopped",cond=whenReply("dopathdone"))
+					transition(edgeName="t625",targetState="savepath",cond=whenReply("dopathfail"))
 				}	 
 				state("savepath") { //this:State
 					action { //it:State
@@ -218,7 +217,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						updateResourceRep( "TROLLEY:STOPPED"  
 						)
 					}
-					 transition(edgeName="t724",targetState="resume",cond=whenDispatch("resume"))
+					 transition(edgeName="t726",targetState="resume",cond=whenDispatch("resume"))
 				}	 
 				state("resume") { //this:State
 					action { //it:State
@@ -245,19 +244,19 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 								 }
 						}
 					}
-					 transition(edgeName="t825",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
+					 transition(edgeName="t827",targetState="home",cond=whenReplyGuarded("dopathdone",{ LastState == "home"  
 					}))
-					transition(edgeName="t826",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
+					transition(edgeName="t828",targetState="go_indoor",cond=whenReplyGuarded("dopathdone",{ LastState == "go_indoor"  
 					}))
-					transition(edgeName="t827",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
+					transition(edgeName="t829",targetState="pickup",cond=whenReplyGuarded("dopathdone",{ LastState == "pickup"  
 					}))
-					transition(edgeName="t828",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
+					transition(edgeName="t830",targetState="trasferimento",cond=whenReplyGuarded("dopathdone",{ LastState == "trasferimento"  
 					}))
-					transition(edgeName="t829",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
+					transition(edgeName="t831",targetState="deposito",cond=whenReplyGuarded("dopathdone",{ LastState == "deposito"  
 					}))
-					transition(edgeName="t830",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
+					transition(edgeName="t832",targetState="ritorno_home",cond=whenReplyGuarded("dopathdone",{ LastState == "ritorno_home"  
 					}))
-					transition(edgeName="t831",targetState="resume",cond=whenReply("dopathfail"))
+					transition(edgeName="t833",targetState="resume",cond=whenReply("dopathfail"))
 				}	 
 			}
 		}
