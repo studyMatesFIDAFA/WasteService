@@ -39,6 +39,7 @@ Event updatestatews: updatestatews(STATE)
 Event updatestateled: updatestateled(STATE)
 Event updatestatetrolley: updatestatetrolley(STATE)
 Event updatepostrolley: updatepostrolley(STATE)
+Event sonardata : distance( V ) 
 
  
 //Context ctxraspy ip [host="127.0.0.1" port=8080]
@@ -565,14 +566,9 @@ QActor wasteservice context ctxanalisiproblema{
 }
 
 QActor sonar context ctxsonar {
-	State stopped initial {
+	State s1 initial {
 		printCurrentMessage
-		forward wasteservice -m stop : stop (STOP)
-	}
-	Goto resumed
-	State resumed {
-		printCurrentMessage
-		forward wasteservice -m resume: resume(RES)
+		emit sonardata : distance
 	}
 }
 
@@ -615,6 +611,64 @@ QActor waste_truck_mock context ctxwastetruck {
 		printCurrentMessage
 		println("Request rejected")
 	}
+}
+
+QActor distancefilter context ctxanalisiproblema {
+	
+	[#
+		RaspberryConfigurator.setTheConfiguration("./raspberryConfigurator.json")
+		val LimitDistance = RaspberryConfigurator.dlimit
+		var Sospeso = false
+	#]
+	
+	State s0 initial{
+		println("Avvio distancefilter")
+	}
+	Transition t1 whenEvent sonardata -> gestiscidistanza
+	
+	State gestiscidistanza{
+//		onMsg(sonar: distance(V)){
+//			println("-->sonar")
+//			[#
+//				var Distance = payloadArg(0).toInt()
+//				if( Distance < LimitDistance && !Sospeso){
+//	 			Sospeso=true
+//			#]
+//				forward wasteservice -m stop:stop($Distance)
+//			[#
+//				} else if(Distance>= LimitDistance && Sospeso){
+//				Sospeso=false
+//			#]
+//				forward wasteservice -m resume:resume($Distance)
+//			[#
+//				}
+//			#]
+//			
+//		}
+		onMsg(sonardata:distance(V)){
+			
+			[#
+				var Distance = payloadArg(0).toInt()
+			#]
+				println("-->sonardata $Distance")	
+			[#
+				if( Distance < LimitDistance && !Sospeso){
+	 			Sospeso=true
+			#]
+				forward wasteservice -m stop:stop($Distance)
+			[#
+				} else if(Distance>= LimitDistance && Sospeso){
+				Sospeso=false 
+			#]
+				forward wasteservice -m resume:resume($Distance)
+			[#
+				}
+			#]
+		}
+	}
+	Transition t2 whenEvent sonardata -> gestiscidistanza
+	
+	
 }
 
 ExternalQActor gui context ctxgui 

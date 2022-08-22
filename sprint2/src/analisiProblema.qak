@@ -172,7 +172,7 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | PICKUP")
 		updateResource [# "TROLLEY:PICKUP" #]
 		onMsg(pickup : pickup(ARG)){
-			delay 500
+			delay 1000
 			replyTo pickup with pickup_done : pickup_done(ok)
 		}
 		
@@ -226,7 +226,7 @@ QActor trolley context ctxanalisiproblema {
 		println("TROLLEY | DEPOSITO")
 		updateResource [# "TROLLEY:DEPOSITO" #]
 		onMsg(deposit : deposit(arg)) {
-			delay 500
+			delay 1000
 			replyTo deposit with deposit_done : deposit_done(ok)
 		}
 		

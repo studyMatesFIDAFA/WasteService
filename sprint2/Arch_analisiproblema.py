@@ -24,8 +24,12 @@ with Diagram('analisiproblemaArch', show=False, outformat='png', graph_attr=grap
      with Cluster('ctxbasicrobot', graph_attr=nodeattr):
           pathexec=Custom('pathexec(ext)','./qakicons/externalQActor.png')
      with Cluster('ctxanalisiproblema', graph_attr=nodeattr):
+          distancefilter=Custom('distancefilter','./qakicons/symActorSmall.png')
           trolley=Custom('trolley','./qakicons/symActorSmall.png')
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
+     sys >> Edge(color='red', style='dashed', xlabel='sonardata') >> distancefilter
+     distancefilter >> Edge(color='blue', style='solid', xlabel='stop') >> wasteservice
+     distancefilter >> Edge(color='blue', style='solid', xlabel='resume') >> wasteservice
      trolley >> Edge(color='magenta', style='solid', xlabel='dopath') >> pathexec
      trolley >> Edge( xlabel='alarm', **eventedgeattr) >> sys
      wasteservice >> Edge(color='blue', style='solid', xlabel='cmd') >> led

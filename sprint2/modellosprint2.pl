@@ -12,3 +12,4 @@ context(ctxanalisiproblema, "localhost",  "TCP", "8078").
   qactor( wasteservice, ctxanalisiproblema, "it.unibo.wasteservice.Wasteservice").
   qactor( sonar, ctxsonar, "it.unibo.sonar.Sonar").
   qactor( waste_truck_mock, ctxwastetruck, "it.unibo.waste_truck_mock.Waste_truck_mock").
+  qactor( distancefilter, ctxanalisiproblema, "it.unibo.distancefilter.Distancefilter").

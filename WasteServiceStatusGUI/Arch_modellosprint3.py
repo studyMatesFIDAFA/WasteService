@@ -30,6 +30,7 @@ with Diagram('modellosprint3Arch', show=False, outformat='png', graph_attr=graph
      with Cluster('ctxanalisiproblema', graph_attr=nodeattr):
           trolley=Custom('trolley','./qakicons/symActorSmall.png')
           wasteservice=Custom('wasteservice','./qakicons/symActorSmall.png')
+          distancefilter=Custom('distancefilter','./qakicons/symActorSmall.png')
      with Cluster('ctxgui', graph_attr=nodeattr):
           gui=Custom('gui(ext)','./qakicons/externalQActor.png')
      led >> Edge( xlabel='updatestateled', **eventedgeattr) >> sys
@@ -46,7 +47,9 @@ with Diagram('modellosprint3Arch', show=False, outformat='png', graph_attr=graph
      wasteservice >> Edge(color='magenta', style='solid', xlabel='deposit') >> trolley
      wasteservice >> Edge(color='magenta', style='solid', xlabel='ritorno_home') >> trolley
      wasteservice >> Edge(color='blue', style='solid', xlabel='stop') >> trolley
-     sonar >> Edge(color='blue', style='solid', xlabel='stop') >> wasteservice
-     sonar >> Edge(color='blue', style='solid', xlabel='resume') >> wasteservice
+     sonar >> Edge( xlabel='sonardata', **eventedgeattr) >> sys
      waste_truck_mock >> Edge(color='magenta', style='solid', xlabel='load_req') >> wasteservice
+     sys >> Edge(color='red', style='dashed', xlabel='sonardata') >> distancefilter
+     distancefilter >> Edge(color='blue', style='solid', xlabel='stop') >> wasteservice
+     distancefilter >> Edge(color='blue', style='solid', xlabel='resume') >> wasteservice
 diag

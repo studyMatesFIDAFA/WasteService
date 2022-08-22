@@ -14,6 +14,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 		return "start"
 	}
 	override fun getBody() : (ActorBasicFsm.() -> Unit){
+		val interruptedStateTransitions = mutableListOf<Transition>()
 		
 				var Path = ""
 				val DelayIndoor=2000L
@@ -84,7 +85,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						)
 						if( checkMsgContent( Term.createTerm("pickup(arg)"), Term.createTerm("pickup(ARG)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								delay(500) 
+								delay(1000) 
 								answer("pickup", "pickup_done", "pickup_done(ok)"   )  
 						}
 					}
@@ -139,7 +140,7 @@ class Trolley ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( name, sc
 						)
 						if( checkMsgContent( Term.createTerm("deposit(arg)"), Term.createTerm("deposit(arg)"), 
 						                        currentMsg.msgContent()) ) { //set msgArgList
-								delay(500) 
+								delay(1000) 
 								answer("deposit", "deposit_done", "deposit_done(ok)"   )  
 						}
 					}

@@ -24,7 +24,7 @@ class Distancefilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 					action { //it:State
 						println("Avvio distancefilter")
 					}
-					 transition(edgeName="t10",targetState="gestiscidistanza",cond=whenEvent("sonardata"))
+					 transition(edgeName="t157",targetState="gestiscidistanza",cond=whenEvent("sonardata"))
 				}	 
 				state("gestiscidistanza") { //this:State
 					action { //it:State
@@ -39,13 +39,13 @@ class Distancefilter ( name: String, scope: CoroutineScope  ) : ActorBasicFsm( n
 								forward("stop", "stop($Distance)" ,"wasteservice" ) 
 								
 												} else if(Distance>= LimitDistance && Sospeso){
-												Sospeso=false
+												Sospeso=false 
 								forward("resume", "resume($Distance)" ,"wasteservice" ) 
 								
 												}
 						}
 					}
-					 transition(edgeName="t21",targetState="gestiscidistanza",cond=whenEvent("sonardata"))
+					 transition(edgeName="t258",targetState="gestiscidistanza",cond=whenEvent("sonardata"))
 				}	 
 			}
 		}
