@@ -204,7 +204,7 @@ Progetto finale del corso di studio Ingegneria dei sistemi software M, Laurea Ma
 <h2>Sprint 1 results</h2>
 <div class="remark">
 Di seguito &eacute riportato il risultato finale ottenuto al termine dello <a href="../../sprint1/userDocs/Sprint1_v2.html">Sprint 1</a>:<br>
-<img src="./img_Sprint2/sintesiFinale_Sprint1.png" alt="RF2" width="90%" height="90%"><br>
+<img src="./img_Sprint2/sintesiFinale_Sprint1_ctx.jpg" alt="RF2" width="90%" height="90%"><br>
 MODELLO: <a href="../../sprint1/src/analisiProblema_v4.qak">modello eseguibile</a><br>
 TEST: <a href="../../sprint1/test/it/unibo/TestApplSprint1.java">Test plan</a><br><br>
 
@@ -431,9 +431,10 @@ Non essendoci richieste specifiche dal committente, si lascia libert&aacute di s
 
 <h3>SOLUZIONE PROPOSTA</h3>
 Dopo l'analisi appena effettuata proponiamo una possibile soluzione, che a nostro parere incorpora la maggior parte dei vantaggi: <br>
-Gli obiettivi sono quelli di mantenere il TROLLEY come attuatore e di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal SONAR il comando di stop/resume, in modo 
-tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop.<br>
-Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal SONAR al TROLLEY, il quale, 
+Gli obiettivi sono quelli di mantenere il TROLLEY come attuatore e di modellare il WASTE_SERVICE come controllore del sistema. Esso riceve dal DISTANCEFILTER il comando di stop/resume, in modo 
+tale da poter memorizzare lo stato in cui trova il TROLLEY prima dello stop. Il DISTANCEFILTER rappresenta l'entit&aacute dedicata che
+riceve, sottoforma di eventi, le distanze rilevate dal SONAR e le processa inviando l'opportuno comando (stop/resume) quando &eacute necessario al WASTE_SERVICE.<br>
+Successivamente il WASTE_SERVICE invier&aacute il comando appena ricevuto dal DISTANCEFILTER al TROLLEY, il quale, 
 se si trova in uno stato di movimento, dovr&aacute emettere l'evento alarm per notificare lo stop anche al pathexecutor.
 Oltre al comando stop/resume, il WASTE_SERVICE dovr&aacute anche pilotare il comportamento del LED tramite 
 l'invio del comando on/off/blink.<br>
@@ -448,10 +449,10 @@ MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</
 TEST: <a href="../test/it/unibo/TestApplSprint2.java">Test WASTE_SERVICE</a><br>
 &nbsp;&emsp;&ensp;&emsp; <a href="../../raspberry/test/it/unibo/LedTest.java">Test LED</a><br>
 &nbsp;&emsp;&ensp;&emsp; Non &eacute necessario effettuare test sul SONAR in quanto si utilizza il software fornito dal committente.<br><br><br>
-<img src="./img_Sprint2/modelloEseguibile.png" alt="RF2" width="90%" height="90%"><br><br>
+<img src="./img_Sprint2/modelloEseguibile_ctx.png" alt="RF2" width="90%" height="90%"><br><br>
 
 <h4>FILE DI CONFIGURAZIONE</h4>
-Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del Raspberry (DLIMIT, ip_WasteService e porta_WasteService) possono essere cablati
+Inizialmente, per facilit&aacute di implementazione, i parametri che regolano il funzionamento del Raspberry (ip_WasteService e porta_WasteService) possono essere cablati
 all'interno di esso.<br>
 Successivamnete, potrebbe essere opportuna l'introduzione di un file di configurazione, ad esempio scritto in linguaggio JSON e letto da un POJO apposito,
 per consentire la definizione dei paramentri del Raspberry in fase di avvio. In questo modo aumenta notevolmente la flessibilit&aacute del sistema.<br>
@@ -479,19 +480,8 @@ compongono il sistema, in particolare:
 
 <h2>Project</h2> 
  <div class="remark">
- Fino ad adesso abbiamo rappresentato, per facilit&aacute di notazione, il SONAR come un unico attore. In realt&aacute
- esso &eacute implementato mediante una pipeline di attori. In particolare, come si pu&oacute evincere dall'immagine sottostante,
- esso &eacute composto dai seguenti attori:
- <ul>
-	<li>sonarHCSR04Support2021: utilizza il <a href="../../CodiceRasp/SonarAlone.c">SonarAlone</a> fornito dal committente
-		per ottenere le distanze rilevate dal sonar fisico e le immette nella pipeline.</li>
-	<li>dataCleaner: filtra le distanze passate dal sonarHCSR04Support2021, considerando solo quelle comprese in un 
-		determinato range. Questo &eacute necessario in quanto il sonar fisico &eacute realizzato per rilevare distanze non
-		troppo elevate.</li>
-	<li>distanceFilter: &eacute stato modificato per esigenze implementative, arricchendolo con logica di business. Esso processa le distanze provenienti del dataCleaner inviando, quando &eacute necessario, il dispatch di
-		stop/resume al WASTE_SERVICE (distanza superiore o inferiore a DLIMIT).</li>
- </ul><br>
- <img src="./img_Sprint2/sonar.png" alt="RF2" width="90%" height="90%"><br><br>
+ L'attore SONAR &eacute stato realizzato con l'ausilio del codice sonarHCSR04Support2021, che utilizza il <a href="../../CodiceRasp/SonarAlone.c">SonarAlone</a> fornito dal committente
+ per ottenere ed emettere, sottoforma di eventi, le distanze rilevate dal sonar fisico.<br>
  Per quanto riguarda il LED,invece, abbiamo deciso di realizzare una nostra versione ispirandoci al codice fornito dal
  committente per esigenze implementative. Nel dettaglio il LED &eacute modellato come un attore e sfrutta gli script bash
  forniti dal committente per accendere (<a href="../../CodiceRasp/led25GpioTurnOn.sh">led25GpioTurnOn</a>) e spegnere (<a href="../../CodiceRasp/led25GpioTurnOff.sh">led25GpioTurnOff</a>)
@@ -526,7 +516,7 @@ compongono il sistema, in particolare:
 Questa caratteristica &eacute gi&aacute sfruttata in fase di test, ma potrebbe risultare un'alternativa interessante per quanto
 riguarda i requisiti affrontati negli Sprint successivi.<br><br>
 
-<img src="./img_Sprint2/sintesiFinale.png" alt="RF2" width="90%" height="90%"><br><br>
+<img src="./img_Sprint2/sintesiFinale_ctx.png" alt="RF2" width="90%" height="90%"><br><br>
 MODELLO: <a href="../src/analisiProblema.qak">Contesto WASTE_SERVICE e TROLLEY</a><br>
 &emsp;&emsp;&emsp;&nbsp;&emsp;&emsp;<a href="../../sonarqak/src/sonar.qakt">Modello eseguibile SONAR</a>.<br>
 &emsp;&emsp;&emsp;&emsp;&emsp;	<a href="../../ledqak/src/led.qak">Modello eseguibile LED</a>.<br>
